@@ -1,0 +1,74 @@
+{
+  "schema_version": "0.1",
+  "source": "MIT-SPARK/VGGT-SLAM",
+  "source_commit": "35327ac28b7d193df9ccc39ba6346052bb6f1207",
+  "point_coordinates": "VGGT submap canonical coordinates",
+  "point_transform": "optimized SL(4) global_from_submap; homogeneous divide required",
+  "confidence_encoding": "binary mask from upstream percentile threshold",
+  "frames": [
+    {
+      "frame_id": "frame_0001",
+      "image_path": "data/office_loop/frame_0001.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 0,
+      "graph_node_id": 0,
+      "confidence_threshold": 2.328126
+    },
+    {
+      "frame_id": "frame_0002",
+      "image_path": "data/office_loop/frame_0002.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 1,
+      "graph_node_id": 1,
+      "confidence_threshold": 2.328126
+    },
+    {
+      "frame_id": "frame_0003",
+      "image_path": "data/office_loop/frame_0003.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 2,
+      "graph_node_id": 2,
+      "confidence_threshold": 2.328126
+    },
+    {
+      "frame_id": "frame_0004",
+      "image_path": "data/office_loop/frame_0004.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 3,
+      "graph_node_id": 3,
+      "confidence_threshold": 2.328126
+    },
+    {
+      "frame_id": "frame_0005",
+      "image_path": "data/office_loop/frame_0005.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 4,
+      "graph_node_id": 4,
+      "confidence_threshold": 2.328126
+    },
+    {
+      "frame_id": "frame_0006",
+      "image_path": "data/office_loop/frame_0006.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 5,
+      "graph_node_id": 5,
+      "confidence_threshold": 2.328126
+    },
+    {
+      "frame_id": "frame_0007",
+      "image_path": "data/office_loop/frame_0007.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 6,
+      "graph_node_id": 6,
+      "confidence_threshold": 2.328126
+    },
+    {
+      "frame_id": "frame_0008",
+      "image_path": "data/office_loop/frame_0008.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 7,
+      "graph_node_id": 7,
+      "confidence_threshold": 2.328126
+    }
+  ]
+}

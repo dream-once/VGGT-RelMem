@@ -1,0 +1,29 @@
+{
+  "git_sha": "35327ac28b7d193df9ccc39ba6346052bb6f1207",
+  "env_lock": "scripts/bootstrap_vggt_geom.sh",
+  "dataset_split": "office_loop",
+  "seed": 0,
+  "config": {
+    "pipeline": "MIT-SPARK/VGGT-SLAM 2.0 geometry",
+    "upstream_path": "/root/autodl-tmp/VGGT-RelMem/third_party/VGGT-SLAM",
+    "upstream_commit": "35327ac28b7d193df9ccc39ba6346052bb6f1207",
+    "project_git_sha": "unknown",
+    "salad_commit": "33ca9c0ca1e10cbb21efc0d6a5fcb6d45688e42d",
+    "vggt_commit": "6e6e16107b88e8e76c751826af10d4295d87ecd2",
+    "model_url": "https://huggingface.co/facebook/VGGT-1B/resolve/main/model.pt",
+    "submap_size": 8,
+    "overlap": 1,
+    "max_loops": 0,
+    "max_frames": 8,
+    "min_disparity": 50.0,
+    "conf_percentile": 25.0,
+    "flow_filter": false,
+    "frame_count": 8,
+    "geometry_path": "runs/office-loop/geometry.npz"
+  },
+  "command": "/root/autodl-tmp/envs/vggt_geom/bin/python -m scripts.run_vggt_geometry --image-folder data/office_loop --output runs/office-loop/geometry.npz --max-frames 8 --submap-size 8 --max-loops 0 --disable-flow-filter",
+  "runtime_seconds": 966.7352879070677,
+  "peak_vram_mb": 4008.54931640625,
+  "created_at": "2026-08-19T16:08:06.372849+00:00",
+  "schema_version": "0.1"
+}

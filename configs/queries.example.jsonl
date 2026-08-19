@@ -1,0 +1,2 @@
+{"query_id":"q001","target":"chair","relation":"left_of","reference":"desk","anchor_frame":"frame_0001","answer_object_id":"obj_0001"}
+{"query_id":"q002","target":"lamp","relation":"right_of","reference":"desk","anchor_frame":"frame_0001","answer_object_id":null}
