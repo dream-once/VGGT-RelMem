@@ -1,0 +1,29 @@
+seed: 7
+
+retrieval:
+  top_k: 5
+  redundancy: hybrid
+  min_frame_gap: 3
+  min_camera_distance: 0.15
+  min_view_angle_deg: 12.0
+
+lifter:
+  confidence_threshold: 0.25
+  min_points: 30
+  outlier_mad_scale: 3.5
+
+association:
+  distance_threshold: 0.75
+  semantic_threshold: 0.70
+  min_match_score: 0.45
+  distance_weight: 0.55
+  semantic_weight: 0.30
+  overlap_weight: 0.15
+
+relations:
+  margin: 0.10
+  ambiguity_margin: 0.05
+  confidence_threshold: 0.50
+
+calibration:
+  answer_threshold: 0.60
