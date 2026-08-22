@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "project": "VGGT-RelMem",
+  "repository": {
+    "remote": "https://github.com/dream-once/VGGT-RelMem.git",
+    "default_branch": "main"
+  },
+  "tracked_required": [
+    "AGENTS.md",
+    "README.md",
+    "PROJECT_MEMORY.md",
+    "pyproject.toml",
+    "adapters/vggt_slam.py",
+    "adapters/open_vocab.py",
+    "scripts/bootstrap_open_vocab.sh",
+    "scripts/run_open_vocab_top1.py",
+    "scripts/run_pe_top1.py",
+    "scripts/validate_open_vocab.py",
+    "scripts/run_vggt_geometry.py",
+    "scripts/validate_geometry.py",
+    "tests/test_open_vocab.py",
+    "tests/test_validate_open_vocab.py",
+    ".agents/vggt-instance-baseline.json",
+    ".agents/skills/vggt-instance-handoff/SKILL.md",
+    ".agents/skills/vggt-instance-handoff/scripts/audit_instance.py"
+  ],
+  "upstream_repositories": [
+    {
+      "path": "third_party/VGGT-SLAM",
+      "commit": "35327ac28b7d193df9ccc39ba6346052bb6f1207",
+      "role": "VGGT-SLAM 2.0 geometry"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/salad",
+      "commit": "33ca9c0ca1e10cbb21efc0d6a5fcb6d45688e42d",
+      "role": "SALAD loop closure"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/vggt",
+      "commit": "6e6e16107b88e8e76c751826af10d4295d87ecd2",
+      "role": "VGGT_SPARK geometry model"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/perception_models",
+      "commit": "3e352cca660658d4b5c90f42a7808b11469e4c66",
+      "role": "Perception Encoder top-1 retrieval"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/sam3",
+      "commit": "8f0b7f4d4e7eda2ed606ebde6702c93359ad01da",
+      "role": "SAM 3 open-vocabulary segmentation"
+    }
+  ],
+  "local_assets": [
+    {
+      "path": "/root/autodl-tmp/envs/vggt_geom/bin/python",
+      "kind": "file",
+      "min_size": 1,
+      "purpose": "D3 geometry environment"
+    },
+    {
+      "path": "/root/autodl-tmp/cache/torch/hub/checkpoints/model.pt",
+      "kind": "file",
+      "min_size": 5000000000,
+      "purpose": "VGGT-1B model weight"
+    },
+    {
+      "path": "/root/autodl-tmp/envs/open_vocab/bin/python",
+      "kind": "file",
+      "min_size": 1,
+      "purpose": "D4 Python 3.12 PE/SAM 3 environment"
+    },
+    {
+      "path": "/root/autodl-tmp/cache/huggingface/hub/models--facebook--PE-Core-L14-336/snapshots/bafb0f76541d399057e980a25947f67acec76575/PE-Core-L14-336.pt",
+      "kind": "file",
+      "min_size": 2600000000,
+      "purpose": "D4 PE-Core-L14-336 checkpoint"
+    },
+    {
+      "path": "/root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt",
+      "kind": "file",
+      "min_size": 3400000000,
+      "sha256": "9999e2341ceef5e136daa386eecb55cb414446a00ac2b55eb2dfd2f7c3cf8c9e",
+      "purpose": "D4 SAM 3 checkpoint from ModelScope facebook/sam3"
+    },
+    {
+      "path": "data/office_loop",
+      "kind": "directory",
+      "min_files": 473,
+      "purpose": "official office_loop sample"
+    },
+    {
+      "path": "runs/office-loop/geometry.npz",
+      "kind": "file",
+      "min_size": 5000000,
+      "sha256": "760bc15dad97482941e7e38940c225a0ba38440bd463944a0c8ea1d9a6c94619",
+      "purpose": "D3 first validated geometry run"
+    },
+    {
+      "path": "runs/office-loop-repeat/geometry.npz",
+      "kind": "file",
+      "min_size": 5000000,
+      "sha256": "760bc15dad97482941e7e38940c225a0ba38440bd463944a0c8ea1d9a6c94619",
+      "purpose": "D3 repeat validated geometry run"
+    },
+    {
+      "path": "runs/office-loop-pe-printer/retrieval.json",
+      "kind": "file",
+      "min_size": 500,
+      "purpose": "D4 first real PE top-1 result"
+    },
+    {
+      "path": "runs/office-loop-pe-printer-repeat/retrieval.json",
+      "kind": "file",
+      "min_size": 500,
+      "purpose": "D4 repeat PE top-1 result"
+    },
+    {
+      "path": "runs/office-loop-b0-trash-can/b0_result.json",
+      "kind": "file",
+      "min_size": 1000,
+      "purpose": "D4 first passing mask and 3D OBB result"
+    },
+    {
+      "path": "runs/office-loop-b0-trash-can-repeat/b0_result.json",
+      "kind": "file",
+      "min_size": 1000,
+      "purpose": "D4 repeat passing mask and 3D OBB result"
+    }
+  ],
+  "disk": {
+    "path": "/root/autodl-tmp",
+    "min_free_gib": 10
+  }
+}

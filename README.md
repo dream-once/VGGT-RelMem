@@ -31,6 +31,16 @@ python -m unittest discover -v
 python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```
 
+## 换机检查与进度记忆
+
+仓库内置 `vggt-instance-handoff` Skill。克隆或更换 AutoDL 实例后，在开始下一项任务前运行只读审计：
+
+```bash
+python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py
+```
+
+审计会区分 Git 跟踪源码与本机专属的环境、权重、数据集和运行产物，同时报告上游 commit、磁盘和 GPU。可恢复的当前进度记录在 [`PROJECT_MEMORY.md`](PROJECT_MEMORY.md)；每次用户明确要求把项目更新上传 GitHub 时，应先更新该记忆和 `.agents/vggt-instance-baseline.json`，再随代码一同提交。审计本身不会下载、删除、覆盖或推送任何内容。
+
 ## VGGT-SLAM 2.0 几何接入
 
 几何环境与后续 SAM3 环境分离。安装固定的 Python 3.11 几何环境：
@@ -56,13 +66,14 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 
 ### 当前状态与文档日程
 
-核心接入对应推荐文档的 **D3**：“关闭开放词汇路径，跑通 VGGT-SLAM 几何；保存关键帧、点图、置信度与变换”。当前无卡模式下已完成 D3 的源码和环境准备，但尚未执行 CUDA 推理，因此不能把 D3 标为验收通过。
+核心接入对应推荐文档的 **D3**：“关闭开放词汇路径，跑通 VGGT-SLAM 几何；保存关键帧、点图、置信度与变换”。目前已在 RTX 4090 上完成两次独立的 8 帧 CUDA 推理，两个产物均通过 validator 且 SHA-256 完全一致，因此 D3 已验收完成。
 
-同时完成了部分前置工作：
+当前文档日程状态：
 
-- D1：官方 VGGT-SLAM、SALAD、VGGT_SPARK 均已下载并固定 commit，磁盘已检查；SAM 3 权限和有卡 GPU 状态尚未验收。
-- D2：`vggt_geom` 环境、geometry NPZ/JSON schema、适配器和 smoke test 已准备；`open_vocab` 环境尚未建立，因此完整 D2 仍未结束。
-- D3：运行器、无界面模式、关闭回环时跳过 SALAD 权重、产物导出和 run manifest 已接好；等待 GPU 实跑。
+- D1：官方 VGGT-SLAM、SALAD、VGGT_SPARK 均已下载并固定 commit；SAM 3 checkpoint 已从 ModelScope 官方发布页下载、校验并成功加载。
+- D2：`vggt_geom` 与 Python 3.12 `open_vocab` 两个隔离环境、geometry/mask NPZ+JSON schema、适配器和 smoke test 均已完成。
+- D3：运行器、无界面模式、产物导出、run manifest、两次 GPU 实跑及严格复现均已完成。
+- D4：PE top-1、SAM 3 mask、mask-to-point lifting、3D OBB、可视化、validator 和两次真实 GPU 复现均已完成。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -74,7 +85,7 @@ python -m unittest discover -v
 
 今天的源码接入验收标准是：check-only 所有模块无 `ERROR`；VGGT-SLAM commit 为 `35327ac28b7d193df9ccc39ba6346052bb6f1207`；全部单测通过。这个结果只说明“接线完成”，不代替 D3 的 GPU 验收。
 
-### 恢复 GPU 后的 D3 验收
+### D3 GPU 验收与复现命令（已完成）
 
 官方示例图片已包含在 `third_party/VGGT-SLAM/office_loop.zip`。准备数据后，用 8 帧、关闭开放词汇和回环做第一轮：
 
@@ -116,6 +127,45 @@ conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
   python -m scripts.visualize_geometry runs/office-loop/geometry.npz \
   --serve --host 127.0.0.1 --port 8080
 ```
+
+## D4 开放词汇 top-1 基线（已完成）
+
+Perception Encoder 固定为 `3e352cca660658d4b5c90f42a7808b11469e4c66`，SAM 3 固定为 `8f0b7f4d4e7eda2ed606ebde6702c93359ad01da`。它们使用独立的 Python 3.12 环境，不修改 D3 的 `vggt_geom`：
+
+```bash
+bash scripts/bootstrap_open_vocab.sh
+
+conda run --no-capture-output -p /root/autodl-tmp/envs/open_vocab \
+  python -m scripts.run_open_vocab_top1 --check-only
+```
+
+当前已经用官方 `PE-Core-L14-336` 在 D3 的 8 个关键帧上两次运行查询 `printer`，两次都选择 `frame_0006`，余弦分数均为 `0.1550685453894363`。缓存后运行约 `10.91 s`，峰值显存约 `2797 MB`：
+
+```bash
+HF_HOME=/root/autodl-tmp/cache/huggingface \
+conda run --no-capture-output -p /root/autodl-tmp/envs/open_vocab \
+  python -m scripts.run_pe_top1 \
+  --query printer --max-frames 8 \
+  --output-dir runs/office-loop-pe-printer
+```
+
+SAM 3 checkpoint 已从 ModelScope 的 `facebook/sam3` 官方发布页下载到数据盘。完整 B0 使用两个显式本地 checkpoint，不访问 Hugging Face，也不会重复下载：
+
+```bash
+conda run --no-capture-output -p /root/autodl-tmp/envs/open_vocab \
+  python -m scripts.run_open_vocab_top1 \
+  --query 'trash can' --max-frames 8 \
+  --pe-checkpoint \
+  /root/autodl-tmp/cache/huggingface/hub/models--facebook--PE-Core-L14-336/snapshots/bafb0f76541d399057e980a25947f67acec76575/PE-Core-L14-336.pt \
+  --sam3-checkpoint /root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt \
+  --output-dir runs/office-loop-b0-trash-can
+
+python -m scripts.validate_open_vocab runs/office-loop-b0-trash-can
+```
+
+两次真实运行都选择 `frame_0004`，SAM 3 输出 6 个实例，4 个具有有效 VGGT 点并成功生成 3D OBB；validator 均为 `PASS`。核心 `masks.json`、`observations.json` 和 `preview.png` 的 SHA-256 在两次运行间完全一致，峰值显存约 `5090 MB`。
+
+`printer` 的 PE top-1 仍稳定选择 `frame_0006`，但最前 8 帧没有可见打印机，因此 SAM 3 在官方阈值 `0.50` 下返回 0 个实例；这作为负例保留，不用降低阈值制造误检。
 
 
 如果需要开发安装：
@@ -177,7 +227,8 @@ python -m scripts.evaluate \
 ## 当前边界与下一步
 
 - 已实现：确定性 top-K 去冗余、置信过滤/MAD 离群剔除/PCA OBB、空间与语义关联、证据融合、JSON round-trip、左右/前后关系、逻辑回归校准、选择性预测指标。
-- 已完成 D3 基线：锁定 commit 的 VGGT-SLAM 2.0 已在 office_loop 前 8 帧跑通，几何产物通过 validator；严格的稳定复现仍需第二次独立运行。
-- 待接入：实际文本-帧编码器、SAM 3 mask 导出器和 Clio 标注。
+- 已完成 D3：锁定 commit 的 VGGT-SLAM 2.0 已在 `office_loop` 前 8 帧独立运行两次，两个几何产物均通过 validator 且哈希一致。
+- 已完成 D4：实际 PE 文本-帧检索、SAM 3 mask 导出、VGGT 点图抬升和 3D OBB 产物均已接入并通过真实运行验收。
+- 待完成 D5：跨视角观测关联、持久化对象记忆，以及后续 Clio 标注与关系评估。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。
