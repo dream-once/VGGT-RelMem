@@ -31,6 +31,17 @@ class ObservationTests(unittest.TestCase):
                 np.zeros((6, 6), dtype=bool), self.point_map
             )
 
+    def test_radial_mad_filter_removes_far_outlier(self) -> None:
+        point_map = self.point_map.copy()
+        point_map[0, 0] = [1000.0, -1000.0, 500.0]
+        lifter = Robust3DLifter(
+            LifterConfig(min_points=10, outlier_mad_scale=3.5)
+        )
+        result = lifter.lift(self.mask, point_map, np.ones((6, 6)))
+        self.assertEqual(result.points.shape, (35, 3))
+        self.assertLess(float(np.max(np.linalg.norm(result.points, axis=1))), 10.0)
+        self.assertAlmostEqual(result.valid_point_ratio, 35.0 / 36.0)
+
 
 if __name__ == "__main__":
     unittest.main()

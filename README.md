@@ -74,6 +74,7 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D2：`vggt_geom` 与 Python 3.12 `open_vocab` 两个隔离环境、geometry/mask NPZ+JSON schema、适配器和 smoke test 均已完成。
 - D3：运行器、无界面模式、产物导出、run manifest、两次 GPU 实跑及严格复现均已完成。
 - D4：PE top-1、SAM 3 mask、mask-to-point lifting、3D OBB、可视化、validator 和两次真实 GPU 复现均已完成。
+- D5：真实 PE top-K、时间/视角去冗余和 K=1/3/5 产物均已完成 GPU 实跑，validator 为 `PASS`。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -167,6 +168,84 @@ python -m scripts.validate_open_vocab runs/office-loop-b0-trash-can
 
 `printer` 的 PE top-1 仍稳定选择 `frame_0006`，但最前 8 帧没有可见打印机，因此 SAM 3 在官方阈值 `0.50` 下返回 0 个实例；这作为负例保留，不用降低阈值制造误检。
 
+## D5 PE top-K 与冗余抑制（已完成）
+
+`scripts.run_pe_topk` 一次编码所有候选帧，同时导出 K=1/3/5。它保持上游 B0 的非负余弦规则，并在相同分数时按 geometry 原始帧序稳定排序；视角特征来自 D3 导出的刚性 `world_from_anchor`，相机局部 `+z` 定义为前方，不把可能为投影变换的 `world_from_camera` 当作相机姿态。
+
+这里的 Top-K 指与文本查询最相关的前 K 个候选图像帧，不是 K 个物体。每个入选帧在 D6 中仍可能由 SAM 3 分割出零个、一个或多个实例。
+
+无卡检查不会加载 2.68 GB PE checkpoint：
+
+```bash
+python -m scripts.run_pe_topk \
+  --check-only --max-frames 8 \
+  --redundancy temporal --min-frame-gap 2
+```
+
+无卡检查结果为 `SOURCE_READY`：8 帧、K=1/3/5、PE commit 和全部 anchor pose 均有效。无卡容器的 cgroup 内存上限是 2 GiB，小于 checkpoint，因此不能在该模式下加载 PE。
+
+2026-08-23 已完成真实 GPU 验收：validator 为 `PASS`；top-1 为 `frame_0004`，分数 `0.20180504907322777`，与 D4 B0 完全一致；K=1/3/5 分别保留 1/3/4 个非冗余帧，且前缀一致。运行耗时 `9.640 s`，峰值显存 `2797.170 MB`。
+
+复现命令：
+
+```bash
+OMP_NUM_THREADS=8 \
+conda run --no-capture-output -p /root/autodl-tmp/envs/open_vocab \
+  python -m scripts.run_pe_topk \
+  --query 'trash can' --max-frames 8 \
+  --pe-checkpoint \
+  /root/autodl-tmp/cache/huggingface/hub/models--facebook--PE-Core-L14-336/snapshots/bafb0f76541d399057e980a25947f67acec76575/PE-Core-L14-336.pt \
+  --redundancy temporal --min-frame-gap 2 \
+  --output-dir runs/office-loop-d5-trash-can
+
+python -m scripts.validate_topk_retrieval \
+  runs/office-loop-d5-trash-can
+```
+
+验收产物：
+
+- `retrieval.json`：全部帧原始排序、位姿特征、配置、B0 top-1 兼容性和前缀一致性；
+- `topk_1.json`、`topk_3.json`、`topk_5.json`：各 K 的帧索引与分数；
+- `topk_preview.png`：最大 K 的候选帧预览；
+- `run_manifest.json`：命令、commit、配置、耗时与峰值显存。
+
+冗余抑制可能合理地返回少于请求 K 的独立视角，此时产物会显式标记 `exhausted_nonredundant_candidates`，不会用已判定为重复的帧静默回填。
+
+## D6 多帧 SAM mask 与鲁棒 3D lifting（已完成）
+
+`scripts.run_sam_topk_lifting` 直接读取 D5 的 `topk_5.json`，因此不会重新加载或运行 PE。它只加载一次官方 SAM 3，依次处理所有入选帧；每个 mask 先缩放到 VGGT 点图网格，再执行几何置信度过滤、MAD 径向离群点剔除、最小点数检查和世界坐标粗 OBB 拟合。不同帧的观测在 D6 保持独立，跨帧对象关联留到 D8 以后。
+
+无 GPU 的输入完整性检查：
+
+```bash
+python -m scripts.run_sam_topk_lifting --check-only \
+  --selection runs/office-loop-d5-trash-can/topk_5.json \
+  --sam3-checkpoint /root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt
+```
+
+真实运行与独立验收：
+
+```bash
+OMP_NUM_THREADS=8 \
+conda run --no-capture-output -p /root/autodl-tmp/envs/open_vocab \
+  python -m scripts.run_sam_topk_lifting \
+  --selection runs/office-loop-d5-trash-can/topk_5.json \
+  --sam3-checkpoint /root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt \
+  --output-dir runs/office-loop-d6-trash-can
+
+python -m scripts.validate_d6 runs/office-loop-d6-trash-can
+```
+
+2026-08-23 的 RTX 4090 实跑耗时 `14.374 s`、峰值显存 `5089.975 MB`，validator 为 `PASS`。D5 选出的 4 帧全部产生了 mask 和有效 3D 观测：
+
+- `frame_0004`：6 个 mask，4 个有效 3D 观测；
+- `frame_0001`：6 个 mask，4 个有效 3D 观测；
+- `frame_0006`：5 个 mask，4 个有效 3D 观测；
+- `frame_0008`：5 个 mask，3 个有效 3D 观测。
+
+总计 22 个 SAM 实例中有 15 个通过 lifting；其余 7 个因置信过滤后有效 VGGT 点少于 30 被显式拒绝。合成回归测试还单独验证了远距离离群点会被 MAD 过滤。验收目录包含 D5 选择快照、逐实例 mask、逐观测点云与 OBB、逐帧叠加预览、拒绝原因和运行 manifest。
+
+D6 validator 要求至少两个不同帧产生有效 3D 观测，避免单帧结果被误报为多帧接入完成。
 
 如果需要开发安装：
 
@@ -229,6 +308,8 @@ python -m scripts.evaluate \
 - 已实现：确定性 top-K 去冗余、置信过滤/MAD 离群剔除/PCA OBB、空间与语义关联、证据融合、JSON round-trip、左右/前后关系、逻辑回归校准、选择性预测指标。
 - 已完成 D3：锁定 commit 的 VGGT-SLAM 2.0 已在 `office_loop` 前 8 帧独立运行两次，两个几何产物均通过 validator 且哈希一致。
 - 已完成 D4：实际 PE 文本-帧检索、SAM 3 mask 导出、VGGT 点图抬升和 3D OBB 产物均已接入并通过真实运行验收。
-- 待完成 D5：跨视角观测关联、持久化对象记忆，以及后续 Clio 标注与关系评估。
+- 已完成 D5：真实 PE top-K 与时间/视角冗余抑制已通过 K=1/3/5 GPU 实跑、validator 和 27 个单测。
+- 已完成 D6：D5 多帧候选已接入 SAM 3 和 Robust3DLifter，4 帧真实样例、离群点测试、31 个完整单测及独立 validator 均通过。
+- 后续：按文档进入 D7，冻结并缓存 `ObjectObservation` 场景产物；对象关联与持久记忆实际属于 D8–D11。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
+import json
 
 import numpy as np
 
@@ -95,3 +96,32 @@ def load_geometry_npz(path: str | Path) -> GeometryBundle:
             world_from_camera=archive["world_from_camera"],
             schema_version=version,
         )
+
+
+def load_anchor_poses(
+    path: str | Path,
+    required_frame_ids: Sequence[str] | None = None,
+) -> dict[str, np.ndarray]:
+    """Load rigid ``world_from_anchor`` poses used for viewpoint suppression."""
+
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict) or not payload:
+        raise ValueError("anchor pose file must contain a non-empty object")
+    poses: dict[str, np.ndarray] = {}
+    for frame_id, value in payload.items():
+        pose = np.asarray(value, dtype=np.float64)
+        if pose.shape != (4, 4) or not np.all(np.isfinite(pose)):
+            raise ValueError(f"anchor pose for {frame_id} must be a finite 4x4 matrix")
+        if not np.allclose(pose[3], [0.0, 0.0, 0.0, 1.0], atol=1e-6):
+            raise ValueError(f"anchor pose for {frame_id} is not affine")
+        rotation = pose[:3, :3]
+        if not np.allclose(rotation.T @ rotation, np.eye(3), atol=1e-4):
+            raise ValueError(f"anchor pose for {frame_id} is not rigid")
+        if not np.isclose(np.linalg.det(rotation), 1.0, atol=1e-4):
+            raise ValueError(f"anchor pose for {frame_id} has invalid handedness")
+        poses[str(frame_id)] = pose
+    if required_frame_ids is not None:
+        missing = [frame_id for frame_id in required_frame_ids if frame_id not in poses]
+        if missing:
+            raise ValueError(f"anchor pose file is missing frames: {missing}")
+    return poses

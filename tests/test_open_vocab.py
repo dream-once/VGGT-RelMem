@@ -13,6 +13,7 @@ from adapters.open_vocab import (
     load_frame_sources,
     prepare_sam_outputs,
     resize_mask_nearest,
+    score_frames,
     select_top1,
 )
 
@@ -58,6 +59,16 @@ class OpenVocabAdapterTests(unittest.TestCase):
         self.assertEqual(match.frame_id, "f0")
         self.assertAlmostEqual(match.score, 1.0)
         self.assertAlmostEqual(match.cosine, 1.0)
+
+    def test_all_frame_scores_preserve_geometry_order(self) -> None:
+        frame_ids = ["z_first", "a_second", "m_third"]
+        images = np.array([[1.0, 0.0], [1.0, 0.0], [-1.0, 0.0]])
+        text = np.array([1.0, 0.0])
+        scored = score_frames(frame_ids, images, text)
+        self.assertEqual([item.frame_id for item in scored], frame_ids)
+        self.assertEqual([item.index for item in scored], [0, 1, 2])
+        self.assertEqual([item.score for item in scored], [1.0, 1.0, 0.0])
+        self.assertEqual(select_top1(frame_ids, images, text).frame_id, "z_first")
 
     def test_top1_clips_all_negative_scores_like_upstream(self) -> None:
         match = select_top1(

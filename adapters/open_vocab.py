@@ -1,4 +1,4 @@
-"""Isolated Perception Encoder + SAM 3 adapter for the D4 top-1 baseline."""
+"""Isolated Perception Encoder + SAM 3 adapter for D4/D5 retrieval and masks."""
 
 from __future__ import annotations
 
@@ -27,6 +27,14 @@ class FrameSource:
 
 @dataclass(frozen=True)
 class Top1Match:
+    frame_id: str
+    index: int
+    score: float
+    cosine: float
+
+
+@dataclass(frozen=True)
+class FrameScore:
     frame_id: str
     index: int
     score: float
@@ -101,12 +109,12 @@ def load_frame_sources(
     return sources
 
 
-def select_top1(
+def score_frames(
     frame_ids: Sequence[str],
     image_embeddings: np.ndarray,
     text_embedding: np.ndarray,
-) -> Top1Match:
-    """Reproduce upstream non-negative cosine top-1 selection deterministically."""
+) -> list[FrameScore]:
+    """Compute upstream-compatible non-negative cosine scores in frame order."""
 
     if not frame_ids or len(set(frame_ids)) != len(frame_ids):
         raise ValueError("frame_ids must be non-empty and unique")
@@ -118,10 +126,24 @@ def select_top1(
     if text.shape[0] != 1 or images.shape != (len(frame_ids), text.shape[1]):
         raise ValueError("embedding shapes do not match frame_ids and one text query")
     cosine = images @ text[0]
-    # GraphMap.retrieve_best_semantic_frame initializes its best score at zero.
     scores = np.clip(cosine, 0.0, 1.0)
-    index = int(np.argmax(scores))
-    return Top1Match(str(frame_ids[index]), index, float(scores[index]), float(cosine[index]))
+    return [
+        FrameScore(str(frame_id), index, float(scores[index]), float(cosine[index]))
+        for index, frame_id in enumerate(frame_ids)
+    ]
+
+
+def select_top1(
+    frame_ids: Sequence[str],
+    image_embeddings: np.ndarray,
+    text_embedding: np.ndarray,
+) -> Top1Match:
+    """Reproduce upstream non-negative cosine top-1 selection deterministically."""
+
+    scored = score_frames(frame_ids, image_embeddings, text_embedding)
+    index = int(np.argmax([item.score for item in scored]))
+    winner = scored[index]
+    return Top1Match(winner.frame_id, winner.index, winner.score, winner.cosine)
 
 
 def prepare_sam_outputs(
@@ -311,3 +333,10 @@ class Sam3Backend:
             output["scores"],
             image_shape=(image.height, image.width),
         )
+
+    def close(self) -> None:
+        """Release the model before another large backend is loaded."""
+
+        self.processor = None
+        if self.device.startswith("cuda") and self.torch.cuda.is_available():
+            self.torch.cuda.empty_cache()

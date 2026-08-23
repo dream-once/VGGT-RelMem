@@ -21,6 +21,8 @@ class FrameCandidate:
         self.score = float(self.score)
         if not self.frame_id or not np.isfinite(self.score):
             raise ValueError("frame_id and a finite score are required")
+        if self.index is not None and self.index < 0:
+            raise ValueError("index must be non-negative")
         if self.camera_center is not None:
             self.camera_center = np.asarray(self.camera_center, dtype=np.float64)
             if self.camera_center.shape != (3,):
@@ -45,6 +47,30 @@ class RetrievalConfig:
             raise ValueError("top_k must be positive")
         if self.redundancy not in {"none", "temporal", "viewpoint", "hybrid"}:
             raise ValueError("unsupported redundancy mode")
+        if self.min_frame_gap < 0:
+            raise ValueError("min_frame_gap must be non-negative")
+        if self.min_camera_distance < 0.0:
+            raise ValueError("min_camera_distance must be non-negative")
+        if not 0.0 <= self.min_view_angle_deg <= 180.0:
+            raise ValueError("min_view_angle_deg must be in [0, 180]")
+
+
+def viewpoint_from_world_pose(world_from_anchor: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Return camera center and world-space +z viewing direction from a rigid pose."""
+
+    pose = np.asarray(world_from_anchor, dtype=np.float64)
+    if pose.shape != (4, 4) or not np.all(np.isfinite(pose)):
+        raise ValueError("world_from_anchor must be a finite 4x4 matrix")
+    if not np.allclose(pose[3], [0.0, 0.0, 0.0, 1.0], atol=1e-6):
+        raise ValueError("world_from_anchor must be affine")
+    rotation = pose[:3, :3]
+    if not np.allclose(rotation.T @ rotation, np.eye(3), atol=1e-4):
+        raise ValueError("world_from_anchor rotation must be orthonormal")
+    direction = rotation[:, 2]
+    norm = float(np.linalg.norm(direction))
+    if norm < 1e-12:
+        raise ValueError("world_from_anchor has no valid +z direction")
+    return pose[:3, 3].copy(), direction / norm
 
 
 class TopKFrameRetriever:
@@ -58,7 +84,14 @@ class TopKFrameRetriever:
         self.config = config or RetrievalConfig()
 
     def retrieve(self, candidates: Iterable[FrameCandidate]) -> list[FrameCandidate]:
-        ordered = sorted(candidates, key=lambda item: (-item.score, item.frame_id))
+        ordered = sorted(
+            candidates,
+            key=lambda item: (
+                -item.score,
+                item.index if item.index is not None else float("inf"),
+                item.frame_id,
+            ),
+        )
         selected: list[FrameCandidate] = []
         seen: set[str] = set()
         for candidate in ordered:

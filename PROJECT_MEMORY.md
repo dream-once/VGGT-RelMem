@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-22 publication session (`2026-08-22T06:15:33Z` pre-publication audit)
+- Updated: 2026-08-23 publication session
 - Private repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `5946f3e30bf75c556802085ebeb6374004898a88`
-- Current milestone: document D3 and D4 are complete.
-- Next milestone: begin D5 multi-view observation fusion and persistent object memory.
-- Publication state: the completed D4 source, tests, documentation, continuity skill, memory, and baseline are included in the publication commit containing this entry. Environments, weights, datasets, upstream checkouts, and generated run artifacts remain ignored and local-only.
+- Publication target and pre-publication HEAD: `main` at `d46b3f7d3ba2b91bed86e943273e99be7b2e48ad`
+- Current milestone: document D1 through D6 are complete.
+- Next milestone: D7 freezes and caches multi-frame `ObjectObservation` scene artifacts.
+- Publication state: the completed D5/D6 source, tests, documentation, memory, and baseline are included in the publication commit containing this entry. Environments, weights, datasets, upstream checkouts, and generated run artifacts remain ignored and local-only.
 
 ## Document-day progress
 
@@ -19,7 +19,9 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D2 | Complete | `vggt_geom` and Python 3.12 `open_vocab` are isolated; geometry/mask schemas, adapters, and smoke tests pass. |
 | D3 | Complete | Two independent 8-frame `office_loop` geometry runs passed validation and produced byte-identical geometry plus run manifests. |
 | D4 | Complete | Two real `trash can` B0 runs produced identical masks, four valid 3D OBB observations, previews, manifests, and validator `PASS`. |
-| D5+ | Pending | Multi-view observation fusion, persistent memory, relation evaluation, calibration, and full experiment matrix follow D4. |
+| D5 | Complete | Real PE Top-K retrieval exported deterministic K=1/3/5 results with temporal redundancy suppression and B0-compatible top-1. |
+| D6 | Complete | Four D5-selected frames ran through SAM 3 and robust 3D lifting; all four produced valid observations and the independent validator passed. |
+| D7+ | Pending | Freeze/cache scene observations next; cross-frame association, persistent memory, relation evaluation, calibration, and the full experiment matrix follow. |
 
 ## D3 acceptance evidence
 
@@ -47,15 +49,31 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Matching hashes across the two runs: `masks.json` `713f8b12e11fe36244200bc83dde61cc9f6e4e5fc8736931bb5ffa5376f4497c`, `observations.json` `f71ed5d6354998f3a2efc09f3c43f9d3573a1c4126837bbad93c118eb9505527`, and `preview.png` `e5c612a6a88662de942c7b01349dfdd4c5076fadfcde0d83a36f192ab3b02fa3`.
 - `printer` is retained as a negative D4 example: the first eight frames do not show a printer, and all raw SAM candidates stay far below the official `0.50` threshold.
 
+## D5 acceptance evidence
+
+- One PE pass over the eight D3 frames exported deterministic K=1/3/5 selections for query `trash can`.
+- Temporal suppression with `min_frame_gap=2` retained 1/3/4 frames for K=1/3/5; K=5 correctly reports exhausted nonredundant candidates instead of silently backfilling duplicates.
+- Top-1 is `frame_0004` at score `0.20180504907322777`, exactly matching D4 B0; all K outputs are prefix-consistent.
+- Real run time was `9.640 s`, peak GPU memory was `2797.170 MB`, and `scripts.validate_topk_retrieval` reported `PASS`.
+
+## D6 acceptance evidence
+
+- `scripts.run_sam_topk_lifting` consumes the saved D5 selection and does not rerun PE; it loads SAM 3 once and processes all selected frames.
+- Per-frame SAM/lifted counts were `frame_0004` 6/4, `frame_0001` 6/4, `frame_0006` 5/4, and `frame_0008` 5/3.
+- All four selected frames produced masks and valid world-space 3D observations. In total, 15 of 22 SAM instances passed confidence filtering, MAD outlier removal, minimum-point checks, and coarse OBB fitting.
+- Seven instances were explicitly rejected because fewer than 30 trustworthy VGGT points remained.
+- Real run time was `14.374 s`, peak GPU memory was `5089.975 MB`, and `scripts.validate_d6` reported `PASS`.
+- A synthetic regression independently confirms that the radial MAD filter removes a far 3D outlier.
+
 ## Publication verification
 
-- `python -m unittest discover -v`: all 20 tests passed in no-card mode.
-- Open-vocabulary environment: `python -m unittest tests.test_open_vocab tests.test_validate_open_vocab -v` passed all 6 focused tests.
-- `bash -n scripts/bootstrap_open_vocab.sh` and `git diff --check` passed.
-- The pre-publication instance audit found no deleted or missing required files; all five ignored upstream source checkouts match their fixed commits; every required local-only asset passed size/hash checks.
-- `/root/autodl-tmp` had `24.55 GiB` free, above the `10 GiB` baseline.
-- GPU was not detected in this no-card instance. Its empty `/usr/bin/nvidia-smi` placeholder previously raised `Exec format error`; the audit now records unavailable probes as `not detected` and continues instead of aborting.
-- `git fetch --prune origin` succeeded, and `main...origin/main` was `0 0` before creating the publication commit.
+- `python -m unittest discover -v tests`: all 31 tests passed.
+- D5 real artifact: `python -m scripts.validate_topk_retrieval runs/office-loop-d5-trash-can` reported `PASS`.
+- D6 real artifact: `python -m scripts.validate_d6 runs/office-loop-d6-trash-can` reported `PASS`.
+- D6 no-model check resolved four selected images, the geometry point-map shape `(294, 518, 3)`, the fixed SAM 3 source commit, and the 3,450,062,241-byte local checkpoint.
+- `python -m compileall` over the new D6 modules and `git diff --check` passed.
+- The publication instance has an NVIDIA GeForce RTX 4090 with 24,564 MiB total memory.
+- `/root/autodl-tmp` has about `25 GiB` free, above the `10 GiB` baseline.
 
 ## Fixed upstream sources
 
@@ -80,21 +98,26 @@ These were present when the baseline was created but are not guaranteed to exist
 - SAM 3 weight: `/root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt`, `3,450,062,241` bytes
 - First/repeat real PE results: `runs/office-loop-pe-printer` and `runs/office-loop-pe-printer-repeat`
 - First/repeat passing B0 results: `runs/office-loop-b0-trash-can` and `runs/office-loop-b0-trash-can-repeat`
+- Passing D5 retrieval result: `runs/office-loop-d5-trash-can/retrieval.json`
+- D5 maximum nonredundant selection: `runs/office-loop-d5-trash-can/topk_5.json`
+- Passing D6 multi-frame result: `runs/office-loop-d6-trash-can/d6_result.json`
+- D6 mask/observation/point-cloud/previews directory: `runs/office-loop-d6-trash-can`, about `6.3 MiB`
 - Baseline disk requirement: at least `10 GiB` free under `/root/autodl-tmp`
 
 Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` after every instance migration. Missing ignored assets mean the new server is incomplete, not that Git-tracked source was lost.
 
 ## Concrete next task
 
-1. Re-read the recommendation document's exact D5 acceptance criteria before implementation.
-2. Extend the validated single-view observations into multi-view association and persistent `ObjectMemory`.
-3. Keep inference inputs separate from oracle/evaluation-only depth, poses, and OBBs.
-4. Add deterministic fixtures and a small real-scene D5 validation before expanding the experiment matrix.
+1. Re-read the recommendation document's exact D7 acceptance criteria.
+2. Freeze the `ObjectObservation` cache schema and build a one-command scene-cache runner over the validated D6 artifacts.
+3. Verify multi-frame 3D observations can be saved, reloaded, and validated without loading PE, SAM 3, VGGT, or a GPU.
+4. Keep cross-frame object association out of D7; it belongs to the later persistent-memory days.
 
 ## Publication history
 
 - 2026-08-20: PR #1 merged to private `main` at `5946f3e30bf75c556802085ebeb6374004898a88`; D3 integration and first validated run were published, and the local repeat run subsequently confirmed strict reproducibility.
 - 2026-08-22: D4 PE/SAM 3 integration, BF16 inference fix, local checkpoint workflow, two matching real B0 runs, validator evidence, and disposable-instance continuity support were published to private `main` in the commit containing this entry (parent `5946f3e30bf75c556802085ebeb6374004898a88`).
+- 2026-08-23: D5 deterministic PE Top-K retrieval and D6 multi-frame SAM 3/robust lifting, real RTX 4090 evidence, validators, 31-test regression, documentation, memory, and baseline were published in the commit containing this entry (parent `d46b3f7d3ba2b91bed86e943273e99be7b2e48ad`).
 
 ## Scope reminder
 

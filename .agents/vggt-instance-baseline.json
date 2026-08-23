@@ -12,13 +12,21 @@
     "pyproject.toml",
     "adapters/vggt_slam.py",
     "adapters/open_vocab.py",
+    "relground/retrieval.py",
     "scripts/bootstrap_open_vocab.sh",
     "scripts/run_open_vocab_top1.py",
     "scripts/run_pe_top1.py",
+    "scripts/run_pe_topk.py",
+    "scripts/run_sam_topk_lifting.py",
     "scripts/validate_open_vocab.py",
+    "scripts/validate_topk_retrieval.py",
+    "scripts/validate_d6.py",
     "scripts/run_vggt_geometry.py",
     "scripts/validate_geometry.py",
+    "tests/test_observations.py",
     "tests/test_open_vocab.py",
+    "tests/test_validate_topk.py",
+    "tests/test_validate_d6.py",
     "tests/test_validate_open_vocab.py",
     ".agents/vggt-instance-baseline.json",
     ".agents/skills/vggt-instance-handoff/SKILL.md",
@@ -126,6 +134,30 @@
       "kind": "file",
       "min_size": 1000,
       "purpose": "D4 repeat passing mask and 3D OBB result"
+    },
+    {
+      "path": "runs/office-loop-d5-trash-can/retrieval.json",
+      "kind": "file",
+      "min_size": 5000,
+      "purpose": "D5 passing deterministic PE Top-K result"
+    },
+    {
+      "path": "runs/office-loop-d5-trash-can/topk_5.json",
+      "kind": "file",
+      "min_size": 2000,
+      "purpose": "D5 maximum nonredundant frame selection consumed by D6"
+    },
+    {
+      "path": "runs/office-loop-d6-trash-can/d6_result.json",
+      "kind": "file",
+      "min_size": 5000,
+      "purpose": "D6 passing multi-frame SAM 3 and robust lifting result"
+    },
+    {
+      "path": "runs/office-loop-d6-trash-can/observations.json",
+      "kind": "file",
+      "min_size": 20000,
+      "purpose": "D6 fifteen validated world-space 3D observations"
     }
   ],
   "disk": {
