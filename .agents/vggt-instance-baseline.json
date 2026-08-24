@@ -3,7 +3,8 @@
   "project": "VGGT-RelMem",
   "repository": {
     "remote": "https://github.com/dream-once/VGGT-RelMem.git",
-    "default_branch": "main"
+    "default_branch": "main",
+    "visibility": "public"
   },
   "tracked_required": [
     "AGENTS.md",
@@ -12,7 +13,11 @@
     "pyproject.toml",
     "adapters/vggt_slam.py",
     "adapters/open_vocab.py",
+    "relground/__init__.py",
+    "relground/schemas.py",
     "relground/retrieval.py",
+    "relground/observation_cache.py",
+    "relground/stage_video.py",
     "scripts/bootstrap_open_vocab.sh",
     "scripts/run_open_vocab_top1.py",
     "scripts/run_pe_top1.py",
@@ -21,12 +26,16 @@
     "scripts/validate_open_vocab.py",
     "scripts/validate_topk_retrieval.py",
     "scripts/validate_d6.py",
+    "scripts/cache_scene_observations.py",
+    "scripts/validate_d7_cache.py",
     "scripts/run_vggt_geometry.py",
     "scripts/validate_geometry.py",
     "tests/test_observations.py",
     "tests/test_open_vocab.py",
     "tests/test_validate_topk.py",
     "tests/test_validate_d6.py",
+    "tests/test_observation_cache.py",
+    "tests/test_validate_d7.py",
     "tests/test_validate_open_vocab.py",
     ".agents/vggt-instance-baseline.json",
     ".agents/skills/vggt-instance-handoff/SKILL.md",
@@ -158,6 +167,24 @@
       "kind": "file",
       "min_size": 20000,
       "purpose": "D6 fifteen validated world-space 3D observations"
+    },
+    {
+      "path": "runs/office-loop-d7-trash-can/scene_cache.json",
+      "kind": "file",
+      "min_size": 5000,
+      "purpose": "D7 self-contained observation cache inventory"
+    },
+    {
+      "path": "runs/office-loop-d7-trash-can/observations.json",
+      "kind": "file",
+      "min_size": 20000,
+      "purpose": "D7 cached observations reloadable without models"
+    },
+    {
+      "path": "runs/office-loop-d7-trash-can/stage_video.mp4",
+      "kind": "file",
+      "min_size": 5000000,
+      "purpose": "D7 validated dynamic four-stage evidence video"
     }
   ],
   "disk": {

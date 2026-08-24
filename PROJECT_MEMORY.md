@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-23 publication session
-- Private repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `d46b3f7d3ba2b91bed86e943273e99be7b2e48ad`
-- Current milestone: document D1 through D6 are complete.
-- Next milestone: D7 freezes and caches multi-frame `ObjectObservation` scene artifacts.
-- Publication state: the completed D5/D6 source, tests, documentation, memory, and baseline are included in the publication commit containing this entry. Environments, weights, datasets, upstream checkouts, and generated run artifacts remain ignored and local-only.
+- Updated: 2026-08-24 publication session
+- Public repository: `dream-once/VGGT-RelMem`
+- Publication target and pre-publication HEAD: `main` at `745d82c1be62a94025b168de4630040edd4d69fe`
+- Current milestone: document D1 through D7 are complete.
+- Next milestone: correct the historical D4 B0/B1 naming and controlled baseline inputs before starting D8.
+- Publication state: the completed D7 source, tests, documentation, memory, and baseline are included in the publication commit containing this entry. Environments, weights, datasets, upstream checkouts, and generated run artifacts remain ignored and local-only.
 
 ## Document-day progress
 
@@ -21,7 +21,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D4 | Complete | Two real `trash can` B0 runs produced identical masks, four valid 3D OBB observations, previews, manifests, and validator `PASS`. |
 | D5 | Complete | Real PE Top-K retrieval exported deterministic K=1/3/5 results with temporal redundancy suppression and B0-compatible top-1. |
 | D6 | Complete | Four D5-selected frames ran through SAM 3 and robust 3D lifting; all four produced valid observations and the independent validator passed. |
-| D7+ | Pending | Freeze/cache scene observations next; cross-frame association, persistent memory, relation evaluation, calibration, and the full experiment matrix follow. |
+| D7 | Complete | `ObjectObservation` schema 1.0 is frozen; 15 observations from four frames are cached self-contained and reload without any model or GPU; the independent validator accepts the 40-second dynamic evidence video. |
+| D8+ | Pending | Correct the controlled B0/B1 single-view baselines first, then freeze `ObjectMemory`; cross-frame association starts at D9. |
 
 ## D3 acceptance evidence
 
@@ -48,6 +49,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - First and fully local repeat runs both passed `scripts.validate_open_vocab`; runtime was about `20 s` and peak GPU memory about `5090 MB`.
 - Matching hashes across the two runs: `masks.json` `713f8b12e11fe36244200bc83dde61cc9f6e4e5fc8736931bb5ffa5376f4497c`, `observations.json` `f71ed5d6354998f3a2efc09f3c43f9d3573a1c4126837bbad93c118eb9505527`, and `preview.png` `e5c612a6a88662de942c7b01349dfdd4c5076fadfcde0d83a36f192ab3b02fa3`.
 - `printer` is retained as a negative D4 example: the first eight frames do not show a printer, and all raw SAM candidates stay far below the official `0.50` threshold.
+- A later audit found that this historical D4 runner is not a strict official B0: it feeds original-resolution images to SAM 3, resizes masks onto VGGT geometry, and uses `Robust3DLifter`. Its artifacts remain valid reproducibility evidence but will be relabelled as the legacy B1 robust single-view result; a controlled `B0-official`/`B1-robust-single-view` split is the next task.
 
 ## D5 acceptance evidence
 
@@ -65,13 +67,24 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Real run time was `14.374 s`, peak GPU memory was `5089.975 MB`, and `scripts.validate_d6` reported `PASS`.
 - A synthetic regression independently confirms that the radial MAD filter removes a far 3D outlier.
 
+## D7 acceptance evidence
+
+- `ObjectObservation` schema 1.0 freezes the frame/query/score, source mask, sampled world-space points, confidence summary, and world-space OBB fields required by later memory stages.
+- The cache copies masks and sampled points into a self-contained directory, records an inventory plus hashes, and reloads independently of D3-D6 artifacts, PE, SAM 3, VGGT, CUDA, or a GPU.
+- The real D6 input produced four cached frames and 15 observations containing 20,814 finite sampled points; every stored mask has the VGGT geometry resolution `(294, 518)`.
+- The replacement evidence video is a dynamic 40-second, 10 FPS four-stage rendering (source masks, per-frame lifting, accumulated scene, rotating world view), not a four-image slideshow.
+- The independent video check measured a motion ratio of `0.9493670886075949`, above its `0.25` threshold. It rejects the retained local slideshow backup, whose motion ratio is about `0.048`.
+- Cache construction took `8.484 s`, required no GPU, and the complete local D7 output occupies about `11 MiB`.
+
 ## Publication verification
 
-- `python -m unittest discover -v tests`: all 31 tests passed.
+- `python -m unittest discover -v tests`: all 38 tests passed.
 - D5 real artifact: `python -m scripts.validate_topk_retrieval runs/office-loop-d5-trash-can` reported `PASS`.
 - D6 real artifact: `python -m scripts.validate_d6 runs/office-loop-d6-trash-can` reported `PASS`.
+- D7 real artifact: `python -m scripts.validate_d7_cache runs/office-loop-d7-trash-can` reported `PASS` for four frames, 15 observations, 20,814 points, and motion ratio `0.9493670886075949`.
+- Base Python reloaded the D7 cache without importing model frameworks; schema version, frame count, and observation count were `1.0`, `4`, and `15`.
 - D6 no-model check resolved four selected images, the geometry point-map shape `(294, 518, 3)`, the fixed SAM 3 source commit, and the 3,450,062,241-byte local checkpoint.
-- `python -m compileall` over the new D6 modules and `git diff --check` passed.
+- `python -m compileall` over project modules and `git diff --check` passed.
 - The publication instance has an NVIDIA GeForce RTX 4090 with 24,564 MiB total memory.
 - `/root/autodl-tmp` has about `25 GiB` free, above the `10 GiB` baseline.
 
@@ -102,22 +115,25 @@ These were present when the baseline was created but are not guaranteed to exist
 - D5 maximum nonredundant selection: `runs/office-loop-d5-trash-can/topk_5.json`
 - Passing D6 multi-frame result: `runs/office-loop-d6-trash-can/d6_result.json`
 - D6 mask/observation/point-cloud/previews directory: `runs/office-loop-d6-trash-can`, about `6.3 MiB`
+- Passing D7 self-contained cache: `runs/office-loop-d7-trash-can/scene_cache.json` and `observations.json`
+- Passing D7 dynamic evidence video: `runs/office-loop-d7-trash-can/stage_video.mp4`, `5,110,187` bytes; the full D7 output is about `11 MiB`
 - Baseline disk requirement: at least `10 GiB` free under `/root/autodl-tmp`
 
 Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` after every instance migration. Missing ignored assets mean the new server is incomplete, not that Git-tracked source was lost.
 
 ## Concrete next task
 
-1. Re-read the recommendation document's exact D7 acceptance criteria.
-2. Freeze the `ObjectObservation` cache schema and build a one-command scene-cache runner over the validated D6 artifacts.
-3. Verify multi-frame 3D observations can be saved, reloaded, and validated without loading PE, SAM 3, VGGT, or a GPU.
-4. Keep cross-frame object association out of D7; it belongs to the later persistent-memory days.
+1. Preserve the historical D4 artifacts while relabelling their method as legacy `B1-robust-single-view`.
+2. Implement controlled `B0-official` and `B1-robust-single-view` paths that share the same VGGT-preprocessed image and SAM 3 masks; only the lifting method may differ.
+3. Save and validate the resize/crop/pad mapping and harden D4 validation for non-finite data and frame/query/class mismatches.
+4. After the baseline correction, start D8 `ObjectMemory`; expand D3 to genuinely separated views before making D9 multi-view claims.
 
 ## Publication history
 
 - 2026-08-20: PR #1 merged to private `main` at `5946f3e30bf75c556802085ebeb6374004898a88`; D3 integration and first validated run were published, and the local repeat run subsequently confirmed strict reproducibility.
 - 2026-08-22: D4 PE/SAM 3 integration, BF16 inference fix, local checkpoint workflow, two matching real B0 runs, validator evidence, and disposable-instance continuity support were published to private `main` in the commit containing this entry (parent `5946f3e30bf75c556802085ebeb6374004898a88`).
 - 2026-08-23: D5 deterministic PE Top-K retrieval and D6 multi-frame SAM 3/robust lifting, real RTX 4090 evidence, validators, 31-test regression, documentation, memory, and baseline were published in the commit containing this entry (parent `d46b3f7d3ba2b91bed86e943273e99be7b2e48ad`).
+- 2026-08-24: D7 frozen self-contained observation cache, dynamic four-stage evidence video, independent cache/video validator, 38-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `745d82c1be62a94025b168de4630040edd4d69fe`).
 
 ## Scope reminder
 

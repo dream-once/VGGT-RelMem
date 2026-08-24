@@ -17,6 +17,22 @@ import numpy as np
 
 
 SCHEMA_VERSION = "0.1"
+OBJECT_OBSERVATION_SCHEMA_VERSION = "1.0"
+OBJECT_OBSERVATION_FIELDS = (
+    "schema_version",
+    "obs_id",
+    "class_text",
+    "frame_id",
+    "mask_ref",
+    "retrieval_score",
+    "sam_score",
+    "valid_point_ratio",
+    "points_ref",
+    "center",
+    "obb",
+    "semantic_embedding",
+    "metadata",
+)
 
 
 def _vector3(value: Sequence[float], name: str) -> np.ndarray:
@@ -98,8 +114,13 @@ class ObjectObservation:
     obb: OrientedBoundingBox
     semantic_embedding: np.ndarray | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
+    schema_version: str = OBJECT_OBSERVATION_SCHEMA_VERSION
 
     def __post_init__(self) -> None:
+        if self.schema_version != OBJECT_OBSERVATION_SCHEMA_VERSION:
+            raise ValueError(
+                f"unsupported ObjectObservation schema: {self.schema_version}"
+            )
         if not self.obs_id or not self.frame_id or not self.class_text.strip():
             raise ValueError("obs_id, frame_id and class_text are required")
         self.class_text = self.class_text.strip()
@@ -117,6 +138,7 @@ class ObjectObservation:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "schema_version": self.schema_version,
             "obs_id": self.obs_id,
             "class_text": self.class_text,
             "frame_id": self.frame_id,
@@ -148,6 +170,9 @@ class ObjectObservation:
             obb=OrientedBoundingBox.from_dict(data["obb"]),
             semantic_embedding=data.get("semantic_embedding"),
             metadata=dict(data.get("metadata", {})),
+            schema_version=str(
+                data.get("schema_version", OBJECT_OBSERVATION_SCHEMA_VERSION)
+            ),
         )
 
 

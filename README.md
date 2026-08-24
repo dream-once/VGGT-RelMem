@@ -247,6 +247,52 @@ python -m scripts.validate_d6 runs/office-loop-d6-trash-can
 
 D6 validator 要求至少两个不同帧产生有效 3D 观测，避免单帧结果被误报为多帧接入完成。
 
+## D7 冻结 ObjectObservation 与场景缓存（已完成）
+
+`ObjectObservation` 已冻结为 schema `1.0`。D7 cache loader 严格检查字段集合、schema 版本、观测 ID、查询文本和多帧覆盖；D6 的旧 `0.1` observation 可在读取时升级，但 D7 缓存中的未知或缺失字段会被拒绝。
+
+一条命令从通过验收的 D6 目录生成自包含场景缓存。这里使用 `vggt_geom` 只因为环境内已有 OpenCV 视频编码器，不会加载 VGGT、PE、SAM 3，也不使用 GPU：
+
+```bash
+conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
+  python -m scripts.cache_scene_observations \
+  --d6-dir runs/office-loop-d6-trash-can \
+  --output-dir runs/office-loop-d7-trash-can \
+  --image-folder data/office_loop \
+  --video-duration 40 \
+  --scene-id office-loop-trash-can
+
+conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
+  python -m scripts.validate_d7_cache \
+  runs/office-loop-d7-trash-can
+```
+
+缓存内容：
+
+- `observations.json`：4 帧共 15 条冻结的 `ObjectObservation`；
+- `masks/` 与 `points/`：每条有效观测对应的 mask 和世界坐标点云；
+- `previews/`：D6 的 4 张逐帧分割预览；
+- `stage_video.mp4`：40 秒、10 FPS 的动态流水线视频；
+- `scene_cache.json`：36 个缓存文件的大小与 SHA-256 清单；
+- `run_manifest.json`：命令、Git SHA、配置和耗时。
+
+阶段视频不是静态图片轮播，而是按时间连续展示：
+
+- 10 秒：D3 的 8 帧输入序列连续过渡；
+- 8 秒：D5 的 PE Top-K 排名、分数条和当前候选；
+- 10 秒：D6 的 SAM 3 mask 从原图渐显，并标注有效 3D 观测数；
+- 12 秒：D7 缓存的真实点云与 OBB 按帧着色并旋转一周。
+
+2026-08-23 重做后的真实缓存耗时 `8.484 s`，峰值显存为 `null`；独立 validator 为 `PASS`，确认 15 条观测包含 `20,814` 个有限 3D 点、mask 形状均为 `294×518`、视频实际时长为 `40.0 s`。逐 0.5 秒采样的动态比例为 `0.949`，高于验收门槛 `0.250`；旧静态轮播的动态比例只有 `0.048`，现在会被 validator 拒绝。缓存总大小约 `11 MiB`。
+
+基础 Python 可直接重载缓存，不需要任何模型：
+
+```bash
+python -c "from relground.observation_cache import load_observation_cache; \
+c=load_observation_cache('runs/office-loop-d7-trash-can/observations.json'); \
+print(c.schema_version, len(c.frame_ids), len(c.observations))"
+```
+
 如果需要开发安装：
 
 ```bash
@@ -310,6 +356,7 @@ python -m scripts.evaluate \
 - 已完成 D4：实际 PE 文本-帧检索、SAM 3 mask 导出、VGGT 点图抬升和 3D OBB 产物均已接入并通过真实运行验收。
 - 已完成 D5：真实 PE top-K 与时间/视角冗余抑制已通过 K=1/3/5 GPU 实跑、validator 和 27 个单测。
 - 已完成 D6：D5 多帧候选已接入 SAM 3 和 Robust3DLifter，4 帧真实样例、离群点测试、31 个完整单测及独立 validator 均通过。
-- 后续：按文档进入 D7，冻结并缓存 `ObjectObservation` 场景产物；对象关联与持久记忆实际属于 D8–D11。
+- 已完成 D7：`ObjectObservation 1.0`、自包含场景缓存、保存/重载、SHA-256 验收和 40 秒四阶段动态视频均完成，38 个完整单测通过。
+- 后续：按文档进入 D8，冻结 `ObjectMemory`、版本字段与 evidence 并完成重载；跨帧对象关联从 D9 开始。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。
