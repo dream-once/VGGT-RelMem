@@ -1,4 +1,9 @@
-"""Run the D4 upstream B0 baseline: PE top-1 frame -> SAM 3 -> 3D OBB."""
+"""Run the historical D4 robust single-view path.
+
+This command is kept to reproduce artifacts that were originally labelled B0.
+It uses original-resolution SAM masks followed by resizing and robust lifting,
+so new controlled comparisons must use scripts.run_single_view_baselines.
+"""
 
 from __future__ import annotations
 
@@ -29,6 +34,7 @@ from adapters.open_vocab import (
 )
 from relground.observations import LifterConfig, LiftingError, Robust3DLifter
 from relground.schemas import RunManifest
+from relground.single_view import B1_ROBUST_SINGLE_VIEW
 
 
 def git_commit(path: Path) -> str:
@@ -156,6 +162,8 @@ def check_only(args: argparse.Namespace) -> int:
     checkpoint, inference_ready, checkpoint_note = local_sam3_checkpoint(args.sam3_checkpoint)
     payload = {
         "status": "READY" if imports["cuda_available"] and inference_ready else "SOURCE_READY",
+        "baseline_id": B1_ROBUST_SINGLE_VIEW,
+        "legacy_label": "B0",
         "inference_ready": bool(imports["cuda_available"] and inference_ready),
         "frames": len(sources),
         "point_map_shape": list(geometry.point_maps.shape[1:]),
@@ -248,7 +256,7 @@ def run(args: argparse.Namespace) -> int:
     for index, (full_mask, box, sam_score) in enumerate(
         zip(segmentation.masks, segmentation.boxes_xyxy, segmentation.scores)
     ):
-        obs_id = f"b0_{selected.frame_id}_{index:03d}"
+        obs_id = f"b1_legacy_{selected.frame_id}_{index:03d}"
         resized = resize_mask_nearest(full_mask, target_shape)
         resized_masks.append(resized)
         mask_name = f"{obs_id}.npy"
@@ -283,6 +291,8 @@ def run(args: argparse.Namespace) -> int:
             observation.metadata.update(
                 {
                     "box_xyxy": np.asarray(box, dtype=float).tolist(),
+                    "baseline_id": B1_ROBUST_SINGLE_VIEW,
+                    "legacy_label": "B0",
                     "source_mask_shape": list(full_mask.shape),
                     "geometry_mask_shape": list(resized.shape),
                 }
@@ -302,6 +312,7 @@ def run(args: argparse.Namespace) -> int:
     mask_manifest_path = output_dir / "masks.json"
     observations_path = output_dir / "observations.json"
     preview_path = output_dir / "preview.png"
+    # Preserve the historical filename so already-produced D4 runs still load.
     result_path = output_dir / "b0_result.json"
     save_mask_manifest(mask_manifest_path, mask_records)
     observations_path.write_text(
@@ -326,7 +337,12 @@ def run(args: argparse.Namespace) -> int:
     result = {
         "schema_version": "0.1",
         "status": status,
-        "backend": "VGGT-SLAM 2.0 upstream B0: PE-Core top-1 + SAM 3",
+        "baseline_id": B1_ROBUST_SINGLE_VIEW,
+        "legacy_label": "B0",
+        "backend": (
+            "legacy top-1 + original-resolution SAM 3 + resized mask "
+            "+ robust lifting"
+        ),
         "query": args.query,
         "top1": {
             "frame_id": selected.frame_id,
@@ -391,7 +407,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--geometry", default="runs/office-loop/geometry.npz")
     parser.add_argument("--geometry-manifest", default="runs/office-loop/geometry.manifest.json")
     parser.add_argument("--query", default="printer")
-    parser.add_argument("--output-dir", default="runs/office-loop-b0-printer")
+    parser.add_argument(
+        "--output-dir",
+        default="runs/office-loop-b1-legacy-printer",
+    )
     parser.add_argument("--project-root", default=str(root))
     parser.add_argument("--pe-root", default=str(upstream / "perception_models"))
     parser.add_argument("--sam3-root", default=str(upstream / "sam3"))

@@ -33,6 +33,25 @@ OBJECT_OBSERVATION_FIELDS = (
     "semantic_embedding",
     "metadata",
 )
+OBJECT_MEMORY_SCHEMA_VERSION = "1.0"
+MEMORY_OBJECT_SCHEMA_VERSION = "1.0"
+MEMORY_EVIDENCE_FIELDS = (
+    "obs_id",
+    "frame_id",
+    "quality",
+)
+MEMORY_OBJECT_FIELDS = (
+    "schema_version",
+    "object_id",
+    "class_text",
+    "observations",
+    "evidence",
+    "fused_center",
+    "fused_obb",
+    "semantic_proto",
+    "confidence",
+)
+
 
 
 def _vector3(value: Sequence[float], name: str) -> np.ndarray:
@@ -185,42 +204,134 @@ class MemoryObject:
     fused_obb: OrientedBoundingBox
     semantic_proto: np.ndarray | None
     confidence: float
-    version: str = SCHEMA_VERSION
+    schema_version: str = MEMORY_OBJECT_SCHEMA_VERSION
 
     def __post_init__(self) -> None:
-        self.fused_center = _vector3(self.fused_center, "memory.fused_center")
-        self.confidence = float(np.clip(self.confidence, 0.0, 1.0))
+        if self.schema_version != MEMORY_OBJECT_SCHEMA_VERSION:
+            raise ValueError(
+                f"unsupported MemoryObject schema: {self.schema_version}"
+            )
+        self.object_id = str(self.object_id).strip()
+        self.class_text = str(self.class_text).strip()
+        if not self.object_id or not self.class_text:
+            raise ValueError("object_id and class_text are required")
+        if not self.observations:
+            raise ValueError("MemoryObject requires observation evidence")
+        observation_ids = [item.obs_id for item in self.observations]
+        if len(observation_ids) != len(set(observation_ids)):
+            raise ValueError("MemoryObject observation ids must be unique")
+        self.fused_center = _vector3(
+            self.fused_center, "memory.fused_center"
+        )
+        self.confidence = float(self.confidence)
+        if not np.isfinite(self.confidence) or not 0.0 <= self.confidence <= 1.0:
+            raise ValueError("memory confidence must be finite in [0, 1]")
         if self.semantic_proto is not None:
-            self.semantic_proto = np.asarray(self.semantic_proto, dtype=np.float64)
+            prototype = np.asarray(self.semantic_proto, dtype=np.float64)
+            if (
+                prototype.ndim != 1
+                or prototype.size == 0
+                or not np.all(np.isfinite(prototype))
+            ):
+                raise ValueError("semantic_proto must be a finite vector")
+            self.semantic_proto = prototype
 
     @property
     def evidence_frames(self) -> list[str]:
-        return list(dict.fromkeys(obs.frame_id for obs in self.observations))
+        return list(
+            dict.fromkeys(item.frame_id for item in self.observations)
+        )
+
+    @property
+    def evidence(self) -> list[dict[str, Any]]:
+        return [
+            {
+                "obs_id": item.obs_id,
+                "frame_id": item.frame_id,
+                "quality": observation_quality(item),
+            }
+            for item in self.observations
+        ]
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        payload = {
+            "schema_version": self.schema_version,
             "object_id": self.object_id,
             "class_text": self.class_text,
             "observations": [item.to_dict() for item in self.observations],
+            "evidence": self.evidence,
             "fused_center": self.fused_center.tolist(),
             "fused_obb": self.fused_obb.to_dict(),
-            "semantic_proto": None if self.semantic_proto is None else self.semantic_proto.tolist(),
+            "semantic_proto": (
+                None
+                if self.semantic_proto is None
+                else self.semantic_proto.tolist()
+            ),
             "confidence": self.confidence,
-            "version": self.version,
         }
+        if tuple(payload) != MEMORY_OBJECT_FIELDS:
+            raise AssertionError("MemoryObject serialization fields changed")
+        return payload
 
     @classmethod
     def from_dict(cls, data: Mapping[str, Any]) -> "MemoryObject":
-        return cls(
+        actual, expected = set(data), set(MEMORY_OBJECT_FIELDS)
+        if actual != expected:
+            raise ValueError(
+                "MemoryObject fields differ from frozen schema: "
+                f"missing={sorted(expected - actual)} "
+                f"unexpected={sorted(actual - expected)}"
+            )
+        raw_observations = data["observations"]
+        if not isinstance(raw_observations, list):
+            raise ValueError("MemoryObject observations must be a list")
+        for index, raw in enumerate(raw_observations):
+            if (
+                not isinstance(raw, Mapping)
+                or set(raw) != set(OBJECT_OBSERVATION_FIELDS)
+            ):
+                raise ValueError(
+                    f"MemoryObject observation {index} fields are not frozen"
+                )
+        observations = [
+            ObjectObservation.from_dict(item) for item in raw_observations
+        ]
+        memory_object = cls(
             object_id=str(data["object_id"]),
             class_text=str(data["class_text"]),
-            observations=[ObjectObservation.from_dict(item) for item in data["observations"]],
+            observations=observations,
             fused_center=data["fused_center"],
             fused_obb=OrientedBoundingBox.from_dict(data["fused_obb"]),
-            semantic_proto=data.get("semantic_proto"),
+            semantic_proto=data["semantic_proto"],
             confidence=float(data["confidence"]),
-            version=str(data.get("version", SCHEMA_VERSION)),
+            schema_version=str(data["schema_version"]),
         )
+        raw_evidence = data["evidence"]
+        expected_evidence = memory_object.evidence
+        if (
+            not isinstance(raw_evidence, list)
+            or len(raw_evidence) != len(expected_evidence)
+        ):
+            raise ValueError("MemoryObject evidence count is inconsistent")
+        for index, (actual_row, expected_row) in enumerate(
+            zip(raw_evidence, expected_evidence)
+        ):
+            if (
+                not isinstance(actual_row, Mapping)
+                or set(actual_row) != set(MEMORY_EVIDENCE_FIELDS)
+                or actual_row["obs_id"] != expected_row["obs_id"]
+                or actual_row["frame_id"] != expected_row["frame_id"]
+                or not np.isclose(
+                    float(actual_row["quality"]),
+                    expected_row["quality"],
+                    atol=1e-12,
+                )
+            ):
+                raise ValueError(
+                    f"MemoryObject evidence {index} is inconsistent"
+                )
+        return memory_object
+
 
 
 @dataclass(frozen=True)

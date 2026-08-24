@@ -13,30 +13,44 @@
     "pyproject.toml",
     "adapters/vggt_slam.py",
     "adapters/open_vocab.py",
+    "evaluation/baselines.py",
     "relground/__init__.py",
+    "relground/association.py",
     "relground/schemas.py",
     "relground/retrieval.py",
     "relground/observation_cache.py",
+    "relground/single_view.py",
     "relground/stage_video.py",
     "scripts/bootstrap_open_vocab.sh",
+    "scripts/prepare_object_memory.py",
     "scripts/run_open_vocab_top1.py",
     "scripts/run_pe_top1.py",
     "scripts/run_pe_topk.py",
     "scripts/run_sam_topk_lifting.py",
+    "scripts/run_single_view_baselines.py",
     "scripts/validate_open_vocab.py",
     "scripts/validate_topk_retrieval.py",
     "scripts/validate_d6.py",
     "scripts/cache_scene_observations.py",
     "scripts/validate_d7_cache.py",
+    "scripts/validate_d8_memory.py",
     "scripts/run_vggt_geometry.py",
     "scripts/validate_geometry.py",
+    "scripts/validate_multiview_geometry.py",
+    "scripts/validate_single_view_baselines.py",
+    "tests/test_object_memory_schema.py",
     "tests/test_observations.py",
     "tests/test_open_vocab.py",
+    "tests/test_run_vggt_geometry.py",
+    "tests/test_single_view.py",
     "tests/test_validate_topk.py",
     "tests/test_validate_d6.py",
     "tests/test_observation_cache.py",
     "tests/test_validate_d7.py",
+    "tests/test_validate_d8.py",
+    "tests/test_validate_multiview_geometry.py",
     "tests/test_validate_open_vocab.py",
+    "tests/test_validate_single_view.py",
     ".agents/vggt-instance-baseline.json",
     ".agents/skills/vggt-instance-handoff/SKILL.md",
     ".agents/skills/vggt-instance-handoff/scripts/audit_instance.py"
@@ -121,6 +135,13 @@
       "purpose": "D3 repeat validated geometry run"
     },
     {
+      "path": "runs/office-loop-multiview-s10/geometry.npz",
+      "kind": "file",
+      "min_size": 5000000,
+      "sha256": "3f9a5c2305150a8dd8e7ec8425c322b1bb972174dabc8970ecd8e15701c152af",
+      "purpose": "true-multiview geometry passing the pose-spread gate"
+    },
+    {
       "path": "runs/office-loop-pe-printer/retrieval.json",
       "kind": "file",
       "min_size": 500,
@@ -136,13 +157,20 @@
       "path": "runs/office-loop-b0-trash-can/b0_result.json",
       "kind": "file",
       "min_size": 1000,
-      "purpose": "D4 first passing mask and 3D OBB result"
+      "purpose": "historical D4 legacy-B1 first result"
     },
     {
       "path": "runs/office-loop-b0-trash-can-repeat/b0_result.json",
       "kind": "file",
       "min_size": 1000,
-      "purpose": "D4 repeat passing mask and 3D OBB result"
+      "purpose": "historical D4 legacy-B1 repeat result"
+    },
+    {
+      "path": "runs/office-loop-single-view-trash-can/single_view_result.json",
+      "kind": "file",
+      "min_size": 2000,
+      "sha256": "b7c2514dd4981a1459cee26d78d68f9c26c16142451ea14db4c3e5ead3ea9f64",
+      "purpose": "controlled D4 B0-official and B1-robust result"
     },
     {
       "path": "runs/office-loop-d5-trash-can/retrieval.json",
@@ -160,13 +188,20 @@
       "path": "runs/office-loop-d6-trash-can/d6_result.json",
       "kind": "file",
       "min_size": 5000,
-      "purpose": "D6 passing multi-frame SAM 3 and robust lifting result"
+      "purpose": "historical D6 result retained for D7 reproducibility"
     },
     {
       "path": "runs/office-loop-d6-trash-can/observations.json",
       "kind": "file",
       "min_size": 20000,
-      "purpose": "D6 fifteen validated world-space 3D observations"
+      "purpose": "historical D6 observations retained for D7 reproducibility"
+    },
+    {
+      "path": "runs/office-loop-d6-controlled-trash-can/d6_result.json",
+      "kind": "file",
+      "min_size": 5000,
+      "sha256": "452e6d458cb9cf0dc7c290a01c7c4e5a392899ab6e1680bc3f7d8d921ca509b1",
+      "purpose": "controlled D6 B2 result without post-SAM mask resizing"
     },
     {
       "path": "runs/office-loop-d7-trash-can/scene_cache.json",
@@ -184,7 +219,15 @@
       "path": "runs/office-loop-d7-trash-can/stage_video.mp4",
       "kind": "file",
       "min_size": 5000000,
+      "sha256": "ada66f1382c8beebb6f2f291677b90d975544a3b6e342233d03fd4756c67fed3",
       "purpose": "D7 validated dynamic four-stage evidence video"
+    },
+    {
+      "path": "runs/office-loop-d8-trash-can/object_memory.json",
+      "kind": "file",
+      "min_size": 20000,
+      "sha256": "1157bc19a0d44c0f6217d6a00e2adbafec2c9a1ea38172b2e73db2e09d6eb1b6",
+      "purpose": "D8 strict ObjectMemory schema and round-trip artifact"
     }
   ],
   "disk": {

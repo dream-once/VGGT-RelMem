@@ -10,9 +10,11 @@ from typing import Any
 
 import numpy as np
 
-from adapters.masks import load_mask, load_mask_manifest
+from adapters.masks import load_mask_manifest
 from adapters.open_vocab import SAM3_SOURCE_COMMIT
 from relground.schemas import ObjectObservation
+from relground.observation_cache import sha256_file
+from relground.single_view import VGGTImageTransform
 
 
 def _safe_artifact(root: Path, reference: str) -> Path:
@@ -23,6 +25,44 @@ def _safe_artifact(root: Path, reference: str) -> Path:
     if candidate != root.resolve() and root.resolve() not in candidate.parents:
         raise ValueError(f"artifact reference escapes output directory: {reference}")
     return candidate
+
+
+def _validate_controlled_frame(
+    root: Path,
+    row: dict[str, Any],
+    frame_id: str,
+    errors: list[str],
+) -> tuple[int, int] | None:
+    if row.get("mask_resizing_after_sam") is not False:
+        errors.append(f"mask resizing is not disabled for {frame_id}")
+    try:
+        preprocess_path = _safe_artifact(root, str(row["preprocess"]))
+        sam_input_path = _safe_artifact(root, str(row["sam_input"]))
+        payload = json.loads(preprocess_path.read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError("preprocess root must be an object")
+        if payload.get("frame_id") != frame_id:
+            errors.append(f"preprocess frame mismatch for {frame_id}")
+        if payload.get("sam_input") != row["sam_input"]:
+            errors.append(f"SAM input reference mismatch for {frame_id}")
+        if sha256_file(sam_input_path) != payload.get("sam_input_sha256"):
+            errors.append(f"SAM input hash mismatch for {frame_id}")
+        transform = VGGTImageTransform.from_dict(payload["transform"])
+        from PIL import Image
+
+        with Image.open(sam_input_path) as image:
+            if tuple(image.size) != transform.output_size:
+                errors.append(f"SAM input size mismatch for {frame_id}")
+        return transform.output_shape
+    except (
+        KeyError,
+        OSError,
+        TypeError,
+        ValueError,
+        json.JSONDecodeError,
+    ) as error:
+        errors.append(f"invalid controlled preprocessing for {frame_id}: {error}")
+        return None
 
 
 def validate_output(path: str | Path) -> dict[str, Any]:
@@ -52,6 +92,9 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         observation_payload = json.loads(
             observations_path.read_text(encoding="utf-8")
         )
+        run_manifest = json.loads(
+            manifest_path.read_text(encoding="utf-8")
+        )
         records = load_mask_manifest(masks_path)
         observations = [
             ObjectObservation.from_dict(row)
@@ -73,6 +116,20 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         errors.append("selection snapshot stage is not D5")
     if str(selection.get("query", "")).strip() != query:
         errors.append("selection and D6 query disagree")
+    baseline_id = result.get("baseline_id")
+    controlled = baseline_id == "B2-topk-multiframe"
+    if baseline_id is not None and not controlled:
+        errors.append(f"unsupported D6 baseline_id: {baseline_id!r}")
+    if controlled:
+        if result.get("mask_resizing_after_sam") is not False:
+            errors.append("controlled D6 must disable mask resizing")
+        config = run_manifest.get("config", {})
+        if (
+            not isinstance(config, dict)
+            or config.get("query") != query
+            or config.get("pipeline") != result.get("backend")
+        ):
+            errors.append("controlled D6 run manifest differs from result")
 
     selected_rows = result.get("selected_frames", [])
     selection_rows = selection.get("frames", [])
@@ -139,6 +196,7 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         for row in processed
         if isinstance(row, dict)
     }
+    expected_mask_shapes: dict[str, tuple[int, int]] = {}
     for row in processed:
         if not isinstance(row, dict):
             errors.append("processed frame entries must be objects")
@@ -158,6 +216,11 @@ def validate_output(path: str | Path) -> dict[str, Any]:
                 errors.append(f"missing preview for {frame_id}")
         except (KeyError, OSError, ValueError) as error:
             errors.append(f"invalid preview for {frame_id}: {error}")
+        if controlled:
+            shape = _validate_controlled_frame(root, row, frame_id, errors)
+            if shape is not None:
+                expected_mask_shapes[frame_id] = shape
+
 
     record_ids = [record.obs_id for record in records]
     if len(record_ids) != len(set(record_ids)):
@@ -180,10 +243,18 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         except (KeyError, TypeError, ValueError):
             errors.append(f"invalid retrieval score for mask: {record.obs_id}")
         try:
-            _safe_artifact(root, record.mask_ref)
-            mask = load_mask(record, masks_path)
+            mask_path = _safe_artifact(root, record.mask_ref)
+            mask = np.load(mask_path, allow_pickle=False)
+            if controlled and mask.dtype != np.bool_:
+                errors.append(f"controlled mask is not boolean: {record.obs_id}")
+            mask = np.asarray(mask, dtype=bool)
             if mask.ndim != 2 or not mask.any():
                 errors.append(f"invalid or empty mask: {record.obs_id}")
+            expected_shape = expected_mask_shapes.get(record.frame_id)
+            if controlled and mask.shape != expected_shape:
+                errors.append(
+                    f"mask does not directly match VGGT grid: {record.obs_id}"
+                )
         except (OSError, ValueError) as error:
             errors.append(f"cannot load mask {record.obs_id}: {error}")
 
@@ -229,6 +300,31 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         )
         if int(observation.metadata.get("selected_rank", -1)) != expected_rank:
             errors.append(f"observation rank mismatch: {observation.obs_id}")
+        if controlled:
+            summary = processed_by_id.get(observation.frame_id, {})
+            metadata = observation.metadata
+            if metadata.get("baseline_id") != "B2-topk-multiframe":
+                errors.append(
+                    f"observation baseline mismatch: {observation.obs_id}"
+                )
+            if metadata.get("mask_resizing_after_sam") is not False:
+                errors.append(
+                    f"observation resized its SAM mask: {observation.obs_id}"
+                )
+            if metadata.get("preprocess_ref") != summary.get("preprocess"):
+                errors.append(
+                    f"observation preprocess reference mismatch: {observation.obs_id}"
+                )
+            if metadata.get("sam_input_ref") != summary.get("sam_input"):
+                errors.append(
+                    f"observation SAM input reference mismatch: {observation.obs_id}"
+                )
+            if tuple(metadata.get("sam_mask_shape", ())) != (
+                expected_mask_shapes.get(observation.frame_id)
+            ):
+                errors.append(
+                    f"observation mask shape mismatch: {observation.obs_id}"
+                )
         if not observation.points_ref:
             errors.append(f"observation has no points_ref: {observation.obs_id}")
             continue

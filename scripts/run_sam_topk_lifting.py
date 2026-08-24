@@ -22,11 +22,12 @@ from adapters.open_vocab import (
     FrameSource,
     Sam3Backend,
     load_frame_sources,
-    resize_mask_nearest,
     validate_source_checkout,
 )
+from relground.observation_cache import sha256_file
 from relground.observations import LifterConfig, LiftingError, Robust3DLifter
 from relground.schemas import RunManifest
+from relground.single_view import load_vggt_sam_image
 
 
 def git_commit(path: Path) -> str:
@@ -189,6 +190,20 @@ def check_only(args: argparse.Namespace) -> int:
     source_commit = require_pinned_sam3_source(sam3_root)
     checkpoint = require_local_checkpoint(args.sam3_checkpoint)
     geometry, _sources, selection, selected = _load_inputs(args)
+    preprocess = []
+    for row in selected:
+        frame = geometry.get(row["frame_id"])
+        image, transform = load_vggt_sam_image(
+            row["image_path"],
+            frame.point_map.shape[:2],
+        )
+        preprocess.append(
+            {
+                "frame_id": row["frame_id"],
+                "sam_input_size": list(image.size),
+                "transform": transform.to_dict(),
+            }
+        )
     payload = {
         "status": "SOURCE_READY",
         "stage": "D6",
@@ -196,6 +211,9 @@ def check_only(args: argparse.Namespace) -> int:
         "query": selection["query"],
         "selected_frames": [row["frame_id"] for row in selected],
         "point_map_shape": list(geometry.point_maps.shape[1:]),
+        "preprocess": preprocess,
+        "baseline_id": "B2-topk-multiframe",
+        "mask_resizing_after_sam": False,
         "source_commits": {"sam3": source_commit},
         "sam3_checkpoint": str(checkpoint),
         "sam3_checkpoint_bytes": checkpoint.stat().st_size,
@@ -221,7 +239,15 @@ def run(args: argparse.Namespace) -> int:
     masks_dir = output_dir / "masks"
     points_dir = output_dir / "points"
     previews_dir = output_dir / "previews"
-    for directory in (masks_dir, points_dir, previews_dir):
+    sam_inputs_dir = output_dir / "sam_inputs"
+    preprocess_dir = output_dir / "preprocess"
+    for directory in (
+        masks_dir,
+        points_dir,
+        previews_dir,
+        sam_inputs_dir,
+        preprocess_dir,
+    ):
         directory.mkdir(parents=True, exist_ok=True)
 
     lifter_config = LifterConfig(
@@ -243,17 +269,40 @@ def run(args: argparse.Namespace) -> int:
     )
     torch = backend.torch
     try:
-        from PIL import Image
-
         for row in selected:
             frame_id = row["frame_id"]
             image_path = Path(row["image_path"])
-            with Image.open(image_path) as source_image:
-                image = source_image.convert("RGB")
+            frame = geometry.get(frame_id)
+            target_shape = frame.point_map.shape[:2]
+            image, transform = load_vggt_sam_image(
+                image_path,
+                target_shape,
+            )
+            sam_input_ref = f"sam_inputs/{frame_id}.png"
+            preprocess_ref = f"preprocess/{frame_id}.json"
+            image.save(output_dir / sam_input_ref)
+            save_json(
+                output_dir / preprocess_ref,
+                {
+                    "schema_version": transform.schema_version,
+                    "frame_id": frame_id,
+                    "source_image": str(image_path),
+                    "sam_input": sam_input_ref,
+                    "sam_input_sha256": sha256_file(
+                        output_dir / sam_input_ref
+                    ),
+                    "transform": transform.to_dict(),
+                },
+            )
             segmentation = backend.segment(image, query)
+            if tuple(segmentation.masks.shape[1:]) != tuple(target_shape):
+                raise RuntimeError(
+                    "SAM masks must directly match the VGGT point grid: "
+                    f"{segmentation.masks.shape[1:]} != {target_shape}"
+                )
             preview_ref = f"previews/{frame_id}.png"
             save_preview(
-                image_path,
+                output_dir / sam_input_ref,
                 segmentation.masks,
                 segmentation.boxes_xyxy,
                 segmentation.scores,
@@ -261,11 +310,9 @@ def run(args: argparse.Namespace) -> int:
                 query,
             )
 
-            frame = geometry.get(frame_id)
-            target_shape = frame.point_map.shape[:2]
             lifted_count = 0
             rejected_count = 0
-            for index, (full_mask, box, sam_score) in enumerate(
+            for index, (mask, box, sam_score) in enumerate(
                 zip(
                     segmentation.masks,
                     segmentation.boxes_xyxy,
@@ -273,10 +320,9 @@ def run(args: argparse.Namespace) -> int:
                 )
             ):
                 obs_id = f"d6_{frame_id}_{index:03d}"
-                resized = resize_mask_nearest(full_mask, target_shape)
                 mask_ref = f"masks/{obs_id}.npy"
                 points_ref = f"points/{obs_id}.npz"
-                np.save(output_dir / mask_ref, resized)
+                np.save(output_dir / mask_ref, np.asarray(mask, dtype=bool))
                 mask_records.append(
                     MaskRecord(
                         obs_id=obs_id,
@@ -292,7 +338,7 @@ def run(args: argparse.Namespace) -> int:
                         obs_id=obs_id,
                         class_text=query,
                         frame_id=frame_id,
-                        mask=resized,
+                        mask=mask,
                         point_map=frame.point_map,
                         confidence_map=frame.confidence_map,
                         world_from_camera=frame.world_from_camera,
@@ -306,8 +352,11 @@ def run(args: argparse.Namespace) -> int:
                             "selected_rank": row["rank"],
                             "retrieval_cosine": row["retrieval_cosine"],
                             "box_xyxy": np.asarray(box, dtype=float).tolist(),
-                            "source_mask_shape": list(full_mask.shape),
-                            "geometry_mask_shape": list(resized.shape),
+                            "baseline_id": "B2-topk-multiframe",
+                            "sam_mask_shape": list(mask.shape),
+                            "mask_resizing_after_sam": False,
+                            "sam_input_ref": sam_input_ref,
+                            "preprocess_ref": preprocess_ref,
                         }
                     )
                     np.savez_compressed(
@@ -339,6 +388,9 @@ def run(args: argparse.Namespace) -> int:
                     "lifted_instances": lifted_count,
                     "rejected_instances": rejected_count,
                     "preview": preview_ref,
+                    "sam_input": sam_input_ref,
+                    "preprocess": preprocess_ref,
+                    "mask_resizing_after_sam": False,
                 }
             )
     finally:
@@ -371,7 +423,11 @@ def run(args: argparse.Namespace) -> int:
         "schema_version": "0.1",
         "status": status,
         "stage": "D6",
-        "backend": "D5 top-K + official SAM 3 + Robust3DLifter",
+        "baseline_id": "B2-topk-multiframe",
+        "backend": (
+            "D5 top-K + VGGT-preprocessed SAM 3 + Robust3DLifter"
+        ),
+        "mask_resizing_after_sam": False,
         "query": query,
         "selection_source": str(Path(args.selection)),
         "requested_k": int(selection["requested_k"]),
@@ -394,6 +450,8 @@ def run(args: argparse.Namespace) -> int:
             "mask_manifest": mask_manifest_path.name,
             "observations": observations_path.name,
             "previews": previews_dir.name,
+            "sam_inputs": sam_inputs_dir.name,
+            "preprocess": preprocess_dir.name,
         },
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -441,7 +499,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--geometry-manifest",
         default="runs/office-loop/geometry.manifest.json",
     )
-    parser.add_argument("--output-dir", default="runs/office-loop-d6-trash-can")
+    parser.add_argument(
+        "--output-dir",
+        default="runs/office-loop-d6-controlled-trash-can",
+    )
     parser.add_argument("--project-root", default=str(root))
     parser.add_argument("--sam3-root", default=str(sam3_root))
     parser.add_argument("--sam3-checkpoint")

@@ -11,7 +11,10 @@ import re
 import numpy as np
 
 from .schemas import (
-    SCHEMA_VERSION,
+    MEMORY_OBJECT_SCHEMA_VERSION,
+    OBJECT_MEMORY_SCHEMA_VERSION,
+    OBJECT_OBSERVATION_FIELDS,
+    OBJECT_OBSERVATION_SCHEMA_VERSION,
     MemoryObject,
     ObjectObservation,
     OrientedBoundingBox,
@@ -81,13 +84,51 @@ class AssociationDecision:
     overlap_iou: float
 
 
+OBJECT_MEMORY_FIELDS = (
+    "schema_version",
+    "observation_schema_version",
+    "memory_object_schema_version",
+    "association_config",
+    "pending_observations",
+    "objects",
+    "decisions",
+    "evidence",
+    "metadata",
+)
+OBJECT_MEMORY_EVIDENCE_FIELDS = (
+    "pending_observation_ids",
+    "associated_observation_ids",
+    "frame_ids",
+    "object_observation_ids",
+)
+
+
 class ObjectMemory:
-    def __init__(self, config: AssociationConfig | None = None, version: str = SCHEMA_VERSION) -> None:
+    def __init__(
+        self,
+        config: AssociationConfig | None = None,
+        schema_version: str = OBJECT_MEMORY_SCHEMA_VERSION,
+        metadata: dict[str, Any] | None = None,
+    ) -> None:
+        if schema_version != OBJECT_MEMORY_SCHEMA_VERSION:
+            raise ValueError(
+                f"unsupported ObjectMemory schema: {schema_version}"
+            )
+        if metadata is not None and not isinstance(metadata, dict):
+            raise ValueError("ObjectMemory metadata must be an object")
         self.config = config or AssociationConfig()
-        self.version = version
+        self.schema_version = schema_version
+        self.metadata = dict(metadata or {})
+        self.pending_observations: dict[str, ObjectObservation] = {}
         self.objects: dict[str, MemoryObject] = {}
         self.decisions: list[AssociationDecision] = []
         self._next_id = 1
+
+    @property
+    def version(self) -> str:
+        """Compatibility alias for the frozen schema version."""
+
+        return self.schema_version
 
     def __len__(self) -> int:
         return len(self.objects)
@@ -98,16 +139,48 @@ class ObjectMemory:
     def get(self, object_id: str) -> MemoryObject:
         return self.objects[object_id]
 
-    def add_many(self, observations: Iterable[ObjectObservation]) -> list[AssociationDecision]:
-        return [self.add_observation(observation) for observation in observations]
+    def _associated_observation_ids(self) -> set[str]:
+        return {
+            observation.obs_id
+            for memory_object in self.objects.values()
+            for observation in memory_object.observations
+        }
+
+    def stage_many(
+        self,
+        observations: Iterable[ObjectObservation],
+    ) -> list[str]:
+        staged: list[str] = []
+        associated_ids = self._associated_observation_ids()
+        for observation in observations:
+            if (
+                observation.obs_id in self.pending_observations
+                or observation.obs_id in associated_ids
+            ):
+                raise ValueError(
+                    f"duplicate observation id: {observation.obs_id}"
+                )
+            self.pending_observations[observation.obs_id] = observation
+            staged.append(observation.obs_id)
+        return staged
+
+    def add_many(
+        self,
+        observations: Iterable[ObjectObservation],
+    ) -> list[AssociationDecision]:
+        return [self.add_observation(item) for item in observations]
 
     def add_observation(self, observation: ObjectObservation) -> AssociationDecision:
-        if any(
-            existing.obs_id == observation.obs_id
-            for memory_object in self.objects.values()
-            for existing in memory_object.observations
-        ):
-            raise ValueError(f"duplicate observation id: {observation.obs_id}")
+        associated_ids = self._associated_observation_ids()
+        if observation.obs_id in associated_ids:
+            raise ValueError(
+                f"duplicate observation id: {observation.obs_id}"
+            )
+        staged = self.pending_observations.get(observation.obs_id)
+        if staged is not None and staged.to_dict() != observation.to_dict():
+            raise ValueError(
+                f"staged observation changed: {observation.obs_id}"
+            )
 
         matches: list[tuple[float, float, float, float, MemoryObject]] = []
         for memory_object in self.objects.values():
@@ -157,6 +230,7 @@ class ObjectMemory:
                 semantic_similarity=semantic,
                 overlap_iou=overlap,
             )
+        self.pending_observations.pop(observation.obs_id, None)
         self.decisions.append(decision)
         return decision
 
@@ -205,30 +279,141 @@ class ObjectMemory:
             confidence=confidence,
         )
 
-    def to_dict(self) -> dict[str, Any]:
+    def _evidence(self) -> dict[str, Any]:
+        pending = list(self.pending_observations.values())
+        associated = [
+            observation
+            for memory_object in self.objects.values()
+            for observation in memory_object.observations
+        ]
+        combined = [*pending, *associated]
         return {
-            "version": self.version,
+            "pending_observation_ids": [
+                observation.obs_id for observation in pending
+            ],
+            "associated_observation_ids": [
+                observation.obs_id for observation in associated
+            ],
+            "frame_ids": list(
+                dict.fromkeys(item.frame_id for item in combined)
+            ),
+            "object_observation_ids": {
+                object_id: [item.obs_id for item in memory_object.observations]
+                for object_id, memory_object in self.objects.items()
+            },
+        }
+
+    def to_dict(self) -> dict[str, Any]:
+        payload = {
+            "schema_version": self.schema_version,
+            "observation_schema_version": OBJECT_OBSERVATION_SCHEMA_VERSION,
+            "memory_object_schema_version": MEMORY_OBJECT_SCHEMA_VERSION,
             "association_config": asdict(self.config),
+            "pending_observations": [
+                item.to_dict()
+                for item in self.pending_observations.values()
+            ],
             "objects": [item.to_dict() for item in self.objects.values()],
             "decisions": [asdict(item) for item in self.decisions],
+            "evidence": self._evidence(),
+            "metadata": self.metadata,
         }
+        if tuple(payload) != OBJECT_MEMORY_FIELDS:
+            raise AssertionError("ObjectMemory serialization fields changed")
+        return payload
 
     def save(self, path: str | Path) -> None:
         output = Path(path)
         output.parent.mkdir(parents=True, exist_ok=True)
         temporary = output.with_suffix(output.suffix + ".tmp")
-        temporary.write_text(json.dumps(self.to_dict(), ensure_ascii=False, indent=2) + "\n")
+        temporary.write_text(
+            json.dumps(self.to_dict(), ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
         temporary.replace(output)
 
     @classmethod
-    def load(cls, path: str | Path, config: AssociationConfig | None = None) -> "ObjectMemory":
-        data = json.loads(Path(path).read_text())
-        stored_config = AssociationConfig(**data.get("association_config", {}))
-        memory = cls(config=config or stored_config, version=str(data.get("version", SCHEMA_VERSION)))
-        memory.objects = {
-            item["object_id"]: MemoryObject.from_dict(item) for item in data.get("objects", [])
-        }
-        memory.decisions = [AssociationDecision(**item) for item in data.get("decisions", [])]
-        used_ids = [int(match.group(1)) for key in memory.objects if (match := re.fullmatch(r"obj_(\d+)", key))]
+    def load(
+        cls,
+        path: str | Path,
+        config: AssociationConfig | None = None,
+    ) -> "ObjectMemory":
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+        if not isinstance(payload, dict):
+            raise ValueError("ObjectMemory root must be an object")
+        actual, expected = set(payload), set(OBJECT_MEMORY_FIELDS)
+        if actual != expected:
+            raise ValueError(
+                "ObjectMemory fields differ from frozen schema: "
+                f"missing={sorted(expected - actual)} "
+                f"unexpected={sorted(actual - expected)}"
+            )
+        if payload["observation_schema_version"] != OBJECT_OBSERVATION_SCHEMA_VERSION:
+            raise ValueError("unsupported observation schema in memory")
+        if payload["memory_object_schema_version"] != MEMORY_OBJECT_SCHEMA_VERSION:
+            raise ValueError("unsupported object schema in memory")
+        stored_config = AssociationConfig(**payload["association_config"])
+        memory = cls(
+            config=config or stored_config,
+            schema_version=str(payload["schema_version"]),
+            metadata=dict(payload["metadata"]),
+        )
+        pending = payload["pending_observations"]
+        if not isinstance(pending, list):
+            raise ValueError("pending_observations must be a list")
+        for index, raw in enumerate(pending):
+            if not isinstance(raw, dict) or set(raw) != set(OBJECT_OBSERVATION_FIELDS):
+                raise ValueError(
+                    f"pending observation {index} fields are not frozen"
+                )
+        memory.stage_many(ObjectObservation.from_dict(raw) for raw in pending)
+
+        raw_objects = payload["objects"]
+        if not isinstance(raw_objects, list):
+            raise ValueError("objects must be a list")
+        for raw in raw_objects:
+            item = MemoryObject.from_dict(raw)
+            if item.object_id in memory.objects:
+                raise ValueError(f"duplicate object id: {item.object_id}")
+            memory.objects[item.object_id] = item
+        pending_ids = set(memory.pending_observations)
+        associated_ids = memory._associated_observation_ids()
+        associated_count = sum(
+            len(item.observations) for item in memory.objects.values()
+        )
+        if pending_ids & associated_ids:
+            raise ValueError("pending and associated observations overlap")
+        if len(associated_ids) != associated_count:
+            raise ValueError("associated observation ids must be globally unique")
+
+        decisions = payload["decisions"]
+        if not isinstance(decisions, list):
+            raise ValueError("decisions must be a list")
+        memory.decisions = [AssociationDecision(**item) for item in decisions]
+        for decision in memory.decisions:
+            obj = memory.objects.get(decision.object_id)
+            object_ids = (
+                {item.obs_id for item in obj.observations}
+                if obj is not None
+                else set()
+            )
+            if decision.obs_id not in object_ids:
+                raise ValueError(
+                    "association decision has inconsistent evidence"
+                )
+
+        evidence = payload["evidence"]
+        if (
+            not isinstance(evidence, dict)
+            or set(evidence) != set(OBJECT_MEMORY_EVIDENCE_FIELDS)
+        ):
+            raise ValueError("ObjectMemory evidence fields are not frozen")
+        if evidence != memory._evidence():
+            raise ValueError("ObjectMemory evidence is inconsistent")
+        used_ids = [
+            int(match.group(1))
+            for key in memory.objects
+            if (match := re.fullmatch(r"obj_(\d+)", key))
+        ]
         memory._next_id = max(used_ids, default=0) + 1
         return memory

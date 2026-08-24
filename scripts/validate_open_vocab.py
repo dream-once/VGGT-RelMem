@@ -1,4 +1,7 @@
-"""Validate a D4 B0 top-1 + SAM 3 + 3D OBB output directory."""
+"""Validate historical D4 artifacts originally labelled B0.
+
+Use validate_single_view_baselines for the strict controlled B0/B1 pair.
+"""
 
 from __future__ import annotations
 
