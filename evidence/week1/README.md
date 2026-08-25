@@ -1,40 +1,36 @@
-# Week 1 D4–D8 evidence
+# Week 1 D4–D8 JSON evidence
 
-This 12 MiB snapshot publishes lightweight, inspectable evidence from the real
-office-loop runs without committing model weights, the source dataset, or the
-multi-megabyte D3 geometry NPZ.
+This directory intentionally keeps only small, inspectable JSON/text evidence.
+Model weights, source images, geometry archives, masks, point arrays, previews,
+and videos are reproducible local artifacts and are excluded from Git.
 
 ## Contents
 
-- `d4-single-view/`: controlled `B0-official` versus
-  `B1-robust-single-view` result, preprocessing record, run manifest, and
-  preview.
-- `d5-multiview/`: six real PE hybrid-query results and manifests; the
-  trash-can directory also includes the Top-K preview.
-- `d6-multiview/`: six real SAM 3/Robust3DLifter result bundles and per-frame
-  previews. Masks and point arrays remain out of this lightweight D6 snapshot.
-- `runs/office-loop-mv-d7-trash-can/`: the complete self-contained D7 cache,
-  including masks, sampled points, previews, inventory, and the 40-second
-  video.
-- `runs/office-loop-mv-d8-trash-can/`: the portable D8 ObjectMemory bundle.
-  Its D7 source reference is relative, so validation still works after the
-  evidence directory is moved.
-- `validation/`: saved independent validator reports, including the
-  query-specific same-frame-pair gate.
+- `d4-single-view/`: controlled B0/B1 result, preprocessing metadata, and run manifest.
+- `d5-multiview/`: six PE retrieval results, Top-K selections, and run manifests.
+- `d6-multiview/`: six SAM 3/lifting summaries, selections, and run manifests.
+- `runs/office-loop-mv-d7-trash-can/`: D7 observation JSON, inventory, and run manifest only.
+- `runs/office-loop-mv-d8-trash-can/`: portable D8 ObjectMemory JSON bundle.
+- `validation/`: saved independent validator and query-specific reports.
 
 ## Verified results
 
-| Stage | Result |
+| Stage | Saved result |
 | --- | --- |
-| D4 | PASS; 6 official-B0 and 4 robust-B1 objects from shared PE/SAM/VGGT inputs |
-| D5 | PASS; all six real interval-sequence runs use hybrid redundancy suppression |
-| D6 | PASS for trash can; 15 SAM instances, 10 lifted observations, 5 explicit rejections |
-| D7 | PASS; 4 frames, 10 observations, 19,062 finite sampled points, 40.0 s video, motion ratio 0.975 |
-| D8 | PASS; 10 pending observations, 0 permanent objects, 0 decisions, exact JSON round trip |
+| D4 | PASS; 6 official-B0 and 4 robust-B1 objects from shared inputs |
+| D5 | PASS; six interval-sequence runs used hybrid redundancy suppression |
+| D6 | PASS for trash can; 15 SAM instances, 10 lifted observations, 5 rejections |
+| D7 | Saved report records 4 frames, 10 observations, 19,062 sampled points and dynamic video validation |
+| D8 | PASS; 10 pending observations, 0 objects/decisions, exact JSON round trip |
 
-The query-specific gate uses only frames that produced lifted observations and
-requires one and the same frame pair to satisfy both `translation >= 0.5`
-unscaled reconstruction units and `rotation >= 3 degrees`:
+The D7 mask arrays, sampled point files, previews, and MP4 are deliberately not
+published. Consequently this lightweight D7 directory is an audit snapshot,
+not a self-contained input for `validate_d7_cache`. The ignored local run can
+be regenerated with the command in the project README. D8 remains directly
+validatable because its relative source and SHA-256 refer to the retained D7
+`observations.json`.
+
+## Query-specific classifications
 
 | Query | Classification |
 | --- | --- |
@@ -42,43 +38,25 @@ unscaled reconstruction units and `rotation >= 3 degrees`:
 | poster | MULTIFRAME_ONLY |
 | blue recycling bin | MULTIFRAME_ONLY |
 | printer | MULTIFRAME_ONLY |
-| dog | NEGATIVE_CONTROL; zero SAM and 3D evidence |
-| bed | NEGATIVE_CONTROL; zero SAM and 3D evidence |
+| dog | NEGATIVE_CONTROL; zero evidence |
+| bed | NEGATIVE_CONTROL; zero evidence |
 
-Dog and bed are intentional absent-object controls for this office scene. They
-test whether the pipeline stays at zero evidence instead of hallucinating an
-object; they are not expected positive queries.
+`dog` and `bed` are absent-object controls, not expected positives.
 
-## Artifact hashes
+## Retained artifact hashes
 
-- D7 video:
-  `aa924ff9913fcca8475b16209a950004f74f20b6774d3903a9a9756eafae0dea`
-- D7 observations:
-  `1a1f46481b2dd7bfb86f82c09dea1b3fe666823823f637e1e47d53369a5139a1`
-- D8 ObjectMemory:
-  `cdf1eccd7dabcae658f927ae122f5dcec77c220b0c4338f220adc88702411879`
-- D8 result:
-  `6a83fafd85c646fb67aa449912012bb6f29ad1e3f276c44fe56880800c4a2382`
+- D7 observations: `1a1f46481b2dd7bfb86f82c09dea1b3fe666823823f637e1e47d53369a5139a1`
+- D8 ObjectMemory: `cdf1eccd7dabcae658f927ae122f5dcec77c220b0c4338f220adc88702411879`
+- D8 result: `6a83fafd85c646fb67aa449912012bb6f29ad1e3f276c44fe56880800c4a2382`
 
-## Model-free reproduction
+## Model-free validation
 
-From the repository root, D8 validates with the base environment:
+From the repository root:
 
 ```bash
 python -m scripts.validate_d8_memory \
   evidence/week1/runs/office-loop-mv-d8-trash-can
 ```
 
-D7 video probing additionally needs OpenCV, already present in the project
-geometry environment:
-
-```bash
-/root/autodl-tmp/envs/vggt_geom/bin/python \
-  -m scripts.validate_d7_cache \
-  evidence/week1/runs/office-loop-mv-d7-trash-can
-```
-
-D4–D6 reports were generated against the complete ignored local run directories
-because their lightweight public snapshots intentionally omit large or repeated
-mask/point inputs. The saved reports and all result manifests preserve the
-measured status and provenance.
+D4-D7 reports preserve measured status and provenance. Full visual or dense
+artifacts must be regenerated locally and should not be committed.

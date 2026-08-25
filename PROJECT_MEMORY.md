@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-25 publication session
+- Updated: 2026-08-26 publication session
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `d0399ffb872c78ec09eae6ab9168f92d47a1fbce`
-- Current milestone: D6 → corrected stride-aware D7 → portable D8 is continuous; query-specific same-pair validation is explicit; D4–D8 lightweight evidence is tracked for public inspection.
-- Next milestone: run the D3 geometry 0.2 exporter once on a GPU, then start D9 association from the true-multiview trash-can D8 bundle.
-- Publication state: the stride fix, D3 schema 0.2 source, query-specific gate, portable D8, 64-test regression, and a 12 MiB D4–D8 evidence snapshot are included in the publication commit containing this entry. Environments, weights, datasets, upstream checkouts, and other generated runs remain local-only.
+- Publication target and pre-publication HEAD: `main` at `4abe143a175f0627804de8ee336851f850240543`
+- Current milestone: D3 geometry schema 0.2 has real RTX 4090 acceptance; D6 → D7 → D8 remains reproducible from JSON; D9 exact-class spatial association is complete and independently validated.
+- Next milestone: D10 adds semantic similarity, OBB features, observation confidence, and explicit merge provenance without changing the frozen D8 input contract.
+- Publication state: this publication adds D9 source/labels/validators and a 73-test regression, while replacing the previous 12 MiB evidence snapshot with about 296 KiB of JSON/text-only evidence. Generated runs, images, masks, points, previews, and videos are intentionally local and ignored.
 
 ## Document-day progress
 
@@ -17,13 +17,14 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | --- | --- | --- |
 | D1 | Complete | All five upstream sources are pinned; disk/GPU checked; local PE and ModelScope SAM 3 checkpoints are verified. |
 | D2 | Complete | `vggt_geom` and Python 3.12 `open_vocab` are isolated; geometry/mask schemas, adapters, and smoke tests pass. |
-| D3 | Complete / 0.2 GPU addendum pending | Two schema-0.1 GPU runs remain byte-identical and valid; schema 0.2 now preserves raw confidence plus valid masks and passes source/unit checks, but needs one real GPU export. |
+| D3 | Complete | Two schema-0.1 GPU runs were byte-identical; a real schema-0.2 RTX 4090 export preserves raw confidence plus valid masks and passes the independent validator. |
 | D4 | Complete | Historical output is relabelled legacy B1; controlled `B0-official` and `B1-robust-single-view` now share the exact PE/SAM/VGGT inputs and differ only in lifting. |
 | D5 | Complete | Temporal and six interval-sequence hybrid GPU runs exported deterministic K=1/3/5 results; all hybrid outputs pass the independent validator. |
 | D6 | Complete | Controlled B2 preprocessing removes post-SAM mask resizing; four selected frames produced 21 SAM instances, 15 valid observations, and six explicit rejections. |
 | D7 | Complete | Stride inputs resolve from the geometry manifest; the current true-multiview cache has 10 observations over four frames and a validated 40-second dynamic video. |
 | D8 | Complete | The true-multiview D7 cache produces 10 pending observations, zero objects/decisions, exact round trip, and a relative source reference that survives bundle moves. |
-| D9+ | Pending | Associate the true-multiview trash-can D8 bundle with an explainable spatial gate; do not promote a single pending observation directly to a permanent object. |
+| D9 | Complete | Exact-class plus center-distance/AABB-overlap gating reached pairwise F1=1.0 on 45 manually labelled pairs; only the cross-frame component became permanent. |
+| D10+ | Pending | Add semantic similarity, OBB features, confidence-aware fusion, and per-merge provenance. |
 
 ## D3 acceptance evidence
 
@@ -36,8 +37,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
   - `geometry.npz`: `760bc15dad97482941e7e38940c225a0ba38440bd463944a0c8ea1d9a6c94619`
   - `geometry.manifest.json`: `a5a3d66d3a38af6dd3f1223b0c298e61a7637d6670a2a1b460f45bf11ec52190`
   - `geometry.anchor_poses.json`: `460701d1772392240c905579cd70a0a217a9a4c15a7ada974cda22979b3e828d`
-- Geometry schema 0.2 source now saves `raw_confidence_maps`, boolean `valid_masks`, and a legacy binary alias; 0.1 archives remain loadable.
-- Current no-GPU validation confirms both old geometry artifacts still pass with `raw_confidence_available=false`; the GPU addendum must produce schema 0.2 with raw confidence available.
+- Geometry schema 0.2 saves `raw_confidence_maps`, boolean `valid_masks`, and a legacy binary alias; 0.1 archives remain loadable.
+- The real schema-0.2 RTX 4090 run passed with 8 frames, finite raw confidence `1.0–14.375`, mean valid ratio `0.7498456912`, `16.270 s` runtime, and `4008.549 MB` peak VRAM. Its generated NPZ was intentionally purged after validation under the new lightweight policy.
 
 ## D4 acceptance evidence
 
@@ -77,7 +78,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The current true-multiview cache contains 10 observations from `frame_0001/0071/0041/0021`, 19,062 finite sampled points, and `(294, 518)` masks.
 - Its 40-second video uses all input frames `0001, 0011, ..., 0071` and the selected Top-K/SAM/3D frames, with independent motion ratio `0.9746835443037974`.
 - The MP4 is `6,038,230` bytes with SHA-256 `aa924ff9913fcca8475b16209a950004f74f20b6774d3903a9a9756eafae0dea`.
-- The complete 7.9 MiB D7 cache is tracked under `evidence/week1/runs/office-loop-mv-d7-trash-can` and validates without model inference.
+- Git now retains only the D7 observation/inventory/run JSON and saved validator report. Dense masks, sampled points, previews, and the MP4 were deliberately removed; the full ignored run can be regenerated locally.
 - The older 15-observation consecutive-frame cache remains local historical evidence but is no longer the D8/D9 input.
 
 ## True-multiview supplemental evidence
@@ -98,20 +99,26 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The source cache reference is relative (`../office-loop-mv-d7-trash-can/observations.json`); absolute paths and bundle escapes fail, while moving the whole bundle passes.
 - The copied public D8 bundle validates directly and is the deterministic, model-free D9 input.
 
+## D9 acceptance evidence
+
+- Manual visual labels group the 10 real D8 observations into three physical trash-can instances with component sizes 2/6/2.
+- The D9 gate uses normalized exact class equality and requires center distance `<=0.15` unscaled reconstruction units or positive AABB IoU; it does not use learned semantic similarity or confidence in matching.
+- All 45 labelled pairs were evaluated: 17 true same-instance pairs and 28 different-instance pairs produced precision/recall/F1/accuracy of `1.0` with no saved failure cases.
+- The predicted graph has three components. Only the six-observation component covering `frame_0001/0041/0021` is promoted to `obj_0001`; two same-frame-only duplicate components remain as four pending observations.
+- The real model-free run took `0.0125 s`, recorded no GPU allocation, round-tripped exactly, and passed an independent validator that recomputes every pair and rejects tampering or absolute source paths.
+- The generated D9 run directory was intentionally deleted after validation. Source, manual labels, tests, README metrics, and the tracked D8 JSON input are sufficient to reproduce it.
+
 ## Publication verification
 
-- `python -m unittest discover -v tests`: all 64 tests passed.
-- Both local schema-0.1 geometry artifacts still validate with finite points and `raw_confidence_available=false`, as expected for legacy files.
-- VGGT `--check-only`, project compileall, and the geometry 0.2 fake-solver export all pass without a GPU.
-- D4 controlled artifact remains `PASS` with six B0 and four B1 objects from shared inputs.
-- All six interval-sequence D5 hybrid directories revalidate as `PASS`.
-- The multiview trash-can D6 artifact is `PASS` with 15 masks, 10 lifts, and five rejections.
-- Query-specific reports classify trash can `TRUE_MULTIVIEW`, three other positives `MULTIFRAME_ONLY`, and dog/bed `NEGATIVE_CONTROL`.
-- The copied public D7 artifact is `PASS` for four frames, 10 observations, 19,062 points, 40 seconds, and motion ratio `0.9746835443037974`.
-- The copied public D8 artifact is `PASS` with 10 pending observations, exact round trip, and no premature objects or decisions.
-- `python -m compileall` and `git diff --check` passed.
-- This publication instance intentionally has no detected GPU; no new model inference is claimed.
-- `/root/autodl-tmp` has about `24.5 GiB` free, above the `10 GiB` baseline.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 73 tests passed.
+- `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
+- The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
+- The real D9 validator passed for 45 pairs, one permanent cross-frame object, four pending observations, and exact JSON round trip before generated runs were purged.
+- D9 tests cover class mismatch, distance/overlap alternatives, insufficient frame support, explicit failure cases, label coverage, pair tampering, and source-path escape.
+- Project compileall, `git diff --check`, and `git diff --cached --check` passed.
+- Git evidence is JSON/text-only and about 296 KiB; 50 binary evidence files were removed from the current tree.
+- The current instance has an RTX 4090 and about 24.56 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
+- Generated `runs/` artifacts were intentionally deleted and are no longer instance-baseline requirements.
 
 ## Fixed upstream sources
 
@@ -125,37 +132,24 @@ These checkouts are intentionally ignored under `third_party/VGGT-SLAM`; a clean
 
 ## Current local-only instance assets
 
-These were present when the baseline was created but are not guaranteed to exist after cloning a new instance:
+The lightweight policy no longer treats generated `runs/` as required instance assets. They were intentionally deleted after validation and can be regenerated from source, weights, data, and retained JSON evidence.
+
+Assets currently present:
 
 - Geometry environment: `/root/autodl-tmp/envs/vggt_geom/bin/python`
+- Open-vocabulary environment: `/root/autodl-tmp/envs/open_vocab/bin/python`
 - VGGT-1B weight: `/root/autodl-tmp/cache/torch/hub/checkpoints/model.pt`, `5,026,874,952` bytes
-- Official sample: `data/office_loop`, `473` files
-- First and repeat D3 geometry NPZ: `runs/office-loop/geometry.npz` and `runs/office-loop-repeat/geometry.npz`, each `5,780,390` bytes
-- Open-vocabulary environment: `/root/autodl-tmp/envs/open_vocab`, about `7.3 GiB`
-- PE-Core-L14-336 weight revision `bafb0f76541d399057e980a25947f67acec76575`: `2,684,747,432` bytes under `/root/autodl-tmp/cache/huggingface`
-- SAM 3 weight: `/root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt`, `3,450,062,241` bytes
-- First/repeat real PE results: `runs/office-loop-pe-printer` and `runs/office-loop-pe-printer-repeat`
-- Historical legacy-B1 results: `runs/office-loop-b0-trash-can` and `runs/office-loop-b0-trash-can-repeat`
-- Passing controlled B0/B1 result: `runs/office-loop-single-view-trash-can/single_view_result.json`
-- Passing D5 retrieval result: `runs/office-loop-d5-trash-can/retrieval.json`
-- D5 maximum nonredundant selection: `runs/office-loop-d5-trash-can/topk_5.json`
-- Historical D6 result retained for D7 reproducibility: `runs/office-loop-d6-trash-can/d6_result.json`
-- Passing controlled D6 result: `runs/office-loop-d6-controlled-trash-can/d6_result.json`
-- Passing true-multiview geometry: `runs/office-loop-multiview-s10/geometry.npz`, `5,678,598` bytes
-- Passing six-query hybrid D5 and D6 matrix: `runs/office-loop-mv-d5-*` and `runs/office-loop-mv-d6-*`
-- Passing current D7 cache: `runs/office-loop-mv-d7-trash-can`, about `7.9 MiB`
-- Passing current D7 video: `runs/office-loop-mv-d7-trash-can/stage_video.mp4`, `6,038,230` bytes, SHA-256 `aa924ff9913fcca8475b16209a950004f74f20b6774d3903a9a9756eafae0dea`
-- Passing portable D8 memory: `runs/office-loop-mv-d8-trash-can/object_memory.json`, SHA-256 `cdf1eccd7dabcae658f927ae122f5dcec77c220b0c4338f220adc88702411879`
-- Missing by design until a GPU is attached: `runs/office-loop-v02/geometry.npz`
-- Baseline disk requirement: at least `10 GiB` free under `/root/autodl-tmp`
+- PE-Core-L14-336 checkpoint revision `bafb0f76541d399057e980a25947f67acec76575`, `2,684,747,432` bytes
+- SAM 3 checkpoint: `/root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt`, `3,450,062,241` bytes, SHA-256 `9999e2341ceef5e136daa386eecb55cb414446a00ac2b55eb2dfd2f7c3cf8c9e`
+- Official `data/office_loop`: 473 files
 
-Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` after every instance migration. Missing ignored assets mean the new server is incomplete, not that Git-tracked source was lost.
+Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` after migration. Missing generated runs are expected; missing tracked files, upstream pins, environments, weights, or the dataset require attention.
 
 ## Concrete next task
 
-1. On the next GPU instance, run the documented D3 schema-0.2 command and require raw confidence availability.
-2. Use `runs/office-loop-mv-d8-trash-can` (or its tracked evidence copy) to implement same-class candidate generation and the explainable 3D center-distance/overlap D9 gate.
-3. Add labelled same/different pairs, pairwise precision/recall/F1, failure cases, strict serialization, and an independent D9 validator.
+1. Start D10 from the frozen D8 input and the D9 gate.
+2. Add semantic similarity, oriented-box features, observation-quality weighting, and explicit per-merge reasons without using them to rewrite D9 metrics.
+3. Regenerate only the small outputs needed for D10 validation; keep Git evidence JSON/text-only.
 
 ## Publication history
 
@@ -165,6 +159,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-24: D7 frozen self-contained observation cache, dynamic four-stage evidence video, independent cache/video validator, 38-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `745d82c1be62a94025b168de4630040edd4d69fe`).
 - 2026-08-25: Corrected D4/D6 controlled baselines, true-multiview pose gate and query evidence, D8 frozen object-memory schema, 56-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `7b646deda5e8a01d128cb95f274f97316d01f53c`).
 - 2026-08-25: Closed the D7/D8 stride and portability gaps, added query-specific same-pair validation, upgraded D3 source to confidence-preserving schema 0.2, published 12 MiB of D4–D8 evidence, and recorded a 64-test no-GPU regression in the commit containing this entry (parent `d0399ffb872c78ec09eae6ab9168f92d47a1fbce`).
+- 2026-08-26: Completed the real D3 schema-0.2 GPU addendum and D9 exact-class spatial association, raised the regression to 73 tests, and replaced binary evidence with a 296 KiB JSON/text-only snapshot. Generated local runs were intentionally purged.
 
 ## Scope reminder
 

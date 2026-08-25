@@ -31,7 +31,7 @@ python -m unittest discover -v
 python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```
 
-真实 D4–D8 的轻量 JSON、预览、查询级 validator 报告以及完整 D7 视频已收录在 [evidence/week1](evidence/week1/README.md)。该证据包不包含权重、原始数据集或 D3 大型几何 NPZ。
+真实 D4–D8 只保留轻量 JSON、manifest 与查询级 validator 报告，收录在 [evidence/week1](evidence/week1/README.md)。视频、预览、mask、点云、权重、数据集与几何 NPZ 均不进入 Git，可按文档命令在本地重新生成。
 
 
 ## 换机检查与进度记忆
@@ -78,6 +78,10 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D3：原 0.1 运行器、产物与两次 GPU 严格复现已完成；0.2 raw confidence/valid mask 源码、单测和真实 RTX 4090 产物验收也已完成。
 - D4：PE top-1、SAM 3 mask、mask-to-point lifting、3D OBB、可视化、validator 和两次真实 GPU 复现均已完成。
 - D5：原始 temporal 与新间隔序列 hybrid（时间 + 相机距离 + 视角）K=1/3/5 均有真实 GPU 产物，六个 hybrid 查询的 validator 均为 `PASS`。
+- D6：间隔多视角 Top-K 的 SAM 3 与鲁棒逐帧 lifting 已完成，真实产物与查询级多视角 validator 均已验收。
+- D7：stride-aware 场景缓存、冻结 ObjectObservation 和动态证据视频已完成。
+- D8：可移动的 ObjectMemory 1.0 bundle 已完成，保留 10 条 pending 观测且不提前关联。
+- D9：精确同类 + 3D 中心距离/AABB 重叠 gate、人工 pairwise F1、跨帧组件提升及独立 validator 已完成。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -387,6 +391,30 @@ python -m scripts.validate_d8_memory \
 
 D8 现在把 D7 来源写成相对路径 `../office-loop-mv-d7-trash-can/observations.json`；目录整体移动后 validator 单测仍通过。因此最终 D6 → D7 → D8 链路已连续，D9 可直接消费这个多视角 trash-can bundle。
 
+## D9 可解释空间 gate 与初始对象关联（已完成）
+
+D9 直接读取 D8 的 `pending_observations`，全程不加载 VGGT、PE 或 SAM 3。当前 gate 严格限定为文档当天范围：
+
+1. 类别文本仅做大小写/分隔符归一化后的精确同类判断，不使用语义 embedding；
+2. 同类 pair 满足“3D 中心距离不超过 `0.15`，或由观测 OBB 转成的 AABB IoU 大于 `0`”即建立无向边；
+3. 对 pair 图取确定性连通分量；
+4. 只有覆盖至少两个不同帧的分量才能成为永久对象，单帧重复候选继续留在 pending。
+
+`0.15` 是当前未标定 VGGT 重建坐标单位，不是米。人工标签来自四张 D6 mask/box 预览，明确把同一实体的重复或局部 SAM mask 放在同一组：
+
+```bash
+python -m scripts.run_d9_association \
+  --memory runs/office-loop-mv-d8-trash-can/object_memory.json \
+  --labels configs/d9_office_loop_trash_can_labels.json \
+  --output-dir runs/office-loop-mv-d9-trash-can
+
+python -m scripts.validate_d9_association \
+  runs/office-loop-mv-d9-trash-can
+```
+
+真实 D8 的 10 条观测产生全部 45 个 pair：17 个同实例正对和 28 个不同实例负对均判断正确，precision/recall/F1 都为 `1.0`，`failure_cases` 为 0。预测得到 3 个空间组件；中间 trash can 的 6 条观测覆盖 `frame_0001/0041/0021`，被提升为 `obj_0001`，另外两个各含 2 条单帧重复观测的组件仍保持 pending。因此最终产物是 1 个永久对象、4 条 pending、6 条带证据的关联决策，规范 JSON round-trip 与独立重算 validator 均为 `PASS`。
+
+D9 bundle 包含 `object_memory.json`、冻结的 `pair_labels.json`、逐对 gate/指标/失败案例所在的 `d9_result.json` 和 `run_manifest.json`。这里的 F1 是小型人工开发样例验收，不代表跨场景泛化；D10 才会正式把语义相似度、OBB 特征和观测置信度纳入 merge 与融合。
 
 如果需要开发安装：
 
@@ -458,6 +486,7 @@ python -m scripts.evaluate \
 - 已完成 D7：stride 图像按 geometry manifest 精确解析；新多视角缓存含 10 条观测，40 秒动态视频通过独立验收。
 - 查询级结论：`trash can` 有 3 对观测帧通过同帧对门槛；`poster`、`blue recycling bin`、`printer` 仅为多帧证据；`dog/bed` 是零证据负对照。
 - 已完成 D8：新多视角 D7 已生成可移动的相对路径 ObjectMemory；真实产物为 10 pending、0 永久对象、0 关联决策。
-- 下一步 D9：以当前 `trash can` 多视角 D8 bundle 为输入，实现并评测同类 + 3D 中心距离/重叠的可解释空间 gate。
+- 已完成 D9：真实 D8 的 45 个人工标注 pair 达到 precision/recall/F1=1.0；3 个空间组件中仅跨 3 帧的 6-observation 组件成为永久对象，两个单帧组件继续 pending。
+- 下一步 D10：把语义相似度、OBB 特征和观测置信度正式加入 merge/融合，并记录每次 merge 的依据，统一 B1/B2 输出。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

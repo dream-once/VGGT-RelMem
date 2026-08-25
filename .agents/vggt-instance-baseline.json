@@ -56,12 +56,19 @@
     "tests/test_cache_scene_observations.py",
     "tests/test_validate_query_multiview.py",
     "evidence/week1/README.md",
-    "evidence/week1/runs/office-loop-mv-d7-trash-can/stage_video.mp4",
     "evidence/week1/runs/office-loop-mv-d8-trash-can/object_memory.json",
     "evidence/week1/validation/query-multiview/trash-can.json",
     ".agents/vggt-instance-baseline.json",
     ".agents/skills/vggt-instance-handoff/SKILL.md",
-    ".agents/skills/vggt-instance-handoff/scripts/audit_instance.py"
+    ".agents/skills/vggt-instance-handoff/scripts/audit_instance.py",
+    ".gitignore",
+    "configs/d9_office_loop_trash_can_labels.json",
+    "relground/d9_association.py",
+    "scripts/run_d9_association.py",
+    "scripts/validate_d9_association.py",
+    "tests/test_d9_association.py",
+    "tests/test_validate_d9.py",
+    "evidence/week1/runs/office-loop-mv-d7-trash-can/observations.json"
   ],
   "upstream_repositories": [
     {
@@ -127,128 +134,6 @@
       "kind": "directory",
       "min_files": 473,
       "purpose": "official office_loop sample"
-    },
-    {
-      "path": "runs/office-loop/geometry.npz",
-      "kind": "file",
-      "min_size": 5000000,
-      "sha256": "760bc15dad97482941e7e38940c225a0ba38440bd463944a0c8ea1d9a6c94619",
-      "purpose": "D3 first validated geometry run"
-    },
-    {
-      "path": "runs/office-loop-repeat/geometry.npz",
-      "kind": "file",
-      "min_size": 5000000,
-      "sha256": "760bc15dad97482941e7e38940c225a0ba38440bd463944a0c8ea1d9a6c94619",
-      "purpose": "D3 repeat validated geometry run"
-    },
-    {
-      "path": "runs/office-loop-multiview-s10/geometry.npz",
-      "kind": "file",
-      "min_size": 5000000,
-      "sha256": "3f9a5c2305150a8dd8e7ec8425c322b1bb972174dabc8970ecd8e15701c152af",
-      "purpose": "true-multiview geometry passing the pose-spread gate"
-    },
-    {
-      "path": "runs/office-loop-pe-printer/retrieval.json",
-      "kind": "file",
-      "min_size": 500,
-      "purpose": "D4 first real PE top-1 result"
-    },
-    {
-      "path": "runs/office-loop-pe-printer-repeat/retrieval.json",
-      "kind": "file",
-      "min_size": 500,
-      "purpose": "D4 repeat PE top-1 result"
-    },
-    {
-      "path": "runs/office-loop-b0-trash-can/b0_result.json",
-      "kind": "file",
-      "min_size": 1000,
-      "purpose": "historical D4 legacy-B1 first result"
-    },
-    {
-      "path": "runs/office-loop-b0-trash-can-repeat/b0_result.json",
-      "kind": "file",
-      "min_size": 1000,
-      "purpose": "historical D4 legacy-B1 repeat result"
-    },
-    {
-      "path": "runs/office-loop-single-view-trash-can/single_view_result.json",
-      "kind": "file",
-      "min_size": 2000,
-      "sha256": "b7c2514dd4981a1459cee26d78d68f9c26c16142451ea14db4c3e5ead3ea9f64",
-      "purpose": "controlled D4 B0-official and B1-robust result"
-    },
-    {
-      "path": "runs/office-loop-d5-trash-can/retrieval.json",
-      "kind": "file",
-      "min_size": 5000,
-      "purpose": "D5 passing deterministic PE Top-K result"
-    },
-    {
-      "path": "runs/office-loop-d5-trash-can/topk_5.json",
-      "kind": "file",
-      "min_size": 2000,
-      "purpose": "D5 maximum nonredundant frame selection consumed by D6"
-    },
-    {
-      "path": "runs/office-loop-d6-trash-can/d6_result.json",
-      "kind": "file",
-      "min_size": 5000,
-      "purpose": "historical D6 result retained for D7 reproducibility"
-    },
-    {
-      "path": "runs/office-loop-d6-trash-can/observations.json",
-      "kind": "file",
-      "min_size": 20000,
-      "purpose": "historical D6 observations retained for D7 reproducibility"
-    },
-    {
-      "path": "runs/office-loop-d6-controlled-trash-can/d6_result.json",
-      "kind": "file",
-      "min_size": 5000,
-      "sha256": "452e6d458cb9cf0dc7c290a01c7c4e5a392899ab6e1680bc3f7d8d921ca509b1",
-      "purpose": "controlled D6 B2 result without post-SAM mask resizing"
-    },
-    {
-      "path": "runs/office-loop-mv-d5-trash-can/retrieval.json",
-      "kind": "file",
-      "min_size": 5000,
-      "purpose": "D5 real interval-sequence hybrid retrieval"
-    },
-    {
-      "path": "runs/office-loop-mv-d6-trash-can/d6_result.json",
-      "kind": "file",
-      "min_size": 5000,
-      "purpose": "D6 true-multiview trash-can observations"
-    },
-    {
-      "path": "runs/office-loop-mv-d7-trash-can/scene_cache.json",
-      "kind": "file",
-      "min_size": 5000,
-      "purpose": "D7 current stride-correct self-contained cache"
-    },
-    {
-      "path": "runs/office-loop-mv-d7-trash-can/observations.json",
-      "kind": "file",
-      "min_size": 15000,
-      "sha256": "1a1f46481b2dd7bfb86f82c09dea1b3fe666823823f637e1e47d53369a5139a1",
-      "purpose": "D7 current observations consumed by D8"
-    },
-    {
-      "path": "runs/office-loop-mv-d7-trash-can/stage_video.mp4",
-      "kind": "file",
-      "min_size": 6000000,
-      "sha256": "aa924ff9913fcca8475b16209a950004f74f20b6774d3903a9a9756eafae0dea",
-      "purpose": "D7 validated true-multiview dynamic evidence video"
-    },
-    {
-      "path": "runs/office-loop-mv-d8-trash-can/object_memory.json",
-      "kind": "file",
-      "min_size": 15000,
-      "sha256": "cdf1eccd7dabcae658f927ae122f5dcec77c220b0c4338f220adc88702411879",
-      "purpose": "D8 portable true-multiview ObjectMemory bundle"
     }
   ],
   "disk": {
