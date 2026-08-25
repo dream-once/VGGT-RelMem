@@ -1,0 +1,201 @@
+{
+  "schema_version": "1.0",
+  "status": "PASS",
+  "stage": "D7",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query": "trash can",
+  "observation_schema_version": "1.0",
+  "source": {
+    "stage": "D6",
+    "directory": "/root/autodl-tmp/VGGT-RelMem/runs/office-loop-mv-d6-trash-can",
+    "d6_result_sha256": "49cabfad10a7d076fc36cdb7c462c4b7e559c4df7e238036eb3c395e73a58df5",
+    "geometry_manifest": "/root/autodl-tmp/VGGT-RelMem/runs/office-loop-multiview-s10/geometry.manifest.json",
+    "geometry_manifest_sha256": "5f44cd7400c241e07a22af0ae936a792a6964442236351801efadbb822aa8b49"
+  },
+  "frame_ids": [
+    "frame_0001",
+    "frame_0071",
+    "frame_0041",
+    "frame_0021"
+  ],
+  "observation_count": 10,
+  "frame_observation_counts": {
+    "frame_0001": 4,
+    "frame_0071": 2,
+    "frame_0041": 2,
+    "frame_0021": 2
+  },
+  "previews": [
+    "previews/frame_0001.png",
+    "previews/frame_0071.png",
+    "previews/frame_0041.png",
+    "previews/frame_0021.png"
+  ],
+  "stage_video": {
+    "path": "stage_video.mp4",
+    "mode": "dynamic_pipeline",
+    "duration_seconds": 40.0,
+    "fps": 10.0,
+    "codec": "mp4v",
+    "segments": {
+      "input_stream": 10.0,
+      "topk_retrieval": 8.0,
+      "sam_masks": 10.0,
+      "observations_3d": 12.0
+    },
+    "source_frame_count": 8,
+    "selected_frame_count": 4,
+    "observation_count": 10,
+    "rendered_point_count": 9336,
+    "input_frame_ids": [
+      "frame_0001",
+      "frame_0011",
+      "frame_0021",
+      "frame_0031",
+      "frame_0041",
+      "frame_0051",
+      "frame_0061",
+      "frame_0071"
+    ],
+    "selected_frame_ids": [
+      "frame_0001",
+      "frame_0071",
+      "frame_0041",
+      "frame_0021"
+    ],
+    "geometry_manifest": "/root/autodl-tmp/VGGT-RelMem/runs/office-loop-multiview-s10/geometry.manifest.json"
+  },
+  "files": [
+    {
+      "path": "masks/d6_frame_0001_000.npy",
+      "size_bytes": 152420,
+      "sha256": "15d10029b92f4c4e2c4bd85fffc3501a8059827e0f26ed70568c75910494adfd"
+    },
+    {
+      "path": "masks/d6_frame_0001_001.npy",
+      "size_bytes": 152420,
+      "sha256": "d03bc5d0c804b98f6fb2b4cf72423575367742c219dea218b179162a2590157f"
+    },
+    {
+      "path": "masks/d6_frame_0001_003.npy",
+      "size_bytes": 152420,
+      "sha256": "2e41e9bbe405a4f9e829ad593075c0648f7794f1296965a0072317fab8454330"
+    },
+    {
+      "path": "masks/d6_frame_0001_005.npy",
+      "size_bytes": 152420,
+      "sha256": "552d850a6e802cdffbb6e55033ccced183f46916d5339cc75b8eb30e372e8a13"
+    },
+    {
+      "path": "masks/d6_frame_0021_000.npy",
+      "size_bytes": 152420,
+      "sha256": "74f0380def7615782c811f9e7be438c3265cd31ffc9bb3c2277930218137d27d"
+    },
+    {
+      "path": "masks/d6_frame_0021_001.npy",
+      "size_bytes": 152420,
+      "sha256": "978126234a0a56ce1af26685f48910dc65158bf0fbf3c11ea9188cbc97f570de"
+    },
+    {
+      "path": "masks/d6_frame_0041_000.npy",
+      "size_bytes": 152420,
+      "sha256": "6d7da8f66787e80744b82cfea7b9f0b57b6383b74b10f5c68f338cc8534a7c04"
+    },
+    {
+      "path": "masks/d6_frame_0041_001.npy",
+      "size_bytes": 152420,
+      "sha256": "2231db33cb85c79c3bfa8c0052c4a3482d3db8de44f7cbefc3f3c666d93a3593"
+    },
+    {
+      "path": "masks/d6_frame_0071_000.npy",
+      "size_bytes": 152420,
+      "sha256": "aa1cbe7e5e6ba5333b594f7d5d34ee13074856c38af897157b9c6f16fc8e05a5"
+    },
+    {
+      "path": "masks/d6_frame_0071_002.npy",
+      "size_bytes": 152420,
+      "sha256": "f0c09a5191a385ce6db373f6778d1a2e89a5ce24cdc327ccf43861d8db1f4615"
+    },
+    {
+      "path": "observations.json",
+      "size_bytes": 17474,
+      "sha256": "1a1f46481b2dd7bfb86f82c09dea1b3fe666823823f637e1e47d53369a5139a1"
+    },
+    {
+      "path": "points/d6_frame_0001_000.npz",
+      "size_bytes": 15764,
+      "sha256": "8debbade3285cb9e5bfb78ebb0f2029daada75b5fe08688a2d5dd14f76d2e635"
+    },
+    {
+      "path": "points/d6_frame_0001_001.npz",
+      "size_bytes": 1389,
+      "sha256": "6dbd6199b6909b8837274fecaf20f6e17b0915adc7c95220c64956c6921fe553"
+    },
+    {
+      "path": "points/d6_frame_0001_003.npz",
+      "size_bytes": 3245,
+      "sha256": "360e0cf531d15fc6c790cf18c3c27333d546e64efec21a7e80e0a8e166515c59"
+    },
+    {
+      "path": "points/d6_frame_0001_005.npz",
+      "size_bytes": 2864,
+      "sha256": "143e26f77af48c4eac77c9041d6bfc03a4eefd54d466b7cdd76d2a68881ec06b"
+    },
+    {
+      "path": "points/d6_frame_0021_000.npz",
+      "size_bytes": 4867,
+      "sha256": "5049db26f48b0645158c62f729e5f299eed1549fdd21d6fef25617bf7d7d0156"
+    },
+    {
+      "path": "points/d6_frame_0021_001.npz",
+      "size_bytes": 12282,
+      "sha256": "f685d6c5cbe773d17b6fd3598c532c22713835221da8ef993f9b95cff6f1b6d0"
+    },
+    {
+      "path": "points/d6_frame_0041_000.npz",
+      "size_bytes": 32055,
+      "sha256": "1edba6632076af5701b4bbe89f96915b27c09252c20756141c98fe9b577d2a66"
+    },
+    {
+      "path": "points/d6_frame_0041_001.npz",
+      "size_bytes": 28454,
+      "sha256": "54034fbcb5e565ce8bca963f4668bd43b34acba930a59fcd564e5e2f8f258dff"
+    },
+    {
+      "path": "points/d6_frame_0071_000.npz",
+      "size_bytes": 42600,
+      "sha256": "9c89e5edc310deec32a6d6486f03aac0c94e65fdc2825388652a50b66321d621"
+    },
+    {
+      "path": "points/d6_frame_0071_002.npz",
+      "size_bytes": 17697,
+      "sha256": "501e4e6b502040f367c059037cfbd7978091edce7690729433f67c432d4a196b"
+    },
+    {
+      "path": "previews/frame_0001.png",
+      "size_bytes": 126847,
+      "sha256": "5ec1089a5fb6158a4290db6c3dfd9a5e7e9cd08a512dc41426ab5730df31070f"
+    },
+    {
+      "path": "previews/frame_0021.png",
+      "size_bytes": 114609,
+      "sha256": "48df523adef8843a122fcd11b58b3ef32113a697dfa320ebcd098308136fe961"
+    },
+    {
+      "path": "previews/frame_0041.png",
+      "size_bytes": 109689,
+      "sha256": "3e3fdd901fd02ca33e49d6a6f907ad777acb9a59b7c348b145442a4b4248668b"
+    },
+    {
+      "path": "previews/frame_0071.png",
+      "size_bytes": 114382,
+      "sha256": "0af9abbcf1e754df85d15b8a28fafd9883d26c8ee5be515336ee77aa9d11945f"
+    },
+    {
+      "path": "stage_video.mp4",
+      "size_bytes": 6038230,
+      "sha256": "aa924ff9913fcca8475b16209a950004f74f20b6774d3903a9a9756eafae0dea"
+    }
+  ],
+  "created_at": "2026-08-24T17:02:25.473748+00:00"
+}

@@ -37,9 +37,10 @@ class D8ValidationTests(unittest.TestCase):
     def make_fixture(self, root: Path) -> None:
         source = root / "source_observations.json"
         source.write_text("{}\n")
+        source_reference = source.name
         memory = ObjectMemory(
             metadata={
-                "source_cache": str(source),
+                "source_cache": source_reference,
                 "source_cache_sha256": sha256_file(source),
             }
         )
@@ -63,7 +64,7 @@ class D8ValidationTests(unittest.TestCase):
             },
             "source": {
                 "stage": "D7",
-                "cache_path": str(source),
+                "cache_path": source_reference,
                 "cache_sha256": sha256_file(source),
             },
             "pending_observation_count": 2,
@@ -79,6 +80,8 @@ class D8ValidationTests(unittest.TestCase):
             "config": {
                 "association_executed": False,
                 "object_memory_schema": OBJECT_MEMORY_SCHEMA_VERSION,
+                "source_cache": source_reference,
+                "source_cache_sha256": sha256_file(source),
             }
         }
         (root / "run_manifest.json").write_text(json.dumps(manifest))
@@ -105,6 +108,34 @@ class D8ValidationTests(unittest.TestCase):
         self.assertTrue(
             any("evidence" in item for item in report["failures"])
         )
+
+    def test_absolute_source_path_fails(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            self.make_fixture(root)
+            path = root / "d8_result.json"
+            payload = json.loads(path.read_text())
+            payload["source"]["cache_path"] = str(
+                root / "source_observations.json"
+            )
+            path.write_text(json.dumps(payload))
+            report = validate_output(root)
+        self.assertEqual(report["status"], "FAIL")
+        self.assertTrue(
+            any(
+                "must be relative" in item
+                for item in report["failures"]
+            )
+        )
+
+    def test_bundle_remains_valid_after_move(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            root = parent / "bundle"
+            root.mkdir()
+            self.make_fixture(root)
+            moved = parent / "moved_bundle"
+            root.rename(moved)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,23 @@
+{
+  "git_sha": "d0399ffb872c78ec09eae6ab9168f92d47a1fbce",
+  "env_lock": "D7 cache is model-free; OpenCV comes from vggt_geom",
+  "dataset_split": "office-loop-multiview-s10-trash-can",
+  "seed": 0,
+  "config": {
+    "pipeline": "D7 frozen ObjectObservation scene cache",
+    "d6_dir": "/root/autodl-tmp/VGGT-RelMem/runs/office-loop-mv-d6-trash-can",
+    "scene_id": "office-loop-multiview-s10-trash-can",
+    "query": "trash can",
+    "observation_schema_version": "1.0",
+    "video_fps": 10.0,
+    "video_duration": 40.0,
+    "video_codec": "mp4v",
+    "image_folder": "/root/autodl-tmp/VGGT-RelMem/data/office_loop",
+    "geometry_manifest": "/root/autodl-tmp/VGGT-RelMem/runs/office-loop-multiview-s10/geometry.manifest.json"
+  },
+  "command": "/root/autodl-tmp/VGGT-RelMem/scripts/cache_scene_observations.py --d6-dir runs/office-loop-mv-d6-trash-can --geometry-manifest runs/office-loop-multiview-s10/geometry.manifest.json --output-dir runs/office-loop-mv-d7-trash-can --image-folder data/office_loop --video-duration 40 --scene-id office-loop-multiview-s10-trash-can",
+  "runtime_seconds": 9.129395997151732,
+  "peak_vram_mb": null,
+  "created_at": "2026-08-24T17:02:25.479831+00:00",
+  "schema_version": "0.1"
+}

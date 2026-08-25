@@ -1,0 +1,206 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D6",
+  "baseline_id": "B2-topk-multiframe",
+  "backend": "D5 top-K + VGGT-preprocessed SAM 3 + Robust3DLifter",
+  "mask_resizing_after_sam": false,
+  "query": "trash can",
+  "selection_source": "runs/office-loop-mv-d5-trash-can/topk_5.json",
+  "requested_k": 5,
+  "selected_frames": [
+    {
+      "rank": 1,
+      "frame_id": "frame_0001",
+      "geometry_index": 0,
+      "image_path": "/root/autodl-tmp/VGGT-RelMem/data/office_loop/frame_0001.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 0,
+      "retrieval_score": 0.19639502856854218,
+      "retrieval_cosine": 0.19639502856854218
+    },
+    {
+      "rank": 2,
+      "frame_id": "frame_0071",
+      "geometry_index": 7,
+      "image_path": "/root/autodl-tmp/VGGT-RelMem/data/office_loop/frame_0071.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 7,
+      "retrieval_score": 0.19541234191969525,
+      "retrieval_cosine": 0.19541234191969525
+    },
+    {
+      "rank": 3,
+      "frame_id": "frame_0041",
+      "geometry_index": 4,
+      "image_path": "/root/autodl-tmp/VGGT-RelMem/data/office_loop/frame_0041.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 4,
+      "retrieval_score": 0.18803172994651282,
+      "retrieval_cosine": 0.18803172994651282
+    },
+    {
+      "rank": 4,
+      "frame_id": "frame_0021",
+      "geometry_index": 2,
+      "image_path": "/root/autodl-tmp/VGGT-RelMem/data/office_loop/frame_0021.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 2,
+      "retrieval_score": 0.16186135359168963,
+      "retrieval_cosine": 0.16186135359168963
+    }
+  ],
+  "processed_frames": [
+    {
+      "rank": 1,
+      "frame_id": "frame_0001",
+      "geometry_index": 0,
+      "retrieval_score": 0.19639502856854218,
+      "sam_instances": 6,
+      "lifted_instances": 4,
+      "rejected_instances": 2,
+      "preview": "previews/frame_0001.png",
+      "sam_input": "sam_inputs/frame_0001.png",
+      "preprocess": "preprocess/frame_0001.json",
+      "mask_resizing_after_sam": false
+    },
+    {
+      "rank": 2,
+      "frame_id": "frame_0071",
+      "geometry_index": 7,
+      "retrieval_score": 0.19541234191969525,
+      "sam_instances": 3,
+      "lifted_instances": 2,
+      "rejected_instances": 1,
+      "preview": "previews/frame_0071.png",
+      "sam_input": "sam_inputs/frame_0071.png",
+      "preprocess": "preprocess/frame_0071.json",
+      "mask_resizing_after_sam": false
+    },
+    {
+      "rank": 3,
+      "frame_id": "frame_0041",
+      "geometry_index": 4,
+      "retrieval_score": 0.18803172994651282,
+      "sam_instances": 3,
+      "lifted_instances": 2,
+      "rejected_instances": 1,
+      "preview": "previews/frame_0041.png",
+      "sam_input": "sam_inputs/frame_0041.png",
+      "preprocess": "preprocess/frame_0041.json",
+      "mask_resizing_after_sam": false
+    },
+    {
+      "rank": 4,
+      "frame_id": "frame_0021",
+      "geometry_index": 2,
+      "retrieval_score": 0.16186135359168963,
+      "sam_instances": 3,
+      "lifted_instances": 2,
+      "rejected_instances": 1,
+      "preview": "previews/frame_0021.png",
+      "sam_input": "sam_inputs/frame_0021.png",
+      "preprocess": "preprocess/frame_0021.json",
+      "mask_resizing_after_sam": false
+    }
+  ],
+  "sam_instances": 15,
+  "lifted_instances": 10,
+  "rejected_instances": [
+    {
+      "obs_id": "d6_frame_0001_002",
+      "frame_id": "frame_0001",
+      "selected_rank": 1,
+      "sam_score": 0.50390625,
+      "box_xyxy": [
+        227.91317749023438,
+        29.093345642089844,
+        236.59083557128906,
+        41.63239669799805
+      ],
+      "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+    },
+    {
+      "obs_id": "d6_frame_0001_004",
+      "frame_id": "frame_0001",
+      "selected_rank": 1,
+      "sam_score": 0.76953125,
+      "box_xyxy": [
+        242.93467712402344,
+        52.369388580322266,
+        255.08872985839844,
+        74.1937255859375
+      ],
+      "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+    },
+    {
+      "obs_id": "d6_frame_0071_001",
+      "frame_id": "frame_0071",
+      "selected_rank": 2,
+      "sam_score": 0.546875,
+      "box_xyxy": [
+        262.9477233886719,
+        33.5598030090332,
+        275.1989440917969,
+        50.10990524291992
+      ],
+      "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+    },
+    {
+      "obs_id": "d6_frame_0041_002",
+      "frame_id": "frame_0041",
+      "selected_rank": 3,
+      "sam_score": 0.8828125,
+      "box_xyxy": [
+        272.446533203125,
+        86.56798553466797,
+        293.1689758300781,
+        119.45581817626953
+      ],
+      "reason": "too few valid points: 1 < 30 (ratio=0.002)"
+    },
+    {
+      "obs_id": "d6_frame_0021_002",
+      "frame_id": "frame_0021",
+      "selected_rank": 4,
+      "sam_score": 0.859375,
+      "box_xyxy": [
+        259.2488708496094,
+        54.9531135559082,
+        273.9871520996094,
+        80.56868743896484
+      ],
+      "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+    }
+  ],
+  "frames_with_masks": [
+    "frame_0001",
+    "frame_0071",
+    "frame_0041",
+    "frame_0021"
+  ],
+  "frames_with_lifted_observations": [
+    "frame_0001",
+    "frame_0071",
+    "frame_0041",
+    "frame_0021"
+  ],
+  "lifter_config": {
+    "confidence_threshold": 0.5,
+    "min_points": 30,
+    "outlier_mad_scale": 3.5
+  },
+  "sam_threshold": 0.5,
+  "source_commits": {
+    "sam3": "8f0b7f4d4e7eda2ed606ebde6702c93359ad01da"
+  },
+  "artifacts": {
+    "selection": "selection.json",
+    "mask_manifest": "masks.json",
+    "observations": "observations.json",
+    "previews": "previews",
+    "sam_inputs": "sam_inputs",
+    "preprocess": "preprocess"
+  },
+  "created_at": "2026-08-24T15:05:18.798365+00:00"
+}

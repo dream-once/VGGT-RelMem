@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "query": "trash can",
+  "searched_frames": 8,
+  "selected_counts": {
+    "1": 1,
+    "3": 3,
+    "5": 4
+  }
+}

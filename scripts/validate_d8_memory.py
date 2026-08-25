@@ -23,6 +23,17 @@ def read_json(path: Path) -> dict[str, Any]:
     return payload
 
 
+def resolve_source_cache(root: Path, reference: str) -> Path:
+    relative = Path(reference)
+    if relative.is_absolute():
+        raise ValueError("source D7 cache path must be relative")
+    bundle_root = root.resolve().parent
+    candidate = (root / relative).resolve()
+    if candidate != bundle_root and bundle_root not in candidate.parents:
+        raise ValueError("source D7 cache escapes the artifact bundle")
+    return candidate
+
+
 def validate_output(path: str | Path) -> dict[str, Any]:
     root = Path(path)
     failures: list[str] = []
@@ -90,12 +101,15 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         failures.append("result does not certify equal round-trip")
 
     source = result.get("source", {})
+    source_reference = ""
+    source_hash: str | None = None
     try:
-        source_path = Path(str(source["cache_path"]))
+        source_reference = str(source["cache_path"])
+        source_path = resolve_source_cache(root, source_reference)
         source_hash = sha256_file(source_path)
         if source_hash != source.get("cache_sha256"):
             failures.append("source D7 cache hash changed")
-        if memory.metadata.get("source_cache") != str(source_path):
+        if memory.metadata.get("source_cache") != source_reference:
             failures.append("memory source cache path is inconsistent")
         if memory.metadata.get("source_cache_sha256") != source_hash:
             failures.append("memory source cache hash is inconsistent")
@@ -110,6 +124,11 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         != OBJECT_MEMORY_SCHEMA_VERSION
     ):
         failures.append("run manifest does not describe schema-only D8")
+    elif (
+        config.get("source_cache") != source_reference
+        or config.get("source_cache_sha256") != source_hash
+    ):
+        failures.append("run manifest source cache is inconsistent")
 
     return {
         "status": "PASS" if not failures else "FAIL",

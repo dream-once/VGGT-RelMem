@@ -1,0 +1,142 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D6",
+  "baseline_id": "B2-topk-multiframe",
+  "backend": "D5 top-K + VGGT-preprocessed SAM 3 + Robust3DLifter",
+  "mask_resizing_after_sam": false,
+  "query": "blue recycling bin",
+  "selection_source": "runs/office-loop-mv-d5-blue-bin/topk_5.json",
+  "requested_k": 5,
+  "selected_frames": [
+    {
+      "rank": 1,
+      "frame_id": "frame_0061",
+      "geometry_index": 6,
+      "image_path": "/root/autodl-tmp/VGGT-RelMem/data/office_loop/frame_0061.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 6,
+      "retrieval_score": 0.1892575988481988,
+      "retrieval_cosine": 0.1892575988481988
+    },
+    {
+      "rank": 2,
+      "frame_id": "frame_0001",
+      "geometry_index": 0,
+      "image_path": "/root/autodl-tmp/VGGT-RelMem/data/office_loop/frame_0001.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 0,
+      "retrieval_score": 0.18703343137811185,
+      "retrieval_cosine": 0.18703343137811185
+    },
+    {
+      "rank": 3,
+      "frame_id": "frame_0031",
+      "geometry_index": 3,
+      "image_path": "/root/autodl-tmp/VGGT-RelMem/data/office_loop/frame_0031.jpg",
+      "submap_id": 0,
+      "submap_frame_index": 3,
+      "retrieval_score": 0.18565678462689006,
+      "retrieval_cosine": 0.18565678462689006
+    }
+  ],
+  "processed_frames": [
+    {
+      "rank": 1,
+      "frame_id": "frame_0061",
+      "geometry_index": 6,
+      "retrieval_score": 0.1892575988481988,
+      "sam_instances": 2,
+      "lifted_instances": 2,
+      "rejected_instances": 0,
+      "preview": "previews/frame_0061.png",
+      "sam_input": "sam_inputs/frame_0061.png",
+      "preprocess": "preprocess/frame_0061.json",
+      "mask_resizing_after_sam": false
+    },
+    {
+      "rank": 2,
+      "frame_id": "frame_0001",
+      "geometry_index": 0,
+      "retrieval_score": 0.18703343137811185,
+      "sam_instances": 3,
+      "lifted_instances": 2,
+      "rejected_instances": 1,
+      "preview": "previews/frame_0001.png",
+      "sam_input": "sam_inputs/frame_0001.png",
+      "preprocess": "preprocess/frame_0001.json",
+      "mask_resizing_after_sam": false
+    },
+    {
+      "rank": 3,
+      "frame_id": "frame_0031",
+      "geometry_index": 3,
+      "retrieval_score": 0.18565678462689006,
+      "sam_instances": 2,
+      "lifted_instances": 1,
+      "rejected_instances": 1,
+      "preview": "previews/frame_0031.png",
+      "sam_input": "sam_inputs/frame_0031.png",
+      "preprocess": "preprocess/frame_0031.json",
+      "mask_resizing_after_sam": false
+    }
+  ],
+  "sam_instances": 7,
+  "lifted_instances": 5,
+  "rejected_instances": [
+    {
+      "obs_id": "d6_frame_0001_001",
+      "frame_id": "frame_0001",
+      "selected_rank": 2,
+      "sam_score": 0.6796875,
+      "box_xyxy": [
+        242.93064880371094,
+        52.595638275146484,
+        255.09486389160156,
+        74.17919158935547
+      ],
+      "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+    },
+    {
+      "obs_id": "d6_frame_0031_001",
+      "frame_id": "frame_0031",
+      "selected_rank": 3,
+      "sam_score": 0.7578125,
+      "box_xyxy": [
+        267.1695251464844,
+        69.22423553466797,
+        284.16766357421875,
+        96.2090835571289
+      ],
+      "reason": "too few valid points: 8 < 30 (ratio=0.019)"
+    }
+  ],
+  "frames_with_masks": [
+    "frame_0061",
+    "frame_0001",
+    "frame_0031"
+  ],
+  "frames_with_lifted_observations": [
+    "frame_0061",
+    "frame_0001",
+    "frame_0031"
+  ],
+  "lifter_config": {
+    "confidence_threshold": 0.5,
+    "min_points": 30,
+    "outlier_mad_scale": 3.5
+  },
+  "sam_threshold": 0.5,
+  "source_commits": {
+    "sam3": "8f0b7f4d4e7eda2ed606ebde6702c93359ad01da"
+  },
+  "artifacts": {
+    "selection": "selection.json",
+    "mask_manifest": "masks.json",
+    "observations": "observations.json",
+    "previews": "previews",
+    "sam_inputs": "sam_inputs",
+    "preprocess": "preprocess"
+  },
+  "created_at": "2026-08-24T15:09:46.335927+00:00"
+}

@@ -1,8 +1,8 @@
-# VGGT-RelGround
+# VGGT-RelMem
 
 面向语义导航的感知前端：在 VGGT-SLAM 2.0 与开放词汇分割输出之上，构建 top-K 多视角对象观察、稳健 3D 提升、跨帧对象记忆、关系约束定位及置信度拒答。
 
-当前提交是项目的“源码起点”。核心后端、标准文件接口、合成 Demo 和单元测试已经可运行。VGGT-SLAM 2.0 官方源码现已作为本地、非跟踪的第三方 checkout 放在 `third_party/VGGT-SLAM`，锁定 commit `35327ac28b7d193df9ccc39ba6346052bb6f1207`；个人代码不复制或修改上游实现，而是由 `adapters/vggt_slam.py` 从官方 `Solver` 导出 NPZ/JSON。文本图像编码器和 SAM 3 后续放在独立的开放词汇环境。
+项目已完成 D1–D8 主链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
 
 ## 目录
 
@@ -30,6 +30,9 @@ runs/                 manifest、日志和指标（大文件不进 Git）
 python -m unittest discover -v
 python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```
+
+真实 D4–D8 的轻量 JSON、预览、查询级 validator 报告以及完整 D7 视频已收录在 [evidence/week1](evidence/week1/README.md)。该证据包不包含权重、原始数据集或 D3 大型几何 NPZ。
+
 
 ## 换机检查与进度记忆
 
@@ -62,19 +65,19 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
   --max-frames 16 --max-loops 0
 ```
 
-适配器同时生成 frame/submap 来源 manifest 和 `world_from_anchor` 位姿 JSON。NPZ 点图保持 VGGT submap canonical 坐标，`world_from_camera` 保存上游优化后的 SL(4) 齐次变换；它可能是投影变换，下游会执行齐次除法。置信度按上游 percentile threshold 导出为二值有效性图，不把原始置信分数误称为概率。
+适配器同时生成 frame/submap 来源 manifest 和 `world_from_anchor` 位姿 JSON。NPZ 点图保持 VGGT submap canonical 坐标，`world_from_camera` 保存上游优化后的 SL(4) 齐次变换；它可能是投影变换，下游会执行齐次除法。几何 schema 0.2 同时保存未修改的 `raw_confidence_maps`、上游 percentile threshold 得到的布尔 `valid_masks`，并保留二值 `confidence_maps` 作为旧下游兼容别名。
 
 ### 当前状态与文档日程
 
-核心接入对应推荐文档的 **D3**：“关闭开放词汇路径，跑通 VGGT-SLAM 几何；保存关键帧、点图、置信度与变换”。目前已在 RTX 4090 上完成两次独立的 8 帧 CUDA 推理，两个产物均通过 validator 且 SHA-256 完全一致，因此 D3 已验收完成。
+核心接入对应推荐文档的 **D3**。此前两次 RTX 4090 八帧推理在 schema 0.1 下通过 validator 且 SHA-256 完全一致；本次已把源码契约升级到 0.2，但当前实例无 GPU，因此真实 0.2 NPZ 尚待有卡实例按下方命令重跑。旧产物的几何与二值有效点仍有效，只是不包含可分析的原始置信分数。
 
 当前文档日程状态：
 
 - D1：官方 VGGT-SLAM、SALAD、VGGT_SPARK 均已下载并固定 commit；SAM 3 checkpoint 已从 ModelScope 官方发布页下载、校验并成功加载。
 - D2：`vggt_geom` 与 Python 3.12 `open_vocab` 两个隔离环境、geometry/mask NPZ+JSON schema、适配器和 smoke test 均已完成。
-- D3：运行器、无界面模式、产物导出、run manifest、两次 GPU 实跑及严格复现均已完成。
+- D3：原 0.1 运行器、产物与两次 GPU 严格复现已完成；0.2 raw confidence/valid mask 源码和单测已完成，等待有卡实例重跑真实产物。
 - D4：PE top-1、SAM 3 mask、mask-to-point lifting、3D OBB、可视化、validator 和两次真实 GPU 复现均已完成。
-- D5：真实 PE top-K、时间/视角去冗余和 K=1/3/5 产物均已完成 GPU 实跑，validator 为 `PASS`。
+- D5：原始 temporal 与新间隔序列 hybrid（时间 + 相机距离 + 视角）K=1/3/5 均有真实 GPU 产物，六个 hybrid 查询的 validator 均为 `PASS`。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -113,6 +116,23 @@ python -m scripts.validate_geometry runs/office-loop/geometry.npz
 - `run_manifest.json`：命令、配置、运行时间、峰值显存和三个上游提交。
 
 再换一个输出目录重复一次，两个结果都通过 validator、帧数一致且没有 NaN/Inf，即达到文档 D3 的“单场景稳定复现 + run manifest”。
+
+几何 0.2 源码需要在下一台有卡实例补一次真实产物验收，使用新目录避免覆盖历史 0.1 证据：
+
+```bash
+TORCH_HOME=/root/autodl-tmp/cache/torch OMP_NUM_THREADS=8 \
+conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
+  python -m scripts.run_vggt_geometry \
+  --image-folder data/office_loop \
+  --output runs/office-loop-v02/geometry.npz \
+  --max-frames 8 --submap-size 8 --max-loops 0 \
+  --disable-flow-filter
+
+python -m scripts.validate_geometry \
+  runs/office-loop-v02/geometry.npz
+```
+
+验收报告必须同时为 `status=PASS`、`schema_version=0.2`、`raw_confidence_available=true`，并给出有限的 raw confidence 最小值和最大值。
 
 基于已导出的几何生成彩色 PLY 和三视角 PNG，不会重新运行模型：
 
@@ -184,7 +204,7 @@ python -m scripts.run_pe_topk \
 
 无卡检查结果为 `SOURCE_READY`：8 帧、K=1/3/5、PE commit 和全部 anchor pose 均有效。无卡容器的 cgroup 内存上限是 2 GiB，小于 checkpoint，因此不能在该模式下加载 PE。
 
-2026-08-23 已完成真实 GPU 验收：validator 为 `PASS`；top-1 为 `frame_0004`，分数 `0.20180504907322777`，与受控 D4 的 PE Top-1 完全一致；K=1/3/5 分别保留 1/3/4 个非冗余帧，且前缀一致。运行耗时 `9.640 s`，峰值显存 `2797.170 MB`。
+2026-08-23 的连续八帧 temporal GPU 验收为 `PASS`：top-1 是 `frame_0004`，K=1/3/5 保留 1/3/4 帧。2026-08-24 又在间隔十帧的八视角几何上真实运行六个查询，配置明确为 `hybrid`、`min_frame_gap=2`、`min_camera_distance=0.15`、`min_view_angle_deg=3.0`；六个目录均重新通过 `validate_topk_retrieval`。因此 viewpoint/hybrid 现在不再只有单测证据。
 
 复现命令：
 
@@ -261,24 +281,34 @@ python -m scripts.validate_multiview_geometry \
 
 相同门槛（最大平移至少 `0.5` 个未标定重建单位、最大旋转至少 `3°`）下，历史前 8 帧明确 `FAIL`；新间隔帧达到 `1.11249` 和 `4.456°`，validator 为 `PASS`。这只是固定数据集的视角跨度门槛，不把未标定平移解释成米或厘米。
 
-新几何上的 D5/D6 查询矩阵：
+新几何上的 D5/D6 查询矩阵及查询级同帧对验收：
 
-| 查询 | 角色 | SAM 实例 | 有效 3D 观测 | 覆盖帧 |
-| --- | --- | ---: | ---: | ---: |
-| `trash can` | 正例 | 15 | 10 | 4 |
-| `poster` | 正例 | 8 | 7 | 2 |
-| `blue recycling bin` | 正例 | 7 | 5 | 3 |
-| `printer` | 正例 | 2 | 2 | 2 |
-| `dog` | 负例 | 0 | 0 | 0 |
-| `bed` | 负例 | 0 | 0 | 0 |
+| 查询 | 角色 | SAM 实例 | 有效 3D 观测 | 覆盖帧 | 查询级证据 |
+| --- | --- | ---: | ---: | ---: | --- |
+| `trash can` | 正例 | 15 | 10 | 4 | `TRUE_MULTIVIEW`，3 对帧通过 |
+| `poster` | 正例 | 8 | 7 | 2 | `MULTIFRAME_ONLY` |
+| `blue recycling bin` | 正例 | 7 | 5 | 3 | `MULTIFRAME_ONLY` |
+| `printer` | 正例 | 2 | 2 | 2 | `MULTIFRAME_ONLY` |
+| `dog` | 负例 | 0 | 0 | 0 | `NEGATIVE_CONTROL` |
+| `bed` | 负例 | 0 | 0 | 0 | `NEGATIVE_CONTROL` |
 
-`printer` 原计划作为负例，但预览确认 `frame_0051/0071` 的柜顶确有打印机，因此按真实正例记录；`dog` 和 `bed` 在官方阈值下均为零证据。负查询的 D6 状态是 `INSUFFICIENT_MULTIFRAME_3D_EVIDENCE`，这是原始证据不足，不提前冒充后续可靠拒答。
+查询级 validator 只查看 `frames_with_lifted_observations`，并要求同一帧对同时满足平移至少 `0.5` 个未标定重建单位和旋转至少 `3°`；不再用可能来自不同帧对的两个最大值拼成“通过”。例如：
+
+```bash
+python -m scripts.validate_query_multiview \
+  runs/office-loop-mv-d6-trash-can \
+  --anchor-poses runs/office-loop-multiview-s10/geometry.anchor_poses.json
+```
+
+`trash can` 的 `0001–0071`、`0071–0041`、`0071–0021` 三对通过。`poster`/`printer` 的唯一有效对只有 `0.3704` 平移，`blue recycling bin` 的有效对旋转均低于 `3°`，所以三者只能称多帧证据，不能称真正多视角证据。
+
+`printer` 原计划作为负例，但预览确认 `frame_0051/0071` 的柜顶确有打印机，因此按真实正例记录。`dog` 和 `bed` 则是故意选择的办公室场景负对照：不是期待检出它们，而是检验 Top-K 排名之后 SAM/3D 链路能否在目标不存在时保持零证据、不制造幻觉。它们的 D6 状态是 `INSUFFICIENT_MULTIFRAME_3D_EVIDENCE`，只证明原始证据不足，不提前冒充 D10 的可靠拒答。
 
 ## D7 冻结 ObjectObservation 与场景缓存（已完成）
 
 `ObjectObservation` 已冻结为 schema `1.0`。D7 cache loader 严格检查字段集合、schema 版本、观测 ID、查询文本和多帧覆盖；D6 的旧 `0.1` observation 可在读取时升级，但 D7 缓存中的未知或缺失字段会被拒绝。
 
-一条命令从通过验收的 D6 目录生成自包含场景缓存。这里使用 `vggt_geom` 只因为环境内已有 OpenCV 视频编码器，不会加载 VGGT、PE、SAM 3，也不使用 GPU：
+以下连续八帧命令保留为历史 D7 证据。这里使用 `vggt_geom` 只因为环境内已有 OpenCV 视频编码器，不会加载 VGGT、PE、SAM 3，也不使用 GPU：
 
 ```bash
 conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
@@ -320,22 +350,42 @@ c=load_observation_cache('runs/office-loop-d7-trash-can/observations.json'); \
 print(c.schema_version, len(c.frame_ids), len(c.observations))"
 ```
 
+
+### D7 当前标准：真实多视角缓存与视频
+
+间隔抽帧不能直接用 `geometry_index` 索引原始连续图片目录；生成器现在优先读取 D6 run manifest 中固定的 geometry manifest，逐项核对帧名，并把全部输入帧和 Top-K 入选帧写回视频 manifest。重制命令：
+
+```bash
+conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
+  python -m scripts.cache_scene_observations \
+  --d6-dir runs/office-loop-mv-d6-trash-can \
+  --geometry-manifest runs/office-loop-multiview-s10/geometry.manifest.json \
+  --output-dir runs/office-loop-mv-d7-trash-can \
+  --image-folder data/office_loop --video-duration 40 \
+  --scene-id office-loop-multiview-s10-trash-can
+
+conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
+  python -m scripts.validate_d7_cache runs/office-loop-mv-d7-trash-can
+```
+
+新视频使用 `frame_0001, 0011, …, 0071` 八个输入视角，Top-K/SAM/3D 阶段使用 `0001/0071/0041/0021`。独立 validator 为 `PASS`：10 条观测、19,062 个有限点、40 秒，动态比例 `0.975`；MP4 大小为 `6,038,230` bytes，SHA-256 为 `aa924ff9913fcca8475b16209a950004f74f20b6774d3903a9a9756eafae0dea`。
+
 ## D8 冻结 ObjectMemory 与 evidence（已完成）
 
-D8 只冻结 schema 和 round-trip，不执行 D9 对象关联。D7 的观测先进入 `pending_observations`，因此一次观测不会在这一阶段被直接当成永久对象：
+D8 是 D7 与 D9 之间的稳定数据边界：它冻结 `ObjectMemory 1.0` 的字段、evidence 语义和规范 JSON round-trip，把昂贵模型产生的 D7 观测放入 `pending_observations`。它故意不执行跨帧关联、不生成永久对象，使 D9 能在不加载 VGGT/PE/SAM 3 的情况下，对确定且可复现的输入实现和评测关联策略。
 
 ```bash
 python -m scripts.prepare_object_memory \
-  --cache runs/office-loop-d7-trash-can/observations.json \
-  --output-dir runs/office-loop-d8-trash-can
+  --cache runs/office-loop-mv-d7-trash-can/observations.json \
+  --output-dir runs/office-loop-mv-d8-trash-can
 
 python -m scripts.validate_d8_memory \
-  runs/office-loop-d8-trash-can
+  runs/office-loop-mv-d8-trash-can
 ```
 
-真实产物的 `ObjectMemory`、`MemoryObject`、`ObjectObservation` 版本均为 `1.0`。15 条观测覆盖 4 帧，保存/重载后的规范 JSON 完全一致；永久对象数和关联决策数都为 0。显式 evidence 同时记录 pending/associated observation ID、证据帧以及每个对象的 observation ID；缺字段、未知字段或篡改 evidence 都会被拒绝。
+当前标准产物来自新多视角 D7：10 条 pending 观测覆盖 `0001/0071/0041/0021` 四帧，保存/重载后的规范 JSON 完全一致；永久对象和关联决策均为 0。缺字段、未知字段、篡改 evidence 或绝对来源路径都会被拒绝。
 
-D8 复用已冻结的 D7 cache 来验收数据协议，因为它不做空间关联或融合；D9 的关联实验将使用上面已通过门槛的新多视角 D6 证据。
+D8 现在把 D7 来源写成相对路径 `../office-loop-mv-d7-trash-can/observations.json`；目录整体移动后 validator 单测仍通过。因此最终 D6 → D7 → D8 链路已连续，D9 可直接消费这个多视角 trash-can bundle。
 
 
 如果需要开发安装：
@@ -360,12 +410,16 @@ Demo 使用两个 chair 和一个 desk 的合成 ObjectMemory，查询协议为�
 
 ## 两环境交换协议
 
-`vggt_geom` 环境导出一个 NPZ，必要数组为：
+`vggt_geom` 环境的新 schema 0.2 NPZ 包含：
 
 - `frame_ids`: `(N,)` 字符串；
 - `point_maps`: `(N,H,W,3)`；
-- `confidence_maps`: `(N,H,W)`；
+- `raw_confidence_maps`: `(N,H,W)`，未修改的 VGGT confidence；
+- `valid_masks`: `(N,H,W)` 布尔数组，上游 percentile threshold 的结果；
+- `confidence_maps`: `(N,H,W)`，`valid_masks` 的 float32 兼容别名；
 - `world_from_camera`: `(N,4,4)`。
+
+旧 schema 0.1 文件仍可读取；它没有 raw confidence，loader 只能从二值 `confidence_maps` 恢复 `valid_masks`。因此 Robust3DLifter 中对这类文件使用的 `confidence_threshold=0.5` 本质是有效点开关，不是对原始 VGGT confidence 再做概率阈值。
 
 `open_vocab` 环境导出 mask manifest JSON。每条记录包含 `obs_id`、`frame_id`、`class_text`、`mask_ref`、`retrieval_score`、`sam_score`，mask 本体保存为 NPY 或包含 `mask` 数组的 NPZ。所有加载都设置 `allow_pickle=False`。
 
@@ -397,13 +451,13 @@ python -m scripts.evaluate \
 ## 当前边界与下一步
 
 - 已实现：确定性 top-K 去冗余、置信过滤/MAD 离群剔除/PCA OBB、空间与语义关联、证据融合、JSON round-trip、左右/前后关系、逻辑回归校准、选择性预测指标。
-- 已完成 D3：锁定 commit 的 VGGT-SLAM 2.0 已在 `office_loop` 前 8 帧独立运行两次，两个几何产物均通过 validator 且哈希一致。
+- D3 状态：0.1 的两次真实几何产物已通过且哈希一致；0.2 raw confidence/valid mask 源码与单测已完成，真实 0.2 产物等待有卡重跑。
 - 已完成 D4 修正：历史误标 B0 已明确归为 legacy B1；严格 `B0-official` 与 `B1-robust-single-view` 共用一次 PE/SAM 和同一 VGGT 网格 mask，真实对照与严格 validator 均通过。
-- 已完成 D5：真实 PE Top-K 与时间/视角冗余抑制已通过 K=1/3/5 GPU 实跑和独立 validator。
+- 已完成 D5：temporal 与间隔序列 hybrid 都有真实 GPU K=1/3/5 产物；六个 hybrid 查询重新通过独立 validator。
 - 已完成 D6 修正：`B2-topk-multiframe` 已移除 SAM 后 mask resize；4 帧真实受控重跑得到 21/15/6 个 SAM/有效/拒绝实例，validator 为 `PASS`。
-- 已完成 D7：`ObjectObservation 1.0`、自包含场景缓存、保存/重载、SHA-256 验收和 40 秒四阶段动态视频均完成。
-- 已完成真实多视角补充验收：间隔 10 帧的 8 个视角达到 `1.11249` 个未标定重建单位和 `4.456°`；4 个正查询产生跨帧 3D 证据，`dog/bed` 两个负查询保持零证据。
-- 已完成 D8：`ObjectMemory 1.0`、`MemoryObject 1.0`、pending observations、显式 evidence 与严格 round-trip validator 均完成；真实产物为 15 pending、0 永久对象、0 关联决策。
-- 下一步 D9：在通过视角门槛的新 D6 证据上实现并评测同类 + 3D 中心距离/重叠的可解释空间 gate。
+- 已完成 D7：stride 图像按 geometry manifest 精确解析；新多视角缓存含 10 条观测，40 秒动态视频通过独立验收。
+- 查询级结论：`trash can` 有 3 对观测帧通过同帧对门槛；`poster`、`blue recycling bin`、`printer` 仅为多帧证据；`dog/bed` 是零证据负对照。
+- 已完成 D8：新多视角 D7 已生成可移动的相对路径 ObjectMemory；真实产物为 10 pending、0 永久对象、0 关联决策。
+- 下一步 D9：以当前 `trash can` 多视角 D8 bundle 为输入，实现并评测同类 + 3D 中心距离/重叠的可解释空间 gate。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "failures": [],
+  "query": "dog",
+  "expect_negative": true,
+  "evidence_class": "NEGATIVE_CONTROL",
+  "frames_with_lifted_observations": [],
+  "thresholds": {
+    "min_translation": 0.5,
+    "translation_unit": "unscaled_reconstruction_unit",
+    "min_rotation_degrees": 3.0,
+    "same_pair_required": true
+  },
+  "pair_measurements": [],
+  "passing_pairs": []
+}

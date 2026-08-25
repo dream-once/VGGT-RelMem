@@ -12,6 +12,7 @@
     "PROJECT_MEMORY.md",
     "pyproject.toml",
     "adapters/vggt_slam.py",
+    "adapters/geometry.py",
     "adapters/open_vocab.py",
     "evaluation/baselines.py",
     "relground/__init__.py",
@@ -37,6 +38,7 @@
     "scripts/run_vggt_geometry.py",
     "scripts/validate_geometry.py",
     "scripts/validate_multiview_geometry.py",
+    "scripts/validate_query_multiview.py",
     "scripts/validate_single_view_baselines.py",
     "tests/test_object_memory_schema.py",
     "tests/test_observations.py",
@@ -51,6 +53,12 @@
     "tests/test_validate_multiview_geometry.py",
     "tests/test_validate_open_vocab.py",
     "tests/test_validate_single_view.py",
+    "tests/test_cache_scene_observations.py",
+    "tests/test_validate_query_multiview.py",
+    "evidence/week1/README.md",
+    "evidence/week1/runs/office-loop-mv-d7-trash-can/stage_video.mp4",
+    "evidence/week1/runs/office-loop-mv-d8-trash-can/object_memory.json",
+    "evidence/week1/validation/query-multiview/trash-can.json",
     ".agents/vggt-instance-baseline.json",
     ".agents/skills/vggt-instance-handoff/SKILL.md",
     ".agents/skills/vggt-instance-handoff/scripts/audit_instance.py"
@@ -204,30 +212,43 @@
       "purpose": "controlled D6 B2 result without post-SAM mask resizing"
     },
     {
-      "path": "runs/office-loop-d7-trash-can/scene_cache.json",
+      "path": "runs/office-loop-mv-d5-trash-can/retrieval.json",
       "kind": "file",
       "min_size": 5000,
-      "purpose": "D7 self-contained observation cache inventory"
+      "purpose": "D5 real interval-sequence hybrid retrieval"
     },
     {
-      "path": "runs/office-loop-d7-trash-can/observations.json",
+      "path": "runs/office-loop-mv-d6-trash-can/d6_result.json",
       "kind": "file",
-      "min_size": 20000,
-      "purpose": "D7 cached observations reloadable without models"
+      "min_size": 5000,
+      "purpose": "D6 true-multiview trash-can observations"
     },
     {
-      "path": "runs/office-loop-d7-trash-can/stage_video.mp4",
+      "path": "runs/office-loop-mv-d7-trash-can/scene_cache.json",
       "kind": "file",
-      "min_size": 5000000,
-      "sha256": "ada66f1382c8beebb6f2f291677b90d975544a3b6e342233d03fd4756c67fed3",
-      "purpose": "D7 validated dynamic four-stage evidence video"
+      "min_size": 5000,
+      "purpose": "D7 current stride-correct self-contained cache"
     },
     {
-      "path": "runs/office-loop-d8-trash-can/object_memory.json",
+      "path": "runs/office-loop-mv-d7-trash-can/observations.json",
       "kind": "file",
-      "min_size": 20000,
-      "sha256": "1157bc19a0d44c0f6217d6a00e2adbafec2c9a1ea38172b2e73db2e09d6eb1b6",
-      "purpose": "D8 strict ObjectMemory schema and round-trip artifact"
+      "min_size": 15000,
+      "sha256": "1a1f46481b2dd7bfb86f82c09dea1b3fe666823823f637e1e47d53369a5139a1",
+      "purpose": "D7 current observations consumed by D8"
+    },
+    {
+      "path": "runs/office-loop-mv-d7-trash-can/stage_video.mp4",
+      "kind": "file",
+      "min_size": 6000000,
+      "sha256": "aa924ff9913fcca8475b16209a950004f74f20b6774d3903a9a9756eafae0dea",
+      "purpose": "D7 validated true-multiview dynamic evidence video"
+    },
+    {
+      "path": "runs/office-loop-mv-d8-trash-can/object_memory.json",
+      "kind": "file",
+      "min_size": 15000,
+      "sha256": "cdf1eccd7dabcae658f927ae122f5dcec77c220b0c4338f220adc88702411879",
+      "purpose": "D8 portable true-multiview ObjectMemory bundle"
     }
   ],
   "disk": {

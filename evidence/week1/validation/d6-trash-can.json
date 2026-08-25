@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "query": "trash can",
+  "selected_frames": [
+    "frame_0001",
+    "frame_0071",
+    "frame_0041",
+    "frame_0021"
+  ],
+  "frames_with_masks": [
+    "frame_0001",
+    "frame_0071",
+    "frame_0041",
+    "frame_0021"
+  ],
+  "frames_with_lifted_observations": [
+    "frame_0001",
+    "frame_0071",
+    "frame_0041",
+    "frame_0021"
+  ],
+  "mask_instances": 15,
+  "lifted_instances": 10,
+  "rejected_instances": 5
+}

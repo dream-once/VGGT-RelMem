@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 from datetime import datetime, timezone
 import json
+import os
 from pathlib import Path
 import shlex
 import subprocess
@@ -55,6 +56,9 @@ def run(args: argparse.Namespace) -> int:
             f"output directory is not empty: {output_dir}"
         )
     output_dir.mkdir(parents=True, exist_ok=True)
+    source_reference = Path(
+        os.path.relpath(cache_path, output_dir)
+    ).as_posix()
 
     cache = load_observation_cache(cache_path)
     source_hash = sha256_file(cache_path)
@@ -63,7 +67,7 @@ def run(args: argparse.Namespace) -> int:
             "scene_id": cache.scene_id,
             "query": cache.query,
             "source_stage": "D7",
-            "source_cache": str(cache_path),
+            "source_cache": source_reference,
             "source_cache_sha256": source_hash,
         }
     )
@@ -94,7 +98,7 @@ def run(args: argparse.Namespace) -> int:
         },
         "source": {
             "stage": "D7",
-            "cache_path": str(cache_path),
+            "cache_path": source_reference,
             "cache_sha256": source_hash,
         },
         "pending_observation_count": len(
@@ -117,7 +121,7 @@ def run(args: argparse.Namespace) -> int:
         seed=0,
         config={
             "pipeline": "D8 frozen ObjectMemory envelope",
-            "source_cache": str(cache_path),
+            "source_cache": source_reference,
             "source_cache_sha256": source_hash,
             "object_memory_schema": OBJECT_MEMORY_SCHEMA_VERSION,
             "memory_object_schema": MEMORY_OBJECT_SCHEMA_VERSION,

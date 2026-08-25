@@ -1,0 +1,33 @@
+{
+  "status": "FAIL",
+  "failures": [
+    "no single lifted-observation frame pair satisfies both viewpoint thresholds"
+  ],
+  "query": "poster",
+  "expect_negative": false,
+  "evidence_class": "MULTIFRAME_ONLY",
+  "frames_with_lifted_observations": [
+    "frame_0051",
+    "frame_0071"
+  ],
+  "thresholds": {
+    "min_translation": 0.5,
+    "translation_unit": "unscaled_reconstruction_unit",
+    "min_rotation_degrees": 3.0,
+    "same_pair_required": true
+  },
+  "pair_measurements": [
+    {
+      "frame_pair": [
+        "frame_0051",
+        "frame_0071"
+      ],
+      "translation": 0.3703679786459004,
+      "rotation_degrees": 3.4275993215998097,
+      "passes_translation": false,
+      "passes_rotation": true,
+      "passes_same_pair_gate": false
+    }
+  ],
+  "passing_pairs": []
+}

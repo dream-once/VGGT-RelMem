@@ -69,6 +69,117 @@ def copy_artifact(source_root: Path, output_root: Path, reference: str) -> str:
     return reference
 
 
+def resolve_project_path(project_root: Path, value: str | Path) -> Path:
+    path = Path(value).expanduser()
+    if not path.is_absolute():
+        path = project_root / path
+    return path.resolve()
+
+
+def resolve_video_input_paths(
+    project_root: Path,
+    d6_dir: Path,
+    image_folder: Path,
+    selected_rows: list[dict[str, Any]],
+    geometry_manifest: str | None,
+) -> tuple[list[Path], Path | None]:
+    """Resolve the exact geometry input sequence used by D6.
+
+    Strided geometry exports cannot index directly into the original image
+    folder: geometry index 7 may represent frame_0071 rather than frame_0008.
+    Prefer the geometry manifest recorded by the D6 run and retain the old
+    image-folder behavior only as a compatibility fallback.
+    """
+    manifest_reference = geometry_manifest
+    if manifest_reference is None:
+        d6_run_manifest_path = d6_dir / "run_manifest.json"
+        if d6_run_manifest_path.is_file():
+            d6_run_manifest = json.loads(
+                d6_run_manifest_path.read_text(encoding="utf-8")
+            )
+            config = d6_run_manifest.get("config", {})
+            if isinstance(config, dict):
+                configured = config.get("geometry_manifest")
+                if configured:
+                    manifest_reference = str(configured)
+
+    if manifest_reference:
+        manifest_path = resolve_project_path(
+            project_root,
+            manifest_reference,
+        )
+        if not manifest_path.is_file() or manifest_path.stat().st_size == 0:
+            raise FileNotFoundError(
+                f"missing or empty geometry manifest: {manifest_path}"
+            )
+        payload = json.loads(manifest_path.read_text(encoding="utf-8"))
+        raw_frames = payload.get("frames")
+        if not isinstance(raw_frames, list) or len(raw_frames) < 2:
+            raise ValueError(
+                "geometry manifest must contain at least two frame rows"
+            )
+
+        input_paths: list[Path] = []
+        geometry_frame_ids: list[str] = []
+        for index, raw in enumerate(raw_frames):
+            if not isinstance(raw, dict):
+                raise ValueError(
+                    f"geometry manifest frame {index} is not an object"
+                )
+            frame_id = str(raw.get("frame_id", "")).strip()
+            image_reference = str(raw.get("image_path", "")).strip()
+            if not frame_id or not image_reference:
+                raise ValueError(
+                    f"geometry manifest frame {index} lacks frame_id/image_path"
+                )
+            image_path = resolve_project_path(project_root, image_reference)
+            if not image_path.is_file() or image_path.stat().st_size == 0:
+                raise FileNotFoundError(
+                    f"missing or empty geometry source image: {image_path}"
+                )
+            if image_path.stem != frame_id:
+                raise ValueError(
+                    "geometry manifest image stem does not match frame_id: "
+                    f"{image_path.stem} != {frame_id}"
+                )
+            input_paths.append(image_path)
+            geometry_frame_ids.append(frame_id)
+
+        for row in selected_rows:
+            geometry_index = int(row["geometry_index"])
+            if not 0 <= geometry_index < len(input_paths):
+                raise ValueError(
+                    "selected geometry index is outside geometry manifest: "
+                    f"{geometry_index}"
+                )
+            selected_frame_id = str(row["frame_id"])
+            if geometry_frame_ids[geometry_index] != selected_frame_id:
+                raise ValueError(
+                    "geometry manifest order does not match D6 frame IDs: "
+                    f"index {geometry_index} is "
+                    f"{geometry_frame_ids[geometry_index]}, "
+                    f"not {selected_frame_id}"
+                )
+        return input_paths, manifest_path
+
+    available_images = image_files(image_folder)
+    max_geometry_index = max(
+        int(row["geometry_index"]) for row in selected_rows
+    )
+    if max_geometry_index >= len(available_images):
+        raise ValueError(
+            "image folder does not cover all selected geometry frames"
+        )
+    input_paths = available_images[: max_geometry_index + 1]
+    for row in selected_rows:
+        geometry_index = int(row["geometry_index"])
+        if input_paths[geometry_index].stem != str(row["frame_id"]):
+            raise ValueError(
+                "image folder order does not match D6 geometry frame IDs"
+            )
+    return input_paths, None
+
+
 def run(args: argparse.Namespace) -> int:
     started = time.perf_counter()
     project_root = Path(args.project_root).resolve()
@@ -98,22 +209,13 @@ def run(args: argparse.Namespace) -> int:
         raise ValueError(
             "stage video target duration must be between 30 and 60 seconds"
         )
-    available_images = image_files(image_folder)
-    max_geometry_index = max(
-        int(row["geometry_index"])
-        for row in d6_result["selected_frames"]
+    input_paths, geometry_manifest_path = resolve_video_input_paths(
+        project_root,
+        d6_dir,
+        image_folder,
+        d6_result["selected_frames"],
+        args.geometry_manifest,
     )
-    if max_geometry_index >= len(available_images):
-        raise ValueError(
-            "image folder does not cover all selected geometry frames"
-        )
-    input_paths = available_images[: max_geometry_index + 1]
-    for row in d6_result["selected_frames"]:
-        geometry_index = int(row["geometry_index"])
-        if input_paths[geometry_index].stem != str(row["frame_id"]):
-            raise ValueError(
-                "image folder order does not match D6 geometry frame IDs"
-            )
     if output_dir.exists() and (
         not output_dir.is_dir() or any(output_dir.iterdir())
     ):
@@ -178,6 +280,10 @@ def run(args: argparse.Namespace) -> int:
         duration_seconds=args.video_duration,
         codec=args.video_codec,
     )
+    video_info["input_frame_ids"] = [path.stem for path in input_paths]
+    video_info["selected_frame_ids"] = frame_ids
+    if geometry_manifest_path is not None:
+        video_info["geometry_manifest"] = str(geometry_manifest_path)
     duration_seconds = float(video_info["duration_seconds"])
     if not 30.0 <= duration_seconds <= 60.0:
         raise RuntimeError(
@@ -195,6 +301,16 @@ def run(args: argparse.Namespace) -> int:
         )
     )
     files = file_inventory(output_dir, inventory_references)
+    source_metadata = {
+        "stage": "D6",
+        "directory": str(d6_dir),
+        "d6_result_sha256": sha256_file(d6_result_path),
+    }
+    if geometry_manifest_path is not None:
+        source_metadata["geometry_manifest"] = str(geometry_manifest_path)
+        source_metadata["geometry_manifest_sha256"] = sha256_file(
+            geometry_manifest_path
+        )
     manifest = {
         "schema_version": SCENE_OBSERVATION_CACHE_VERSION,
         "status": "PASS",
@@ -202,11 +318,7 @@ def run(args: argparse.Namespace) -> int:
         "scene_id": args.scene_id,
         "query": query,
         "observation_schema_version": OBJECT_OBSERVATION_SCHEMA_VERSION,
-        "source": {
-            "stage": "D6",
-            "directory": str(d6_dir),
-            "d6_result_sha256": sha256_file(d6_result_path),
-        },
+        "source": source_metadata,
         "frame_ids": frame_ids,
         "observation_count": len(observations),
         "frame_observation_counts": {
@@ -237,6 +349,7 @@ def run(args: argparse.Namespace) -> int:
             "video_duration": args.video_duration,
             "video_codec": args.video_codec,
             "image_folder": str(image_folder),
+            "geometry_manifest": video_info.get("geometry_manifest"),
         },
         command=shlex.join(sys.argv),
         runtime_seconds=time.perf_counter() - started,
@@ -251,6 +364,8 @@ def run(args: argparse.Namespace) -> int:
         "observations": len(observations),
         "video_mode": video_info["mode"],
         "video_duration_seconds": duration_seconds,
+        "input_frames": len(input_paths),
+        "input_frame_ids": video_info["input_frame_ids"],
         "output_dir": str(output_dir),
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2))
@@ -271,6 +386,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--scene-id", default="office-loop-trash-can")
     parser.add_argument("--project-root", default=str(root))
     parser.add_argument("--image-folder", default="data/office_loop")
+    parser.add_argument(
+        "--geometry-manifest",
+        help="override geometry manifest; defaults to the D6 run manifest",
+    )
     parser.add_argument("--video-fps", type=float, default=10.0)
     parser.add_argument("--video-duration", type=float, default=40.0)
     parser.add_argument("--video-codec", default="mp4v")

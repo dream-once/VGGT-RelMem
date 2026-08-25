@@ -63,8 +63,22 @@ class VGGTAdapterTests(unittest.TestCase):
             self.assertEqual(geometry.frame_ids, ["frame_0001", "frame_0002", "frame_0003"])
             np.testing.assert_allclose(geometry.world_from_camera[2, :3, 3], [4, 0, 0])
             self.assertEqual(set(np.unique(geometry.confidence_maps)), {0.0, 1.0})
+            self.assertEqual(geometry.schema_version, "0.2")
+            np.testing.assert_array_equal(
+                geometry.raw_confidence_maps[0],
+                np.arange(6).reshape(2, 3),
+            )
+            np.testing.assert_array_equal(
+                geometry.valid_masks,
+                geometry.confidence_maps.astype(bool),
+            )
             manifest = json.loads(Path(summary.manifest_path).read_text())
             self.assertEqual(manifest["source_commit"], "test")
+            self.assertEqual(manifest["schema_version"], "0.2")
+            self.assertEqual(
+                set(manifest["confidence_encoding"]),
+                {"raw_confidence_maps", "valid_masks", "confidence_maps"},
+            )
             poses = json.loads(Path(summary.anchor_poses_path).read_text())
             self.assertEqual(set(poses), set(geometry.frame_ids))
             (path.parent / "run_manifest.json").write_text(json.dumps({
@@ -73,6 +87,7 @@ class VGGTAdapterTests(unittest.TestCase):
             report = validate_geometry(path)
             self.assertEqual(report["status"], "PASS")
 
+            self.assertTrue(report["raw_confidence_available"])
 
 if __name__ == "__main__":
     unittest.main()
