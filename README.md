@@ -69,13 +69,13 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 
 ### 当前状态与文档日程
 
-核心接入对应推荐文档的 **D3**。此前两次 RTX 4090 八帧推理在 schema 0.1 下通过 validator 且 SHA-256 完全一致；本次已把源码契约升级到 0.2，但当前实例无 GPU，因此真实 0.2 NPZ 尚待有卡实例按下方命令重跑。旧产物的几何与二值有效点仍有效，只是不包含可分析的原始置信分数。
+核心接入对应推荐文档的 **D3**。此前两次 RTX 4090 八帧推理在 schema 0.1 下通过 validator 且 SHA-256 完全一致；geometry schema 0.2 的真实 GPU 补验也已完成，新增的原始置信度与布尔有效点掩码均通过独立 validator。旧 0.1 产物仍可读取，但不包含可分析的原始置信分数。
 
 当前文档日程状态：
 
 - D1：官方 VGGT-SLAM、SALAD、VGGT_SPARK 均已下载并固定 commit；SAM 3 checkpoint 已从 ModelScope 官方发布页下载、校验并成功加载。
 - D2：`vggt_geom` 与 Python 3.12 `open_vocab` 两个隔离环境、geometry/mask NPZ+JSON schema、适配器和 smoke test 均已完成。
-- D3：原 0.1 运行器、产物与两次 GPU 严格复现已完成；0.2 raw confidence/valid mask 源码和单测已完成，等待有卡实例重跑真实产物。
+- D3：原 0.1 运行器、产物与两次 GPU 严格复现已完成；0.2 raw confidence/valid mask 源码、单测和真实 RTX 4090 产物验收也已完成。
 - D4：PE top-1、SAM 3 mask、mask-to-point lifting、3D OBB、可视化、validator 和两次真实 GPU 复现均已完成。
 - D5：原始 temporal 与新间隔序列 hybrid（时间 + 相机距离 + 视角）K=1/3/5 均有真实 GPU 产物，六个 hybrid 查询的 validator 均为 `PASS`。
 
@@ -117,7 +117,7 @@ python -m scripts.validate_geometry runs/office-loop/geometry.npz
 
 再换一个输出目录重复一次，两个结果都通过 validator、帧数一致且没有 NaN/Inf，即达到文档 D3 的“单场景稳定复现 + run manifest”。
 
-几何 0.2 源码需要在下一台有卡实例补一次真实产物验收，使用新目录避免覆盖历史 0.1 证据：
+几何 0.2 已在 RTX 4090 上完成真实产物补验，并使用新目录保留历史 0.1 证据。复现命令为：
 
 ```bash
 TORCH_HOME=/root/autodl-tmp/cache/torch OMP_NUM_THREADS=8 \
@@ -132,7 +132,7 @@ python -m scripts.validate_geometry \
   runs/office-loop-v02/geometry.npz
 ```
 
-验收报告必须同时为 `status=PASS`、`schema_version=0.2`、`raw_confidence_available=true`，并给出有限的 raw confidence 最小值和最大值。
+本次验收结果为 `status=PASS`、`schema_version=0.2`、`raw_confidence_available=true`；8 帧 raw confidence 全部有限，范围为 `1.0–14.375`，平均有效点比例为 `0.749846`。总运行时间 `16.270 s`，峰值显存 `4008.549 MB`。该补验只证明 D3 新数据契约可真实运行；当前 D6 仍使用兼容的二值 `confidence_maps`，因此不会为了版本对齐而机械重跑 D6–D8。
 
 基于已导出的几何生成彩色 PLY 和三视角 PNG，不会重新运行模型：
 
@@ -451,7 +451,7 @@ python -m scripts.evaluate \
 ## 当前边界与下一步
 
 - 已实现：确定性 top-K 去冗余、置信过滤/MAD 离群剔除/PCA OBB、空间与语义关联、证据融合、JSON round-trip、左右/前后关系、逻辑回归校准、选择性预测指标。
-- D3 状态：0.1 的两次真实几何产物已通过且哈希一致；0.2 raw confidence/valid mask 源码与单测已完成，真实 0.2 产物等待有卡重跑。
+- D3 状态：0.1 的两次真实几何产物已通过且哈希一致；0.2 raw confidence/valid mask 源码、单测及一次真实 RTX 4090 产物均已通过验收。
 - 已完成 D4 修正：历史误标 B0 已明确归为 legacy B1；严格 `B0-official` 与 `B1-robust-single-view` 共用一次 PE/SAM 和同一 VGGT 网格 mask，真实对照与严格 validator 均通过。
 - 已完成 D5：temporal 与间隔序列 hybrid 都有真实 GPU K=1/3/5 产物；六个 hybrid 查询重新通过独立 validator。
 - 已完成 D6 修正：`B2-topk-multiframe` 已移除 SAM 后 mask resize；4 帧真实受控重跑得到 21/15/6 个 SAM/有效/拒绝实例，validator 为 `PASS`。
