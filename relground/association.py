@@ -170,6 +170,80 @@ class ObjectMemory:
     ) -> list[AssociationDecision]:
         return [self.add_observation(item) for item in observations]
 
+    def promote_group(
+        self,
+        observations: Iterable[ObjectObservation],
+    ) -> list[AssociationDecision]:
+        """Atomically promote a pre-gated multi-observation component.
+
+        The caller owns candidate generation and gate validation. This
+        primitive deliberately requires at least two observations so a D8
+        pending observation cannot become permanent merely by being read.
+        """
+
+        items = list(observations)
+        if len(items) < 2:
+            raise ValueError(
+                "a permanent object requires at least two observations"
+            )
+        if len({item.obs_id for item in items}) != len(items):
+            raise ValueError("promotion group observation ids must be unique")
+        associated_ids = self._associated_observation_ids()
+        for item in items:
+            if item.obs_id in associated_ids:
+                raise ValueError(
+                    f"observation is already associated: {item.obs_id}"
+                )
+            staged = self.pending_observations.get(item.obs_id)
+            if staged is None:
+                raise ValueError(
+                    f"observation is not staged: {item.obs_id}"
+                )
+            if staged.to_dict() != item.to_dict():
+                raise ValueError(
+                    f"staged observation changed: {item.obs_id}"
+                )
+
+        object_id = f"obj_{self._next_id:04d}"
+        promoted = self._fuse(object_id, items)
+        decisions: list[AssociationDecision] = []
+        for index, item in enumerate(items):
+            if index == 0:
+                distance, semantic, overlap, score = None, 1.0, 0.0, 0.0
+            else:
+                previous = self._fuse(object_id, items[:index])
+                distance = float(
+                    np.linalg.norm(item.center - previous.fused_center)
+                )
+                semantic = self._semantic_similarity(item, previous)
+                overlap = aabb_iou(item.obb, previous.fused_obb)
+                distance_score = max(
+                    0.0,
+                    1.0 - distance / self.config.distance_threshold,
+                )
+                score = (
+                    self.config.distance_weight * distance_score
+                    + self.config.semantic_weight * max(0.0, semantic)
+                    + self.config.overlap_weight * overlap
+                )
+            decisions.append(AssociationDecision(
+                obs_id=item.obs_id,
+                object_id=object_id,
+                created=index == 0,
+                score=float(score),
+                margin=1.0 if index == 0 else float(score),
+                distance=distance,
+                semantic_similarity=float(semantic),
+                overlap_iou=float(overlap),
+            ))
+
+        self._next_id += 1
+        self.objects[object_id] = promoted
+        for item in items:
+            self.pending_observations.pop(item.obs_id)
+        self.decisions.extend(decisions)
+        return decisions
+
     def add_observation(self, observation: ObjectObservation) -> AssociationDecision:
         associated_ids = self._associated_observation_ids()
         if observation.obs_id in associated_ids:
