@@ -1,28 +1,26 @@
-"""Run D9 exact-class spatial association on a frozen D8 memory."""
+"""Run label-free D9 spatial association on a frozen D8 memory."""
 
 from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
 import json
-import os
 from pathlib import Path
 import shlex
 import subprocess
 import sys
 import time
-from typing import Any
+from typing import Any, Mapping
 
 from relground.association import ObjectMemory
 from relground.d9_association import (
-    D9_ACCEPTANCE_FIELDS,
-    D9_ARTIFACT_FIELDS,
     D9_BASELINE_ID,
     D9_COUNT_FIELDS,
-    D9_RESULT_FIELDS,
-    D9_SCHEMA_VERSION,
-    D9_SOURCE_FIELDS,
-    ManualInstanceLabels,
+    D9_PREDICTION_ACCEPTANCE_FIELDS,
+    D9_PREDICTION_ARTIFACT_FIELDS,
+    D9_PREDICTION_RESULT_FIELDS,
+    D9_PREDICTION_SCHEMA_VERSION,
+    D9_PREDICTION_SOURCE_FIELDS,
     SpatialGateConfig,
     associate_pending,
 )
@@ -44,81 +42,116 @@ def git_commit(path: Path) -> str:
     )
 
 
-def write_json(path: Path, payload: dict[str, Any]) -> None:
+def write_json(path: Path, payload: Mapping[str, Any]) -> None:
     path.write_text(
         json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
 
 
+def prepare_output_dir(path: Path) -> None:
+    if path.exists() and (not path.is_dir() or any(path.iterdir())):
+        raise FileExistsError(f"output directory is not empty: {path}")
+    path.mkdir(parents=True, exist_ok=True)
+
+
+def memory_observation_ids(
+    memory: ObjectMemory,
+) -> tuple[set[str], set[str]]:
+    pending_ids = set(memory.pending_observations)
+    associated_ids = {
+        observation.obs_id
+        for item in memory.objects.values()
+        for observation in item.observations
+    }
+    return pending_ids, associated_ids
+
+
+def prediction_metadata(
+    *,
+    source_reference: str,
+    source_hash: str,
+) -> dict[str, Any]:
+    return {
+        "association_source_stage": "D8",
+        "association_source_memory": source_reference,
+        "association_source_memory_sha256": source_hash,
+        "association_stage": "D9-prediction",
+    }
+
+
 def run(args: argparse.Namespace) -> int:
     started = time.perf_counter()
     project_root = Path(args.project_root).resolve()
     input_memory_path = Path(args.memory).resolve()
-    input_labels_path = Path(args.labels).resolve()
     output_dir = Path(args.output_dir).resolve()
-    if output_dir.exists() and (
-        not output_dir.is_dir() or any(output_dir.iterdir())
-    ):
-        raise FileExistsError(
-            f"output directory is not empty: {output_dir}"
-        )
-    output_dir.mkdir(parents=True, exist_ok=True)
-    if not 0.0 <= args.min_pairwise_f1 <= 1.0:
-        raise ValueError("min_pairwise_f1 must be in [0, 1]")
+    prepare_output_dir(output_dir)
 
-    source_hash = sha256_file(input_memory_path)
-    source_reference = Path(
-        os.path.relpath(input_memory_path, output_dir)
-    ).as_posix()
-    memory = ObjectMemory.load(input_memory_path)
-    labels = ManualInstanceLabels.load(input_labels_path)
-    labels_path = output_dir / "pair_labels.json"
-    write_json(labels_path, labels.to_dict())
-    labels_hash = sha256_file(labels_path)
+    source_memory = ObjectMemory.load(input_memory_path)
+    if source_memory.objects or source_memory.decisions:
+        raise ValueError("D9 prediction requires a pristine D8 memory")
+    scene_id = source_memory.metadata.get("scene_id")
+    query = source_memory.metadata.get("query")
+    if not isinstance(scene_id, str) or not scene_id.strip():
+        raise ValueError("D8 memory metadata.scene_id is required")
+    if not isinstance(query, str) or not query.strip():
+        raise ValueError("D8 memory metadata.query is required")
+
+    source_memory_path = output_dir / "source_memory.json"
+    source_memory.save(source_memory_path)
+    source_hash = sha256_file(source_memory_path)
+    source_reference = source_memory_path.name
 
     config = SpatialGateConfig(
         center_distance_threshold=args.center_distance_threshold,
         min_overlap_iou=args.min_overlap_iou,
         min_distinct_frames=args.min_distinct_frames,
     )
-    memory.metadata.update({
-        "association_source_stage": "D8",
-        "association_source_memory": source_reference,
-        "association_source_memory_sha256": source_hash,
-        "association_stage": "D9",
-        "association_labels": labels_path.name,
-        "association_labels_sha256": labels_hash,
-    })
-    outcome = associate_pending(memory, labels, config)
+    metadata_update = prediction_metadata(
+        source_reference=source_reference,
+        source_hash=source_hash,
+    )
 
+    memory = ObjectMemory.load(source_memory_path)
+    memory.metadata.update(metadata_update)
+    outcome = associate_pending(memory, config)
     memory_path = output_dir / "object_memory.json"
     memory.save(memory_path)
     restored = ObjectMemory.load(memory_path)
     round_trip_equal = memory.to_dict() == restored.to_dict()
-    metrics = outcome["metrics"]
-    pairwise_f1_pass = metrics["f1"] >= args.min_pairwise_f1
-    cross_frame_object_pass = bool(restored.objects) and all(
-        len(item.evidence_frames) >= config.min_distinct_frames
+
+    replay = ObjectMemory.load(source_memory_path)
+    replay.metadata.update(metadata_update)
+    replay_outcome = associate_pending(replay, config)
+    deterministic_recompute = (
+        outcome == replay_outcome
+        and memory.to_dict() == replay.to_dict()
+    )
+
+    source_ids = set(source_memory.pending_observations)
+    pending_ids, associated_ids = memory_observation_ids(restored)
+    observation_conservation = (
+        not (pending_ids & associated_ids)
+        and pending_ids | associated_ids == source_ids
+        and len(pending_ids) + len(associated_ids) == len(source_ids)
+    )
+    cross_frame_object_pass = all(
+        len(set(item.evidence_frames)) >= config.min_distinct_frames
         for item in restored.objects.values()
     )
-    status = (
-        "PASS"
-        if pairwise_f1_pass
-        and cross_frame_object_pass
-        and round_trip_equal
-        else "FAIL"
-    )
+    acceptance = {
+        "observation_conservation": observation_conservation,
+        "deterministic_recompute": deterministic_recompute,
+        "cross_frame_object_pass": cross_frame_object_pass,
+        "round_trip_equal": round_trip_equal,
+    }
+    if tuple(acceptance) != D9_PREDICTION_ACCEPTANCE_FIELDS:
+        raise AssertionError("D9 prediction acceptance fields changed")
+    status = "PASS" if all(acceptance.values()) else "FAIL"
 
     components = outcome["components"]
     counts = {
-        "input_observations": (
-            len(restored.pending_observations)
-            + sum(
-                len(item.observations)
-                for item in restored.objects.values()
-            )
-        ),
+        "input_observations": len(source_ids),
         "pair_count": len(outcome["pairs"]),
         "predicted_match_pairs": sum(
             bool(item["predicted_same"]) for item in outcome["pairs"]
@@ -139,61 +172,47 @@ def run(args: argparse.Namespace) -> int:
     source = {
         "d8_memory": source_reference,
         "d8_memory_sha256": source_hash,
-        "pair_labels": labels_path.name,
-        "pair_labels_sha256": labels_hash,
     }
-    if tuple(source) != D9_SOURCE_FIELDS:
-        raise AssertionError("D9 source fields changed")
-    acceptance = {
-        "min_pairwise_f1": args.min_pairwise_f1,
-        "pairwise_f1_pass": pairwise_f1_pass,
-        "cross_frame_object_pass": cross_frame_object_pass,
-        "round_trip_equal": round_trip_equal,
-    }
-    if tuple(acceptance) != D9_ACCEPTANCE_FIELDS:
-        raise AssertionError("D9 acceptance fields changed")
+    if tuple(source) != D9_PREDICTION_SOURCE_FIELDS:
+        raise AssertionError("D9 prediction source fields changed")
     artifacts = {
+        "source_memory": source_memory_path.name,
         "object_memory": memory_path.name,
-        "pair_labels": labels_path.name,
     }
-    if tuple(artifacts) != D9_ARTIFACT_FIELDS:
-        raise AssertionError("D9 artifact fields changed")
+    if tuple(artifacts) != D9_PREDICTION_ARTIFACT_FIELDS:
+        raise AssertionError("D9 prediction artifact fields changed")
 
     result = {
-        "schema_version": D9_SCHEMA_VERSION,
+        "schema_version": D9_PREDICTION_SCHEMA_VERSION,
         "status": status,
-        "stage": "D9",
+        "stage": "D9-prediction",
         "baseline_id": D9_BASELINE_ID,
-        "scene_id": labels.scene_id,
-        "query": labels.query,
+        "scene_id": scene_id,
+        "query": query,
         "source": source,
         "gate_config": config.to_dict(),
         "counts": counts,
-        "metrics": metrics,
         "components": components,
         "pairs": outcome["pairs"],
-        "failure_cases": outcome["failure_cases"],
         "acceptance": acceptance,
         "artifacts": artifacts,
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
-    if tuple(result) != D9_RESULT_FIELDS:
-        raise AssertionError("D9 result fields changed")
+    if tuple(result) != D9_PREDICTION_RESULT_FIELDS:
+        raise AssertionError("D9 prediction result fields changed")
     write_json(output_dir / "d9_result.json", result)
 
     RunManifest(
         git_sha=git_commit(project_root),
-        env_lock="D9 association is deterministic and model-free",
-        dataset_split=labels.scene_id,
+        env_lock="D9 prediction is deterministic and model-free",
+        dataset_split=scene_id,
         seed=0,
         config={
-            "pipeline": result["baseline_id"],
+            "stage": "D9-prediction",
+            "pipeline": D9_BASELINE_ID,
             "source_memory": source_reference,
             "source_memory_sha256": source_hash,
-            "pair_labels": labels_path.name,
-            "pair_labels_sha256": labels_hash,
             "gate_config": config.to_dict(),
-            "min_pairwise_f1": args.min_pairwise_f1,
         },
         command=shlex.join(sys.argv),
         runtime_seconds=time.perf_counter() - started,
@@ -213,12 +232,8 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
-        "--labels",
-        default="configs/d9_office_loop_trash_can_labels.json",
-    )
-    parser.add_argument(
         "--output-dir",
-        default="runs/office-loop-mv-d9-trash-can",
+        default="runs/office-loop-mv-d9-trash-can/prediction",
     )
     parser.add_argument(
         "--center-distance-threshold",
@@ -228,7 +243,6 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--min-overlap-iou", type=float, default=0.0)
     parser.add_argument("--min-distinct-frames", type=int, default=2)
-    parser.add_argument("--min-pairwise-f1", type=float, default=0.95)
     parser.add_argument("--project-root", default=str(root))
     return parser
 

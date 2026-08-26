@@ -2,7 +2,9 @@
 
 面向语义导航的感知前端：在 VGGT-SLAM 2.0 与开放词汇分割输出之上，构建 top-K 多视角对象观察、稳健 3D 提升、跨帧对象记忆、关系约束定位及置信度拒答。
 
-项目已完成 D1–D8 主链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+项目已完成 D1–D10 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+
+VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
 
 ## 目录
 
@@ -81,7 +83,8 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D6：间隔多视角 Top-K 的 SAM 3 与鲁棒逐帧 lifting 已完成，真实产物与查询级多视角 validator 均已验收。
 - D7：stride-aware 场景缓存、冻结 ObjectObservation 和动态证据视频已完成。
 - D8：可移动的 ObjectMemory 1.0 bundle 已完成，保留 10 条 pending 观测且不提前关联。
-- D9：精确同类 + 3D 中心距离/AABB 重叠 gate、人工 pairwise F1、跨帧组件提升及独立 validator 已完成。
+- D9：精确同类 + 3D 中心距离/AABB 重叠 gate、跨帧组件提升及独立人工 pairwise 评测已完成。
+- D10：D9 已拆成无标签的确定性预测和独立标签评测，并补齐可移动轻量证据、无匹配合法性与排列不变回归验收。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -400,21 +403,38 @@ D9 直接读取 D8 的 `pending_observations`，全程不加载 VGGT、PE 或 SA
 3. 对 pair 图取确定性连通分量；
 4. 只有覆盖至少两个不同帧的分量才能成为永久对象，单帧重复候选继续留在 pending。
 
-`0.15` 是当前未标定 VGGT 重建坐标单位，不是米。人工标签来自四张 D6 mask/box 预览，明确把同一实体的重复或局部 SAM mask 放在同一组：
+`0.15` 是当前未标定 VGGT 重建坐标单位，不是米。人工标签来自四张 D6 mask/box 预览，明确把同一实体的重复或局部 SAM mask 放在同一组；标签只进入独立评测，不进入预测命令、prediction bundle 或预测状态判定。
+
+先生成并验证无标签预测 bundle：
 
 ```bash
 python -m scripts.run_d9_association \
   --memory runs/office-loop-mv-d8-trash-can/object_memory.json \
-  --labels configs/d9_office_loop_trash_can_labels.json \
-  --output-dir runs/office-loop-mv-d9-trash-can
+  --output-dir runs/office-loop-mv-d9-trash-can/prediction \
+  --center-distance-threshold 0.15 \
+  --min-overlap-iou 0.0 \
+  --min-distinct-frames 2
 
 python -m scripts.validate_d9_association \
-  runs/office-loop-mv-d9-trash-can
+  runs/office-loop-mv-d9-trash-can/prediction
 ```
 
-真实 D8 的 10 条观测产生全部 45 个 pair：17 个同实例正对和 28 个不同实例负对均判断正确，precision/recall/F1 都为 `1.0`，`failure_cases` 为 0。预测得到 3 个空间组件；中间 trash can 的 6 条观测覆盖 `frame_0001/0041/0021`，被提升为 `obj_0001`，另外两个各含 2 条单帧重复观测的组件仍保持 pending。因此最终产物是 1 个永久对象、4 条 pending、6 条带证据的关联决策，规范 JSON round-trip 与独立重算 validator 均为 `PASS`。
+再对冻结预测进行独立标签评测和验证：
 
-D9 bundle 包含 `object_memory.json`、冻结的 `pair_labels.json`、逐对 gate/指标/失败案例所在的 `d9_result.json` 和 `run_manifest.json`。这里的 F1 是小型人工开发样例验收，不代表跨场景泛化；D10 才会正式把语义相似度、OBB 特征和观测置信度纳入 merge 与融合。
+```bash
+python -m scripts.evaluate_d9_association \
+  --prediction-dir runs/office-loop-mv-d9-trash-can/prediction \
+  --labels configs/d9_office_loop_trash_can_labels.json \
+  --output-dir runs/office-loop-mv-d9-trash-can/evaluation \
+  --min-pairwise-f1 0.95
+
+python -m scripts.validate_d9_evaluation \
+  runs/office-loop-mv-d9-trash-can/evaluation
+```
+
+无标签预测得到 3 个空间组件；中间 trash can 的 6 条观测覆盖 `frame_0001/0041/0021`，被提升为 `obj_0001`，另外两个各含 2 条单帧重复观测的组件仍保持 pending。因此预测产物是 1 个永久对象、4 条 pending、6 条带证据的关联决策，规范 JSON round-trip 与独立重算 validator 均为 `PASS`。如果输入中确实没有足够的跨帧匹配，生成 0 个永久对象也是合法结果，不会被当成管线失败。
+
+`prediction/` 仅包含 `source_memory.json`、`d9_result.json`、`object_memory.json` 和 `run_manifest.json`，不含人工标签、F1 或失败案例；`evaluation/` 才包含 `pair_labels.json`、`d9_evaluation.json` 和评测 `run_manifest.json`。真实 D8 的 10 条观测对应全部 45 个 pair，其中 17 个同实例正对和 28 个不同实例负对，独立评测的 precision/recall/F1 为 `1.0`。这只是小型人工开发样例的回归基线，不是 held-out 测试，也不代表跨场景泛化。
 
 如果需要开发安装：
 
@@ -486,7 +506,8 @@ python -m scripts.evaluate \
 - 已完成 D7：stride 图像按 geometry manifest 精确解析；新多视角缓存含 10 条观测，40 秒动态视频通过独立验收。
 - 查询级结论：`trash can` 有 3 对观测帧通过同帧对门槛；`poster`、`blue recycling bin`、`printer` 仅为多帧证据；`dog/bed` 是零证据负对照。
 - 已完成 D8：新多视角 D7 已生成可移动的相对路径 ObjectMemory；真实产物为 10 pending、0 永久对象、0 关联决策。
-- 已完成 D9：真实 D8 的 45 个人工标注 pair 达到 precision/recall/F1=1.0；3 个空间组件中仅跨 3 帧的 6-observation 组件成为永久对象，两个单帧组件继续 pending。
-- 下一步 D10：把语义相似度、OBB 特征和观测置信度正式加入 merge/融合，并记录每次 merge 的依据，统一 B1/B2 输出。
+- 已完成 D9：无标签预测得到 3 个空间组件，仅跨 3 帧的 6-observation 组件成为永久对象；独立开发集评测的 45 个人工标注 pair 达到 precision/recall/F1=1.0。
+- 已完成 D10：D9 预测 API 已去除标签依赖，预测与评测产物/状态完全分离，并补上确定性、顺序不变、bridge 已知失败和零匹配合法性回归验收。
+- 下一步 D11：设计并实现 candidate-outcome / visual-memory cache，冻结每个候选帧的检索、SAM、lifting、拒绝原因和成本，使后续 Q0/Q1/Q2 在同一候选宇宙上可公平重放。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

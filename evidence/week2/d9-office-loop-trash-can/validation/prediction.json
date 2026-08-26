@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "failures": [],
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query": "trash can",
+  "input_observations": 10,
+  "pair_count": 45,
+  "predicted_match_pairs": 17,
+  "candidate_components": 3,
+  "permanent_objects": 1,
+  "pending_observations": 4,
+  "association_decisions": 6,
+  "object_frame_support": {
+    "obj_0001": [
+      "frame_0001",
+      "frame_0021",
+      "frame_0041"
+    ]
+  },
+  "observation_conservation": true,
+  "deterministic_recompute": true,
+  "round_trip_equal": true
+}

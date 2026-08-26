@@ -4,11 +4,14 @@ import numpy as np
 
 from relground.association import ObjectMemory
 from relground.d9_association import (
+    D9_PREDICTION_SCHEMA_VERSION,
     ManualInstanceGroup,
     ManualInstanceLabels,
     SpatialGateConfig,
     associate_pending,
-    evaluate_pair,
+    evaluate_predictions,
+    predict_all_pairs,
+    predict_pair,
 )
 from relground.schemas import ObjectObservation, OrientedBoundingBox
 
@@ -71,13 +74,16 @@ class D9AssociationTests(unittest.TestCase):
         )
         memory.stage_many(observations)
 
+        config = SpatialGateConfig(center_distance_threshold=0.15)
         outcome = associate_pending(
             memory,
-            labels,
-            SpatialGateConfig(center_distance_threshold=0.15),
+            config,
+        )
+        evaluation = evaluate_predictions(
+            observations, outcome["pairs"], labels
         )
 
-        self.assertEqual(outcome["metrics"]["f1"], 1.0)
+        self.assertEqual(evaluation["metrics"]["f1"], 1.0)
         self.assertEqual(len(outcome["pairs"]), 6)
         self.assertEqual(len(memory.objects), 1)
         self.assertEqual(list(memory.pending_observations), ["c", "d"])
@@ -103,11 +109,10 @@ class D9AssociationTests(unittest.TestCase):
         second = make_observation(
             "b", "frame_2", [0, 0, 0], class_text="waste bin"
         )
-        pair = evaluate_pair(
+        pair = predict_pair(
             first,
             second,
-            expected_same=False,
-            config=SpatialGateConfig(),
+            SpatialGateConfig(),
         )
         self.assertFalse(pair.same_class)
         self.assertFalse(pair.predicted_same)
@@ -120,11 +125,10 @@ class D9AssociationTests(unittest.TestCase):
         second = make_observation(
             "b", "frame_2", [0.3, 0, 0], extent=1.0
         )
-        pair = evaluate_pair(
+        pair = predict_pair(
             first,
             second,
-            expected_same=True,
-            config=SpatialGateConfig(
+            SpatialGateConfig(
                 center_distance_threshold=0.1,
                 min_overlap_iou=0.1,
             ),
@@ -132,7 +136,6 @@ class D9AssociationTests(unittest.TestCase):
         self.assertFalse(pair.center_distance_pass)
         self.assertTrue(pair.overlap_pass)
         self.assertTrue(pair.predicted_same)
-        self.assertEqual(pair.error_type, None)
 
     def test_false_negative_is_saved_as_failure_case(self) -> None:
         observations = [
@@ -149,31 +152,163 @@ class D9AssociationTests(unittest.TestCase):
         )
         memory.stage_many(observations)
 
-        outcome = associate_pending(
-            memory,
-            labels,
-            SpatialGateConfig(center_distance_threshold=0.1),
+        config = SpatialGateConfig(center_distance_threshold=0.1)
+        outcome = associate_pending(memory, config)
+        evaluation = evaluate_predictions(
+            observations, outcome["pairs"], labels
         )
 
-        self.assertEqual(outcome["metrics"]["false_negative"], 1)
-        self.assertEqual(outcome["metrics"]["f1"], 0.0)
+        self.assertEqual(evaluation["metrics"]["false_negative"], 1)
+        self.assertEqual(evaluation["metrics"]["f1"], 0.0)
         self.assertEqual(
-            outcome["failure_cases"][0]["error_type"],
+            evaluation["failure_cases"][0]["error_type"],
             "false_negative",
         )
         self.assertEqual(len(memory.objects), 0)
 
-    def test_labels_must_cover_every_observation_exactly(self) -> None:
+    def test_label_changes_do_not_change_predictions(self) -> None:
+        observations = [
+            make_observation("a", "frame_1", [0.0, 0.0, 0.0], extent=0.05),
+            make_observation("b", "frame_2", [0.05, 0.0, 0.0], extent=0.05),
+            make_observation("c", "frame_3", [1.0, 0.0, 0.0], extent=0.05),
+        ]
+        predictions = predict_all_pairs(
+            observations,
+            SpatialGateConfig(center_distance_threshold=0.15),
+        )
+        frozen_predictions = [pair.to_dict() for pair in predictions]
+        all_same = make_labels([
+            ("one_instance", ("a", "b", "c")),
+        ])
+        all_different = make_labels([
+            ("instance_a", ("a",)),
+            ("instance_b", ("b",)),
+            ("instance_c", ("c",)),
+        ])
+
+        first_evaluation = evaluate_predictions(
+            observations, predictions, all_same
+        )
+        second_evaluation = evaluate_predictions(
+            observations, predictions, all_different
+        )
+
+        self.assertEqual(D9_PREDICTION_SCHEMA_VERSION, "0.2")
+        self.assertEqual(
+            [pair.to_dict() for pair in predictions],
+            frozen_predictions,
+        )
+        self.assertNotEqual(
+            first_evaluation["metrics"],
+            second_evaluation["metrics"],
+        )
+        self.assertTrue(all(
+            "expected_same" not in pair and "error_type" not in pair
+            for pair in frozen_predictions
+        ))
+
+    def test_association_is_invariant_to_observation_order(self) -> None:
+        observations = [
+            make_observation("a", "frame_0001", [0.0, 0.0, 0.0]),
+            make_observation("b", "frame_0002", [0.05, 0.0, 0.0]),
+            make_observation("c", "frame_0001", [1.0, 0.0, 0.0]),
+            make_observation("d", "frame_0001", [1.04, 0.0, 0.0]),
+        ]
+        config = SpatialGateConfig(center_distance_threshold=0.15)
+
+        def run(order: list[ObjectObservation]) -> tuple[dict, dict]:
+            memory = ObjectMemory(
+                metadata={"scene_id": "scene", "query": "trash can"}
+            )
+            memory.stage_many(order)
+            return associate_pending(memory, config), memory.to_dict()
+
+        forward = run(observations)
+        reverse = run(list(reversed(observations)))
+
+        self.assertEqual(forward, reverse)
+
+    def test_bridge_case_exposes_a1_transitive_false_merge(self) -> None:
+        observations = [
+            make_observation("a", "frame_1", [0.0, 0.0, 0.0], extent=0.01),
+            make_observation("b", "frame_2", [0.1, 0.0, 0.0], extent=0.01),
+            make_observation("c", "frame_3", [0.2, 0.0, 0.0], extent=0.01),
+        ]
         memory = ObjectMemory(
             metadata={"scene_id": "scene", "query": "trash can"}
         )
-        memory.stage_many([
+        memory.stage_many(observations)
+        outcome = associate_pending(
+            memory,
+            SpatialGateConfig(center_distance_threshold=0.11),
+        )
+        by_pair = {
+            (pair["obs_id_a"], pair["obs_id_b"]): pair
+            for pair in outcome["pairs"]
+        }
+
+        self.assertTrue(by_pair[("a", "b")]["predicted_same"])
+        self.assertFalse(by_pair[("a", "c")]["predicted_same"])
+        self.assertTrue(by_pair[("b", "c")]["predicted_same"])
+        self.assertEqual(len(outcome["components"]), 1)
+        self.assertEqual(
+            outcome["components"][0]["observation_ids"],
+            ["a", "b", "c"],
+        )
+
+        labels = make_labels([
+            ("instance_ab", ("a", "b")),
+            ("instance_c", ("c",)),
+        ])
+        evaluation = evaluate_predictions(
+            observations, outcome["pairs"], labels
+        )
+        self.assertEqual(evaluation["metrics"]["false_positive"], 1)
+        self.assertEqual(
+            evaluation["failure_cases"][0]["error_type"],
+            "false_positive",
+        )
+
+    def test_zero_match_prediction_is_valid(self) -> None:
+        observations = [
+            make_observation("a", "frame_1", [0.0, 0.0, 0.0], extent=0.01),
+            make_observation("b", "frame_2", [1.0, 0.0, 0.0], extent=0.01),
+        ]
+        memory = ObjectMemory(
+            metadata={"scene_id": "scene", "query": "trash can"}
+        )
+        memory.stage_many(observations)
+
+        outcome = associate_pending(
+            memory,
+            SpatialGateConfig(center_distance_threshold=0.1),
+        )
+
+        self.assertFalse(outcome["pairs"][0]["predicted_same"])
+        self.assertEqual(len(outcome["components"]), 2)
+        self.assertEqual(len(memory.objects), 0)
+        self.assertEqual(list(memory.pending_observations), ["a", "b"])
+        labels = make_labels([
+            ("instance_a", ("a",)),
+            ("instance_b", ("b",)),
+        ])
+        evaluation = evaluate_predictions(
+            observations, outcome["pairs"], labels
+        )
+        self.assertEqual(evaluation["metrics"]["true_negative"], 1)
+        self.assertEqual(evaluation["metrics"]["accuracy"], 1.0)
+
+    def test_labels_must_cover_every_observation_exactly(self) -> None:
+        observations = [
             make_observation("a", "frame_1", [0, 0, 0]),
             make_observation("b", "frame_2", [0, 0, 0]),
-        ])
+        ]
+        predictions = predict_all_pairs(
+            observations, SpatialGateConfig()
+        )
         labels = make_labels([("instance_a", ("a",))])
         with self.assertRaisesRegex(ValueError, "exactly cover"):
-            associate_pending(memory, labels, SpatialGateConfig())
+            evaluate_predictions(observations, predictions, labels)
 
     def test_single_observation_cannot_be_promoted_directly(self) -> None:
         observation = make_observation("a", "frame_1", [0, 0, 0])

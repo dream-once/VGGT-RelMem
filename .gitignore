@@ -25,3 +25,17 @@ evidence/**/*.mp4
 evidence/**/*.npy
 evidence/**/*.npz
 evidence/**/*.ply
+evidence/**/*.pt
+evidence/**/*.pth
+evidence/**/*.ckpt
+evidence/**/*.safetensors
+evidence/**/*.tar
+evidence/**/*.tar.gz
+evidence/**/*.zip
+evidence/**/*.avi
+evidence/**/*.mov
+evidence/**/*.mkv
+evidence/**/*.glb
+evidence/**/*.obj
+evidence/**/*.pcd
+evidence/**/*.bin
