@@ -76,7 +76,19 @@
     "evidence/week2/d9-office-loop-trash-can/prediction/d9_result.json",
     "evidence/week2/d9-office-loop-trash-can/evaluation/d9_evaluation.json",
     "evidence/week2/d9-office-loop-trash-can/validation/prediction.json",
-    "evidence/week2/d9-office-loop-trash-can/validation/evaluation.json"
+    "evidence/week2/d9-office-loop-trash-can/validation/evaluation.json",
+    "relground/candidate_cache.py",
+    "scripts/build_candidate_cache.py",
+    "scripts/validate_candidate_cache.py",
+    "tests/test_candidate_cache.py",
+    "evidence/week2/d11-candidate-cache/README.md",
+    "evidence/week2/d11-candidate-cache/visual_memory_manifest.json",
+    "evidence/week2/d11-candidate-cache/candidate_cache.json",
+    "evidence/week2/d11-candidate-cache/validation.json",
+    "evidence/week2/d11-candidate-cache/run_manifest.json",
+    "evidence/week2/d11-candidate-cache/source_d5_retrieval.json",
+    "evidence/week2/d11-candidate-cache/source_d6_result.json",
+    "evidence/week2/d11-candidate-cache/source_d7_observations.json"
   ],
   "upstream_repositories": [
     {

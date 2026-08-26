@@ -1,0 +1,17 @@
+{
+  "status": "PASS_WITH_UNMATERIALIZED_OUTCOMES",
+  "failures": [],
+  "stage": "D11",
+  "cpu_completion": "COMPLETE",
+  "gpu_acceptance": "PENDING",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query_id": "office-loop-trash-can",
+  "embedding_status": "not_retained",
+  "candidate_count": 8,
+  "available_candidates": 4,
+  "rejected_candidates": 0,
+  "unmaterialized_candidates": 4,
+  "error_candidates": 0,
+  "total_observations": 10,
+  "total_rejections": 5
+}

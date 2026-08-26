@@ -21,8 +21,43 @@ class EvidencePolicyTests(unittest.TestCase):
         self.assertEqual(unexpected, [])
         self.assertLessEqual(
             sum(path.stat().st_size for path in files),
-            256 * 1024,
+            768 * 1024,
         )
+        bundles = sorted(
+            path for path in self.week2.iterdir() if path.is_dir()
+        )
+        oversized = {
+            path.name: sum(
+                item.stat().st_size
+                for item in path.rglob("*")
+                if item.is_file()
+            )
+            for path in bundles
+            if sum(
+                item.stat().st_size
+                for item in path.rglob("*")
+                if item.is_file()
+            ) > 128 * 1024
+        }
+        self.assertEqual(oversized, {})
+
+    def test_d11_candidate_cache_contains_no_policy_or_ground_truth(self) -> None:
+        cache = json.loads(
+            (
+                self.week2
+                / "d11-candidate-cache"
+                / "candidate_cache.json"
+            ).read_text(encoding="utf-8")
+        )
+        serialized = json.dumps(cache, sort_keys=True).lower()
+        for forbidden in (
+            "ground_truth",
+            "pair_labels",
+            "expected_same",
+            '"metrics"',
+            "policy_trace",
+        ):
+            self.assertNotIn(forbidden, serialized)
 
     def test_prediction_evidence_contains_no_ground_truth(self) -> None:
         root = self.week2 / "d9-office-loop-trash-can"

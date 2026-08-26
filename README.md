@@ -2,7 +2,7 @@
 
 面向语义导航的感知前端：在 VGGT-SLAM 2.0 与开放词汇分割输出之上，构建 top-K 多视角对象观察、稳健 3D 提升、跨帧对象记忆、关系约束定位及置信度拒答。
 
-项目已完成 D1–D10 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+项目已完成 D1–D11 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
 
 VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
 
@@ -85,6 +85,7 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D8：可移动的 ObjectMemory 1.0 bundle 已完成，保留 10 条 pending 观测且不提前关联。
 - D9：精确同类 + 3D 中心距离/AABB 重叠 gate、跨帧组件提升及独立人工 pairwise 评测已完成。
 - D10：D9 已拆成无标签的确定性预测和独立标签评测，并补齐可移动轻量证据、无匹配合法性与排列不变回归验收。
+- D11：Visual Memory 与 Candidate Outcome Cache 0.1 已冻结；真实 8 候选开发缓存诚实保留 4 个历史 outcome 和 4 个未物化 outcome，无卡验收为 `CPU_COMPLETE / GPU_ACCEPTANCE_PENDING`。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -508,6 +509,7 @@ python -m scripts.evaluate \
 - 已完成 D8：新多视角 D7 已生成可移动的相对路径 ObjectMemory；真实产物为 10 pending、0 永久对象、0 关联决策。
 - 已完成 D9：无标签预测得到 3 个空间组件，仅跨 3 帧的 6-observation 组件成为永久对象；独立开发集评测的 45 个人工标注 pair 达到 precision/recall/F1=1.0。
 - 已完成 D10：D9 预测 API 已去除标签依赖，预测与评测产物/状态完全分离，并补上确定性、顺序不变、bridge 已知失败和零匹配合法性回归验收。
-- 下一步 D11：设计并实现 candidate-outcome / visual-memory cache，冻结每个候选帧的检索、SAM、lifting、拒绝原因和成本，使后续 Q0/Q1/Q2 在同一候选宇宙上可公平重放。
+- 已完成 D11（无卡口径）：`VisualMemoryManifest 0.1` 和 `CandidateOutcomeCache 0.1` 冻结 8 个 D5 候选；4 个 D6/D7 outcome 为 `available`，其余 4 个明确为 `unmaterialized`。独立重放状态为 `PASS_WITH_UNMATERIALIZED_OUTCOMES`，真实 embedding 和新 PE/SAM 推理仍为 `GPU_ACCEPTANCE_PENDING`。
+- 下一步 D12：保持 A1 结果不变，新增 label-free、complete-link 的 A2 evidence-aware association，并将人工标签限制在独立 evaluator。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。
