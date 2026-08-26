@@ -1,0 +1,19 @@
+{
+  "git_sha": "94bcb81ecc82ab159f0cdb0f8aa86621a52be24b",
+  "env_lock": "D15 deterministic CPU cache replay; no model inference",
+  "dataset_split": "synthetic-d14-scene",
+  "seed": 0,
+  "config": {
+    "stage": "D15-policy-trace",
+    "policy_id": "Q2-gain-based-sequential-search",
+    "candidate_cache": "../d14-fixed-topk/synthetic_cache.json",
+    "candidate_cache_sha256": "9733281e8d3117e390c318b75d1fedd9681b1e4c0beff9cae0b533c41f4e604c",
+    "development_replay": true,
+    "gpu_acceptance": "GPU_ACCEPTANCE_PENDING"
+  },
+  "command": "/root/autodl-tmp/VGGT-RelMem/scripts/run_sequential_search.py --cache evidence/week2/d14-fixed-topk/synthetic_cache.json --output-dir evidence/week2/d15-sequential-search --prefix synthetic",
+  "runtime_seconds": 0.02510430384427309,
+  "peak_vram_mb": null,
+  "created_at": "2026-08-26T19:16:50.982781+00:00",
+  "schema_version": "0.1"
+}

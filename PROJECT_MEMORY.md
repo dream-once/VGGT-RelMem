@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-27 D14 publication session
+- Updated: 2026-08-27 D15 publication session
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `3ee7e98a3c3facdb35155d4a2a5caff725e5803f`
-- Current milestone: D14 completes Q1 Fixed Top-K metadata-only development replay on real partial and synthetic complete caches.
-- Next milestone: D15 implements gain-based sequential search with strict reveal-after-selection and missing-outcome blocking.
-- Publication state: this publication adds Q1 policy/evaluator contracts, real and synthetic replay, seven dedicated tests, and an approximately 39 KiB JSON/Markdown evidence bundle.
+- Publication target and pre-publication HEAD: `main` at `94bcb81ecc82ab159f0cdb0f8aa86621a52be24b`
+- Current milestone: D15 completes Q2 gain-based sequential search contracts, deterministic trace replay, and synthetic Q0/Q1/Q2 engineering comparison.
+- Next milestone: on a future GPU instance, materialize the first selected missing real outcome and rerun Q2; D16/Clio requires a separate user decision.
+- Publication state: this publication adds Q2 policy/trace/comparison contracts, real blocked readiness evidence, complete synthetic replay, nine dedicated tests, and an approximately 46 KiB JSON/Markdown evidence bundle.
 
 ## Document-day progress
 
@@ -29,7 +29,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D12 | CPU complete; GPU acceptance pending | A2 records semantic/geometric/OBB/quality evidence, uses complete-link, and matches A1 at F1=1.0 on the current development fixture. |
 | D13 | CPU complete; GPU acceptance pending | Q0 is frozen as upstream-aligned with 10/10 static source checks, D5 Top-1 agreement, and an explicit lightweight-D4 validator limitation. |
 | D14 | CPU complete; GPU acceptance pending | Q1 K=1/3/5 selects metadata first and reveals outcomes later; real 1/3/4 and synthetic 1/3/5 curves pass. |
-| D15+ | Pending | Implement Q2 gain-based sequential search, then continue only after a separate publication. |
+| D15 | CPU complete; GPU acceptance pending | Q2 passes complete synthetic replay; real partial cache stops honestly at selected unmaterialized `frame_0061` without skip-ahead. |
 
 ## D3 acceptance evidence
 
@@ -167,9 +167,21 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The complete synthetic cache executes full 1/3/5 paths. Missing selected outcomes return `BLOCKED_MISSING_OUTCOME` without skip-ahead.
 - The D14 validator reports `PASS`; seven dedicated tests cover prefix determinism, Q0 compatibility, metadata-only selection, redundancy exhaustion, missing outcomes, label isolation, and tampering.
 - The D14 evidence bundle is JSON/Markdown-only and about 39 KiB. New visual inference remains `GPU_ACCEPTANCE_PENDING`.
+
+## D15 acceptance evidence
+
+- `Q2-gain-based-sequential-search` freezes max budget `5`, low-gain threshold `1`, patience `2`, and retrieval/novelty weights `0.65/0.35`.
+- Retrieval uses candidate-universe min-max normalization; pose novelty averages translation clipped at `0.15 m` and view angle clipped at `3°`.
+- Step one is retrieval-only and selects Q0 `frame_0001`; later selection reads metadata only and reveals exactly one selected outcome afterward.
+- The real trace reveals 4/2/2 new observations from `frame_0001/0071/0041`, then selects unmaterialized `frame_0061` and immediately returns `BLOCKED_MISSING_OUTCOME`.
+- The real trace has `performance_claim=null`; it does not skip to `frame_0021` or report partial-cache performance improvement.
+- Complete synthetic replay selects five frames and stops at `max_budget_reached`. Zero-gain, exhaustion, missing-outcome, tie-break, and budget-one paths are independently tested.
+- Synthetic Q0/Q1/Q2 comparison contains selected frames and SAM/lifting counts only; Q1 and Q2 are equal on this fixture, so no improvement is claimed.
+- The D15 validator reports `PASS`; nine dedicated tests and 136 total CPU tests pass. Evidence is JSON/Markdown-only at about 46 KiB.
+
 ## Publication verification
 
-- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 127 tests passed.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 136 tests passed.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
 - The real D9 validator passed for 45 pairs, one permanent cross-frame object, four pending observations, and exact JSON round trip before generated runs were purged.
@@ -186,7 +198,9 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - D13 tests reject changes to preprocess size, SAM threshold, robust lifting, OBB method, and source hashes while preserving the explicit missing-binary limitation.
 - The tracked D14 validator reports `PASS` for both the real partial-cache development replay and complete synthetic replay; K=1 matches Q0.
 - D14 tests cover deterministic prefix selection, redundancy exhaustion, missing-outcome blocking, unselected-outcome non-interference, evaluator separation, and tampering.
-- Week 2 evidence remains JSON/Markdown-only at about 279 KiB total; the D14 daily bundle is about 39 KiB.
+- The tracked D15 validator reports `PASS`: real evidence is an explicit blocked readiness trace, while synthetic replay and comparison complete.
+- D15 tests cover Q0 budget-one reduction, frozen novelty math, deterministic ties, low-gain/exhaustion stops, missing outcome, future-outcome non-interference, replay, and tampering.
+- Week 2 evidence remains JSON/Markdown-only at about 323 KiB total; the D15 daily bundle is about 46 KiB.
 - The current instance is in no-GPU mode and has about 24.56 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
 - Generated `runs/` artifacts were intentionally deleted and are no longer instance-baseline requirements.
 
@@ -217,13 +231,12 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Implement Q2 gain-based sequential search with retrieval-only Top-1 and frozen retrieval/pose-novelty scoring thereafter.
-2. Reveal each outcome only after selection; stop on two low-gain steps, exhaustion, budget five, or the first selected missing outcome.
-3. Publish complete synthetic Q0/Q1/Q2 engineering comparison and only a readiness/blocked trace for the real partial cache.
+1. On a future GPU instance, materialize the selected `frame_0061` outcome with the frozen D6 inference configuration; do not infer it from labels.
+2. Update the candidate cache from real inference and rerun Q2 from the beginning, preserving the frozen policy and thresholds.
+3. Keep D16/Clio, relation calibration, and new project scope out until the user explicitly authorizes the next phase.
 
 ## Publication history
 
-- 2026-08-23: D5 deterministic PE Top-K retrieval and D6 multi-frame SAM 3/robust lifting, real RTX 4090 evidence, validators, 31-test regression, documentation, memory, and baseline were published in the commit containing this entry (parent `d46b3f7d3ba2b91bed86e943273e99be7b2e48ad`).
 - 2026-08-24: D7 frozen self-contained observation cache, dynamic four-stage evidence video, independent cache/video validator, 38-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `745d82c1be62a94025b168de4630040edd4d69fe`).
 - 2026-08-25: Corrected D4/D6 controlled baselines, true-multiview pose gate and query evidence, D8 frozen object-memory schema, 56-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `7b646deda5e8a01d128cb95f274f97316d01f53c`).
 - 2026-08-25: Closed the D7/D8 stride and portability gaps, added query-specific same-pair validation, upgraded D3 source to confidence-preserving schema 0.2, published 12 MiB of D4–D8 evidence, and recorded a 64-test no-GPU regression in the commit containing this entry (parent `d0399ffb872c78ec09eae6ab9168f92d47a1fbce`).
@@ -234,6 +247,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-27: Published D13 Q0 upstream-aligned protocol freeze, 10/10 static source checks, explicit lightweight-D4 limitation, 120 CPU tests, and an 8,725-byte JSON/Markdown bundle (pre-publication HEAD `d7a0efd`).
 - 2026-08-27: Published D12 A2 evidence-aware complete-link association, frozen A1 hashes, 112 CPU tests, and a 111,875-byte JSON/Markdown development bundle (pre-publication HEAD `70f336f`).
 - 2026-08-27: Published D14 Q1 Fixed Top-K metadata-only replay, real 1/3/4 and synthetic 1/3/5 budget curves, 127 CPU tests, and an approximately 39 KiB JSON/Markdown development bundle (pre-publication HEAD `3ee7e98`).
+- 2026-08-27: Published D15 Q2 gain-based sequential search, real blocked readiness trace, complete synthetic Q0/Q1/Q2 engineering comparison, 136 CPU tests, and an approximately 46 KiB JSON/Markdown bundle (pre-publication HEAD `94bcb81`).
 ## Scope reminder
 
 The project is currently a semantic-navigation perception front end. It does not yet include path planning, control, or closed-loop navigation. Ground-truth depth, poses, and OBBs belong only in evaluation/oracle paths, not the primary inference input.

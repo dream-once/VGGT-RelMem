@@ -2,7 +2,7 @@
 
 面向语义导航的感知前端：在 VGGT-SLAM 2.0 与开放词汇分割输出之上，构建 top-K 多视角对象观察、稳健 3D 提升、跨帧对象记忆、关系约束定位及置信度拒答。
 
-项目已完成 D1–D14 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+项目已完成 D1–D15 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
 
 VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
 
@@ -89,6 +89,7 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D12：A1 代码与已发布哈希保持冻结；A2 新增语义/几何/OBB/质量 pair 证据和 complete-link 聚类，真实 D8 CPU prediction/evaluation 均通过独立重算。
 - D13：`Q0-vggt-slam-upstream-top1` 已按固定源码和 retained D4/D5 JSON 冻结为 `upstream-aligned`；不声称 FOUND-IT 官方复现，轻量 D4 的二进制验收缺口已显式记录。
 - D14：Q1 Fixed Top-K 已按冻结 hybrid 阈值对真实 partial cache 与 complete synthetic cache 完成 CPU 重放；预测与人工标签评测保持分离。
+- D15：Q2 gain-based sequential search 已完成源码、policy trace、complete synthetic 对照和真实 partial-cache 阻塞验收；不声称真实性能提升。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -520,6 +521,25 @@ python -m scripts.evaluate_fixed_topk_replay \
 python -m scripts.validate_d14 evidence/week2/d14-fixed-topk
 ```
 
+## D15 Q2 gain-based sequential search（无卡完成）
+
+Q2 首步只按 retrieval score 选择，因此 budget=1 严格退化为 Q0。后续候选使用 `0.65 × candidate-universe min-max retrieval + 0.35 × pose novelty`；pose novelty 是最小平移按 `0.15 m` 截断归一化与最小视角差按 `3°` 截断归一化的均值。同分按 D5 原始 rank 和 frame ID 确定性排序。
+
+```bash
+python -m scripts.run_sequential_search \
+  --cache evidence/week2/d11-candidate-cache/candidate_cache.json \
+  --output-dir runs/d15-sequential-search --prefix real \
+  --allow-blocked
+```
+
+真实 partial cache 先揭示 `frame_0001/0071/0041` 的 8 条新 3D observation；第 4 步按 metadata 选择 `frame_0061` 后才发现 outcome 未物化，于是立即返回 `BLOCKED_MISSING_OUTCOME`，不偷看或跳过候选。该 trace 的 `performance_claim=null`，只证明策略 readiness，不是性能结果。
+
+complete synthetic cache 跑满五步并以 `max_budget_reached` 停止。Q0/Q1/Q2 同预算文件只比较 selected frames、SAM calls、lifted/rejected counts；当前 synthetic fixture 上 Q1 与 Q2 同序，既不代表提升，也不使用实例标签。observed gain 仅指新 observation ID 数，不称精确 frustum coverage。
+
+```bash
+python -m scripts.validate_d15 evidence/week2/d15-sequential-search
+```
+
 如果需要开发安装：
 
 ```bash
@@ -596,6 +616,7 @@ python -m scripts.evaluate \
 - 已完成 D12（无卡口径）：A2 对每个 pair 保存语义、中心/AABB、排序 OBB extent ratio、保守质量、固定阈值与加权分数，并以 complete-link 阻断 A1 的桥接误合并。真实开发样例与 A1 同为 F1=1.0，因此当前结论是持平而非提升。
 - 已完成 D13（无卡口径）：10/10 项固定源码语义检查通过，Q0 与 D5 raw rank-1 一致；协议保持 `upstream-aligned`。历史 D4 report 为 PASS，但轻量仓库缺少 mask/preview，旧严格 validator 当前无法重跑，这一限制没有被掩盖。
 - 已完成 D14（无卡口径）：Q1 先按 metadata 选择、后揭示 outcome；真实 partial cache 的 K=1/3/5 选择数为 1/3/4，complete synthetic cache 为 1/3/5，两套开发重放均通过 validator。
-- 下一步 D15：实现 Q2 gain-based sequential search；真实 partial cache 仅发布 readiness/blocked trace，完整工程对照只来自 synthetic complete cache。
+- 已完成 D15（无卡口径）：Q2 policy trace 严格执行先选后揭示、两次低 gain/候选耗尽/预算/缺 outcome 停止规则；真实只发布 blocked readiness，synthetic 发布工程计数对照。
+- 本轮按计划终止于 D15；D16、Clio、关系校准和新 GPU 实验均未启动。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

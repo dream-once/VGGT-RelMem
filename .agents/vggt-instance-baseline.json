@@ -132,7 +132,19 @@
     "evidence/week2/d14-fixed-topk/synthetic_labels.json",
     "evidence/week2/d14-fixed-topk/synthetic_source_labels.json",
     "evidence/week2/d14-fixed-topk/synthetic_run_manifest.json",
-    "evidence/week2/d14-fixed-topk/validation.json"
+    "evidence/week2/d14-fixed-topk/validation.json",
+    "relground/q2_sequential.py",
+    "scripts/run_sequential_search.py",
+    "scripts/build_d15_comparison.py",
+    "scripts/validate_d15.py",
+    "tests/test_q2_sequential.py",
+    "evidence/week2/d15-sequential-search/README.md",
+    "evidence/week2/d15-sequential-search/real_trace.json",
+    "evidence/week2/d15-sequential-search/real_run_manifest.json",
+    "evidence/week2/d15-sequential-search/synthetic_trace.json",
+    "evidence/week2/d15-sequential-search/synthetic_run_manifest.json",
+    "evidence/week2/d15-sequential-search/synthetic_comparison.json",
+    "evidence/week2/d15-sequential-search/validation.json"
   ],
   "upstream_repositories": [
     {
