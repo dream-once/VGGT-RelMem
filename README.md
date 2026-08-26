@@ -2,7 +2,7 @@
 
 面向语义导航的感知前端：在 VGGT-SLAM 2.0 与开放词汇分割输出之上，构建 top-K 多视角对象观察、稳健 3D 提升、跨帧对象记忆、关系约束定位及置信度拒答。
 
-项目已完成 D1–D12 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+项目已完成 D1–D13 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
 
 VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
 
@@ -87,6 +87,7 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D10：D9 已拆成无标签的确定性预测和独立标签评测，并补齐可移动轻量证据、无匹配合法性与排列不变回归验收。
 - D11：Visual Memory 与 Candidate Outcome Cache 0.1 已冻结；真实 8 候选开发缓存诚实保留 4 个历史 outcome 和 4 个未物化 outcome，无卡验收为 `CPU_COMPLETE / GPU_ACCEPTANCE_PENDING`。
 - D12：A1 代码与已发布哈希保持冻结；A2 新增语义/几何/OBB/质量 pair 证据和 complete-link 聚类，真实 D8 CPU prediction/evaluation 均通过独立重算。
+- D13：`Q0-vggt-slam-upstream-top1` 已按固定源码和 retained D4/D5 JSON 冻结为 `upstream-aligned`；不声称 FOUND-IT 官方复现，轻量 D4 的二进制验收缺口已显式记录。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -470,6 +471,32 @@ python -m scripts.validate_a2_evaluation \
 
 真实 D8 CPU 重放保存了 45 个完整 pair 特征和 7 次 complete-link merge，最终仍为 3 个 cluster、1 个永久对象和 4 条 pending。独立开发评测仍是 17/28 个正/负 pair、precision/recall/F1=`1.0`，与 A1 持平；桥接修复的增益只由合成 A–B–C 回归证明，不能用这个无桥接真实样例宣称性能提升。阈值在评测前冻结，评测分数不会反向改变 prediction 状态。状态为 `CPU_COMPLETE / GPU_ACCEPTANCE_PENDING`。
 
+
+## D13 Q0 upstream-aligned Top-1 协议（无卡完成）
+
+正式名称固定为 `Q0-vggt-slam-upstream-top1`，状态固定为 `upstream-aligned`。这里的 `B0-official` 只保留为本仓库已审计的 VGGT-SLAM 单视角 lifting 标签；Q0 不称 FOUND-IT 官方实现，也不称 VGGT-SLAM 交互流程的逐字节官方复现。
+
+冻结协议为：
+
+- PE cosine 使用上游零分下界/本地 `[0,1]` clip 后选择 Top-1，同分保持 geometry 原始顺序；
+- 图像按 VGGT crop 模式把宽缩放到 518，按 14 对齐高度，必要时中心裁高，并以白色对 batch 做对称 padding；
+- SAM 3 threshold 固定为 `0.5`，输入是 VGGT 实际保存的预处理帧；
+- mask 必须直接索引同网格 3D 点，只剔除 NaN/Inf；
+- OBB 使用普通 covariance PCA；
+- 禁止 confidence gate、MAD、minimum-point gate、robust PCA 和 SAM 后 mask resize。
+
+静态冻结与验收：
+
+```bash
+python -m scripts.freeze_q0_protocol \
+  --output-dir evidence/week2/d13-q0-protocol
+
+python -m scripts.validate_q0_protocol \
+  evidence/week2/d13-q0-protocol
+```
+
+validator 对九个固定源码文件做 SHA-256 和 10 项语义检查，并核对 retained D4/D5 JSON。当前 10/10 检查通过，D5 `trash can` 的 Q0 和 raw rank-1 都是 `frame_0001`。轻量发布曾按政策删除 D4 的 `masks.json` 和 `preview.png`，所以旧严格 D4 validator 当前只因这两个文件缺失而 FAIL；历史保存的 validator report 是 PASS。D13 将两种状态同时写入 limitation，未伪造文件或把缺口包装成通过。状态为 `CPU_COMPLETE / GPU_ACCEPTANCE_PENDING`。
+
 如果需要开发安装：
 
 ```bash
@@ -544,6 +571,7 @@ python -m scripts.evaluate \
 - 已完成 D10：D9 预测 API 已去除标签依赖，预测与评测产物/状态完全分离，并补上确定性、顺序不变、bridge 已知失败和零匹配合法性回归验收。
 - 已完成 D11（无卡口径）：`VisualMemoryManifest 0.1` 和 `CandidateOutcomeCache 0.1` 冻结 8 个 D5 候选；4 个 D6/D7 outcome 为 `available`，其余 4 个明确为 `unmaterialized`。独立重放状态为 `PASS_WITH_UNMATERIALIZED_OUTCOMES`，真实 embedding 和新 PE/SAM 推理仍为 `GPU_ACCEPTANCE_PENDING`。
 - 已完成 D12（无卡口径）：A2 对每个 pair 保存语义、中心/AABB、排序 OBB extent ratio、保守质量、固定阈值与加权分数，并以 complete-link 阻断 A1 的桥接误合并。真实开发样例与 A1 同为 F1=1.0，因此当前结论是持平而非提升。
-- 下一步 D13：冻结 `Q0-vggt-slam-upstream-top1` 的 upstream-aligned 静态协议和差异审计，不升级为 FOUND-IT 官方实现。
+- 已完成 D13（无卡口径）：10/10 项固定源码语义检查通过，Q0 与 D5 raw rank-1 一致；协议保持 `upstream-aligned`。历史 D4 report 为 PASS，但轻量仓库缺少 mask/preview，旧严格 validator 当前无法重跑，这一限制没有被掩盖。
+- 下一步 D14：在 D11 cache 上实现 metadata-only 的 Q1 Fixed Top-K K=1/3/5 开发重放，缺 outcome 时必须阻断。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

@@ -1,0 +1,21 @@
+{
+  "git_sha": "d7a0efd3c89bef1730851ae484b7bc6214d200eb",
+  "env_lock": "D13 is a deterministic static source/evidence audit",
+  "dataset_split": "office-loop-development",
+  "seed": 0,
+  "config": {
+    "stage": "D13",
+    "status": "CPU_COMPLETE",
+    "gpu_acceptance": "PENDING",
+    "protocol_id": "Q0-vggt-slam-upstream-top1",
+    "protocol_status": "upstream-aligned",
+    "source_file_count": 9,
+    "source_check_count": 10,
+    "limitation_count": 2
+  },
+  "command": "/root/autodl-tmp/VGGT-RelMem/scripts/freeze_q0_protocol.py",
+  "runtime_seconds": 0.09972865041345358,
+  "peak_vram_mb": null,
+  "created_at": "2026-08-26T18:48:25.086472+00:00",
+  "schema_version": "0.1"
+}

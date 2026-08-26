@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-27 D12 publication session
+- Updated: 2026-08-27 D13 publication session
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `70f336f4d8399b19cd6f7d4d3c0c4d5819d3fd16`
-- Current milestone: D12 adds label-free evidence-aware A2 association with complete-link clustering while preserving the frozen A1 baseline.
-- Next milestone: D13 freezes the upstream-aligned Q0 Top-1 protocol and a static source/evidence audit.
-- Publication state: this publication adds A2 prediction/evaluation contracts, runners, independent validators, 16 new CPU tests, and a 111,875-byte JSON/Markdown evidence bundle.
+- Publication target and pre-publication HEAD: `main` at `d7a0efd3c89bef1730851ae484b7bc6214d200eb`
+- Current milestone: D13 freezes `Q0-vggt-slam-upstream-top1` as an upstream-aligned static protocol with explicit claim and evidence limits.
+- Next milestone: D14 replays metadata-only Q1 Fixed Top-K budgets K=1/3/5 from the D11 cache.
+- Publication state: this publication adds the Q0 contract, source/evidence audit, tamper validator, eight CPU tests, and an 8,725-byte JSON/Markdown evidence bundle.
 
 ## Document-day progress
 
@@ -27,7 +27,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D10 | Complete | Prediction is label-free and deterministic; evaluation alone reads manual labels. Both real JSON bundles pass independent validators. |
 | D11 | CPU complete; GPU acceptance pending | Cache 0.1 conserves all eight ranked candidates: four retained outcomes are available and four are explicitly unmaterialized. |
 | D12 | CPU complete; GPU acceptance pending | A2 records semantic/geometric/OBB/quality evidence, uses complete-link, and matches A1 at F1=1.0 on the current development fixture. |
-| D13+ | Pending | Freeze Q0, then replay Q1/Q2 under the revised route. |
+| D13 | CPU complete; GPU acceptance pending | Q0 is frozen as upstream-aligned with 10/10 static source checks, D5 Top-1 agreement, and an explicit lightweight-D4 validator limitation. |
+| D14+ | Pending | Replay Q1 Fixed Top-K, then Q2 sequential search. |
 
 ## D3 acceptance evidence
 
@@ -141,9 +142,22 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Both independent validators report `PASS`; 15 dedicated tests cover bridge splitting, conflicts, quality, fallback, ordering, conservation, leakage, paths, and tampering.
 - The D12 evidence bundle is JSON/Markdown-only and 111,875 bytes. Visual inference remains `GPU_ACCEPTANCE_PENDING`.
 
+
+## D13 acceptance evidence
+
+- Protocol ID is `Q0-vggt-slam-upstream-top1`; status remains `upstream-aligned`. Both FOUND-IT-official and VGGT-SLAM-official-reproduction claims are explicitly false.
+- Q0 freezes non-negative PE cosine Top-1, VGGT 518 crop/14 alignment/white batch padding, SAM threshold `0.5`, same-grid direct mask indexing, finite-only points, and ordinary PCA OBB.
+- Confidence gating, radial MAD, minimum-point gating, robust PCA, and post-SAM mask resize are explicitly forbidden.
+- Nine pinned source files match SHA-256 and all 10 semantic source checks pass; the four upstream commits also match the instance baseline.
+- D5 `trash can` raw rank 1 and upstream Top-1 both select `frame_0001` with score `0.1963950286`.
+- Retained D4 JSON records `frame_0004`, `294×518`, threshold `0.5`, no mask resize, and the direct finite-only PCA method.
+- The historical D4 validator report remains `PASS`, but its strict rerun now reports only missing `masks.json` and `preview.png`; this lightweight-publication gap is preserved as a limitation.
+- The D13 validator reports `PASS`; eight tests cover claim boundaries, source semantics, D5 agreement, the D4 gap, and preprocess/SAM/lifting/OBB/hash tampering.
+- The D13 evidence bundle is JSON/Markdown-only and 8,725 bytes. Full binary/GPU replay remains `GPU_ACCEPTANCE_PENDING`.
+
 ## Publication verification
 
-- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 112 tests passed.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 120 tests passed.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
 - The real D9 validator passed for 45 pairs, one permanent cross-frame object, four pending observations, and exact JSON round trip before generated runs were purged.
@@ -156,6 +170,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - D11 tests cover strict schema round-trip, complete synthetic replay, universe conservation, duplicate frames, illegal states, path escape, source tampering, and GT/policy leakage.
 - Both tracked D12 validators report `PASS`; the real A2 development evaluation remains precision/recall/F1 `1.0` with no post-label threshold tuning.
 - D12 tests freeze A1 hashes and cover complete-link bridge splitting, embedding fallback/conflict, low quality, same-frame deferral, order invariance, conservation, label isolation, paths, and tampering.
+- The tracked D13 validator reports `PASS` with 10/10 source checks, D5 Top-1 agreement, upstream-aligned claim boundaries, and the retained-D4 gap accounted for.
+- D13 tests reject changes to preprocess size, SAM threshold, robust lifting, OBB method, and source hashes while preserving the explicit missing-binary limitation.
 - The current instance is in no-GPU mode and has about 24.56 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
 - Generated `runs/` artifacts were intentionally deleted and are no longer instance-baseline requirements.
 
@@ -186,13 +202,12 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Freeze the `Q0-vggt-slam-upstream-top1` protocol as `upstream-aligned`, not FOUND-IT official.
-2. Statistically audit pinned upstream `main.py --run_os`, the local single-view runner, and retained D4/D5 evidence for each protocol step.
-3. Make preprocess, SAM-threshold, lifting, PCA, or robust-parameter tampering fail without running the visual models.
+1. Implement metadata-only `FixedTopKPolicy` with frozen hybrid thresholds and budgets K=1/3/5.
+2. Reveal an outcome only after its frame is selected; return `BLOCKED_MISSING_OUTCOME` at the first selected unmaterialized candidate.
+3. Replay the real partial D11 cache and a complete synthetic cache, then evaluate labels separately as development evidence.
 
 ## Publication history
 
-- 2026-08-20: PR #1 merged to private `main` at `5946f3e30bf75c556802085ebeb6374004898a88`; D3 integration and first validated run were published, and the local repeat run subsequently confirmed strict reproducibility.
 - 2026-08-22: D4 PE/SAM 3 integration, BF16 inference fix, local checkpoint workflow, two matching real B0 runs, validator evidence, and disposable-instance continuity support were published to private `main` in the commit containing this entry (parent `5946f3e30bf75c556802085ebeb6374004898a88`).
 - 2026-08-23: D5 deterministic PE Top-K retrieval and D6 multi-frame SAM 3/robust lifting, real RTX 4090 evidence, validators, 31-test regression, documentation, memory, and baseline were published in the commit containing this entry (parent `d46b3f7d3ba2b91bed86e943273e99be7b2e48ad`).
 - 2026-08-24: D7 frozen self-contained observation cache, dynamic four-stage evidence video, independent cache/video validator, 38-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `745d82c1be62a94025b168de4630040edd4d69fe`).
@@ -202,6 +217,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 - 2026-08-27: Published D10 label-free prediction/independent evaluation, 86 CPU tests, revised post-D9 positioning, and an 86 KiB self-contained JSON/Markdown evidence bundle (pre-publication HEAD `3fc3873`).
 - 2026-08-27: Published D11 Visual Memory/Candidate Outcome Cache 0.1, deterministic partial-cache replay, 96 CPU tests, and a 67,029-byte JSON/Markdown evidence bundle (pre-publication HEAD `09fe5c8`).
+- 2026-08-27: Published D13 Q0 upstream-aligned protocol freeze, 10/10 static source checks, explicit lightweight-D4 limitation, 120 CPU tests, and an 8,725-byte JSON/Markdown bundle (pre-publication HEAD `d7a0efd`).
 - 2026-08-27: Published D12 A2 evidence-aware complete-link association, frozen A1 hashes, 112 CPU tests, and a 111,875-byte JSON/Markdown development bundle (pre-publication HEAD `70f336f`).
 ## Scope reminder
 

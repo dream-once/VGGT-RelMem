@@ -105,7 +105,15 @@
     "evidence/week2/d12-a2-office-loop-trash-can/evaluation/pair_labels.json",
     "evidence/week2/d12-a2-office-loop-trash-can/evaluation/run_manifest.json",
     "evidence/week2/d12-a2-office-loop-trash-can/validation/prediction.json",
-    "evidence/week2/d12-a2-office-loop-trash-can/validation/evaluation.json"
+    "evidence/week2/d12-a2-office-loop-trash-can/validation/evaluation.json",
+    "relground/q0_protocol.py",
+    "scripts/freeze_q0_protocol.py",
+    "scripts/validate_q0_protocol.py",
+    "tests/test_q0_protocol.py",
+    "evidence/week2/d13-q0-protocol/README.md",
+    "evidence/week2/d13-q0-protocol/q0_protocol.json",
+    "evidence/week2/d13-q0-protocol/run_manifest.json",
+    "evidence/week2/d13-q0-protocol/validation.json"
   ],
   "upstream_repositories": [
     {
