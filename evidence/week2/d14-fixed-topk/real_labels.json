@@ -1,0 +1,38 @@
+{
+  "schema_version": "0.1",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query": "trash can",
+  "annotation_method": "manual review of D6 mask previews with observation boxes",
+  "notes": [
+    "Labels identify physical trash-can instances, including duplicate or partial SAM masks of the same instance.",
+    "The labels are a small D9 development sample, not a held-out generalization claim.",
+    "Single-frame duplicate groups remain pending until another frame supports a permanent object."
+  ],
+  "instance_groups": [
+    {
+      "instance_id": "trash_can_near_frame_0001",
+      "observation_ids": [
+        "d6_frame_0001_000",
+        "d6_frame_0001_003"
+      ]
+    },
+    {
+      "instance_id": "trash_can_mid_corridor",
+      "observation_ids": [
+        "d6_frame_0001_001",
+        "d6_frame_0001_005",
+        "d6_frame_0041_000",
+        "d6_frame_0041_001",
+        "d6_frame_0021_000",
+        "d6_frame_0021_001"
+      ]
+    },
+    {
+      "instance_id": "trash_can_near_frame_0071",
+      "observation_ids": [
+        "d6_frame_0071_000",
+        "d6_frame_0071_002"
+      ]
+    }
+  ]
+}

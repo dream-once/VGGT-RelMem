@@ -1,0 +1,69 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D14-evaluation",
+  "policy_id": "Q1-fixed-topk-hybrid",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query_id": "office-loop-trash-can",
+  "query_text": "trash can",
+  "development_replay": true,
+  "source": {
+    "prediction": "real_prediction.json",
+    "prediction_sha256": "8ba47efeaee34df4e0544840add2edae0022d6757cd5286b971e11e9abc48791",
+    "labels": "real_labels.json",
+    "labels_sha256": "b9de0a1336146890d002437c152da4eda5b526a1daa1ff46afec178b08df5e6d"
+  },
+  "metric_definitions": {
+    "observed_instance_recall": "labelled instances with >=1 selected observation / all labelled instances",
+    "cross_frame_instance_recall": "eligible labelled instances observed in >=2 selected frames / instances visible in >=2 cached frames",
+    "duplicate_observation_rate": "label-matched observations beyond the first per observed instance / label-matched observations"
+  },
+  "budget_details": [
+    {
+      "requested_budget": 1,
+      "sample_count": 1,
+      "selected_frame_count": 1,
+      "selected_observation_count": 4,
+      "labelled_observation_count": 4,
+      "observed_instances": 2,
+      "total_instances": 3,
+      "observed_instance_recall": 0.6666666666666666,
+      "cross_frame_instances": 0,
+      "eligible_cross_frame_instances": 1,
+      "cross_frame_instance_recall": 0.0,
+      "duplicate_observations": 2,
+      "duplicate_observation_rate": 0.5
+    },
+    {
+      "requested_budget": 3,
+      "sample_count": 1,
+      "selected_frame_count": 3,
+      "selected_observation_count": 8,
+      "labelled_observation_count": 8,
+      "observed_instances": 3,
+      "total_instances": 3,
+      "observed_instance_recall": 1.0,
+      "cross_frame_instances": 1,
+      "eligible_cross_frame_instances": 1,
+      "cross_frame_instance_recall": 1.0,
+      "duplicate_observations": 5,
+      "duplicate_observation_rate": 0.625
+    },
+    {
+      "requested_budget": 5,
+      "sample_count": 1,
+      "selected_frame_count": 4,
+      "selected_observation_count": 10,
+      "labelled_observation_count": 10,
+      "observed_instances": 3,
+      "total_instances": 3,
+      "observed_instance_recall": 1.0,
+      "cross_frame_instances": 1,
+      "eligible_cross_frame_instances": 1,
+      "cross_frame_instance_recall": 1.0,
+      "duplicate_observations": 7,
+      "duplicate_observation_rate": 0.7
+    }
+  ],
+  "created_at": "2026-08-26T19:01:36.164990+00:00"
+}

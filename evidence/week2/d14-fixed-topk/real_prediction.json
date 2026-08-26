@@ -1,0 +1,166 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D14-prediction",
+  "policy_id": "Q1-fixed-topk-hybrid",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query_id": "office-loop-trash-can",
+  "query_text": "trash can",
+  "development_replay": true,
+  "source": {
+    "candidate_cache": "../d11-candidate-cache/candidate_cache.json",
+    "candidate_cache_sha256": "d4ae6cea223a2fd81857720b54072ecf48e3a5961a141f91b082bb6181eac76d",
+    "cache_materialization_status": "partial"
+  },
+  "policy": {
+    "budgets": [
+      1,
+      3,
+      5
+    ],
+    "redundancy": "hybrid",
+    "min_frame_gap": 2,
+    "min_camera_distance": 0.15,
+    "min_view_angle_deg": 3.0,
+    "selection_input": "candidate_metadata_only",
+    "outcome_access": "after_selection_only"
+  },
+  "curves": [
+    {
+      "requested_budget": 1,
+      "selected_count": 1,
+      "status": "PASS",
+      "exhaustion_reason": null,
+      "selected_frames": [
+        {
+          "selection_rank": 1,
+          "source_rank": 1,
+          "frame_id": "frame_0001",
+          "geometry_index": 0,
+          "retrieval_score": 0.19639502856854218,
+          "outcome_status": "available"
+        }
+      ],
+      "sam_calls": 1,
+      "sam_instances": 6,
+      "lifted_instances": 4,
+      "rejected_instances": 2,
+      "evidence_frames": [
+        "frame_0001"
+      ],
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "requested_budget": 3,
+      "selected_count": 3,
+      "status": "PASS",
+      "exhaustion_reason": null,
+      "selected_frames": [
+        {
+          "selection_rank": 1,
+          "source_rank": 1,
+          "frame_id": "frame_0001",
+          "geometry_index": 0,
+          "retrieval_score": 0.19639502856854218,
+          "outcome_status": "available"
+        },
+        {
+          "selection_rank": 2,
+          "source_rank": 2,
+          "frame_id": "frame_0071",
+          "geometry_index": 7,
+          "retrieval_score": 0.19541234191969525,
+          "outcome_status": "available"
+        },
+        {
+          "selection_rank": 3,
+          "source_rank": 3,
+          "frame_id": "frame_0041",
+          "geometry_index": 4,
+          "retrieval_score": 0.18803172994651282,
+          "outcome_status": "available"
+        }
+      ],
+      "sam_calls": 3,
+      "sam_instances": 12,
+      "lifted_instances": 8,
+      "rejected_instances": 4,
+      "evidence_frames": [
+        "frame_0001",
+        "frame_0071",
+        "frame_0041"
+      ],
+      "cost": {
+        "sam_calls": 3,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "requested_budget": 5,
+      "selected_count": 4,
+      "status": "PASS",
+      "exhaustion_reason": "nonredundant_candidates_exhausted",
+      "selected_frames": [
+        {
+          "selection_rank": 1,
+          "source_rank": 1,
+          "frame_id": "frame_0001",
+          "geometry_index": 0,
+          "retrieval_score": 0.19639502856854218,
+          "outcome_status": "available"
+        },
+        {
+          "selection_rank": 2,
+          "source_rank": 2,
+          "frame_id": "frame_0071",
+          "geometry_index": 7,
+          "retrieval_score": 0.19541234191969525,
+          "outcome_status": "available"
+        },
+        {
+          "selection_rank": 3,
+          "source_rank": 3,
+          "frame_id": "frame_0041",
+          "geometry_index": 4,
+          "retrieval_score": 0.18803172994651282,
+          "outcome_status": "available"
+        },
+        {
+          "selection_rank": 4,
+          "source_rank": 8,
+          "frame_id": "frame_0021",
+          "geometry_index": 2,
+          "retrieval_score": 0.16186135359168963,
+          "outcome_status": "available"
+        }
+      ],
+      "sam_calls": 4,
+      "sam_instances": 15,
+      "lifted_instances": 10,
+      "rejected_instances": 5,
+      "evidence_frames": [
+        "frame_0001",
+        "frame_0071",
+        "frame_0041",
+        "frame_0021"
+      ],
+      "cost": {
+        "sam_calls": 4,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    }
+  ],
+  "acceptance": {
+    "q0_top1_frame": "frame_0001",
+    "k1_matches_q0": true,
+    "selection_reads_outcome": false,
+    "gpu_acceptance": "GPU_ACCEPTANCE_PENDING"
+  },
+  "created_at": "2026-08-26T19:01:34.884052+00:00"
+}

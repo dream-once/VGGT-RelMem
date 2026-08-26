@@ -113,7 +113,26 @@
     "evidence/week2/d13-q0-protocol/README.md",
     "evidence/week2/d13-q0-protocol/q0_protocol.json",
     "evidence/week2/d13-q0-protocol/run_manifest.json",
-    "evidence/week2/d13-q0-protocol/validation.json"
+    "evidence/week2/d13-q0-protocol/validation.json",
+    "relground/q1_fixed_topk.py",
+    "relground/q1_synthetic.py",
+    "scripts/build_d14_synthetic_fixture.py",
+    "scripts/run_fixed_topk_replay.py",
+    "scripts/evaluate_fixed_topk_replay.py",
+    "scripts/validate_d14.py",
+    "tests/test_q1_fixed_topk.py",
+    "evidence/week2/d14-fixed-topk/README.md",
+    "evidence/week2/d14-fixed-topk/real_prediction.json",
+    "evidence/week2/d14-fixed-topk/real_evaluation.json",
+    "evidence/week2/d14-fixed-topk/real_labels.json",
+    "evidence/week2/d14-fixed-topk/real_run_manifest.json",
+    "evidence/week2/d14-fixed-topk/synthetic_cache.json",
+    "evidence/week2/d14-fixed-topk/synthetic_prediction.json",
+    "evidence/week2/d14-fixed-topk/synthetic_evaluation.json",
+    "evidence/week2/d14-fixed-topk/synthetic_labels.json",
+    "evidence/week2/d14-fixed-topk/synthetic_source_labels.json",
+    "evidence/week2/d14-fixed-topk/synthetic_run_manifest.json",
+    "evidence/week2/d14-fixed-topk/validation.json"
   ],
   "upstream_repositories": [
     {

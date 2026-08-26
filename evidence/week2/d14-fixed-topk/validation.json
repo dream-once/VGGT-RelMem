@@ -1,0 +1,132 @@
+{
+  "status": "PASS",
+  "stage": "D14",
+  "completion": "CPU_COMPLETE",
+  "gpu_acceptance": "GPU_ACCEPTANCE_PENDING",
+  "development_replay": true,
+  "results": {
+    "real": {
+      "materialization_status": "partial",
+      "selected_frames": [
+        "frame_0001",
+        "frame_0071",
+        "frame_0041",
+        "frame_0021"
+      ],
+      "requested_budget": 5,
+      "selected_count": 4,
+      "exhaustion_reason": "nonredundant_candidates_exhausted",
+      "k1_matches_q0": true,
+      "metrics": [
+        {
+          "requested_budget": 1,
+          "sample_count": 1,
+          "selected_frame_count": 1,
+          "selected_observation_count": 4,
+          "labelled_observation_count": 4,
+          "observed_instances": 2,
+          "total_instances": 3,
+          "observed_instance_recall": 0.6666666666666666,
+          "cross_frame_instances": 0,
+          "eligible_cross_frame_instances": 1,
+          "cross_frame_instance_recall": 0.0,
+          "duplicate_observations": 2,
+          "duplicate_observation_rate": 0.5
+        },
+        {
+          "requested_budget": 3,
+          "sample_count": 1,
+          "selected_frame_count": 3,
+          "selected_observation_count": 8,
+          "labelled_observation_count": 8,
+          "observed_instances": 3,
+          "total_instances": 3,
+          "observed_instance_recall": 1.0,
+          "cross_frame_instances": 1,
+          "eligible_cross_frame_instances": 1,
+          "cross_frame_instance_recall": 1.0,
+          "duplicate_observations": 5,
+          "duplicate_observation_rate": 0.625
+        },
+        {
+          "requested_budget": 5,
+          "sample_count": 1,
+          "selected_frame_count": 4,
+          "selected_observation_count": 10,
+          "labelled_observation_count": 10,
+          "observed_instances": 3,
+          "total_instances": 3,
+          "observed_instance_recall": 1.0,
+          "cross_frame_instances": 1,
+          "eligible_cross_frame_instances": 1,
+          "cross_frame_instance_recall": 1.0,
+          "duplicate_observations": 7,
+          "duplicate_observation_rate": 0.7
+        }
+      ]
+    },
+    "synthetic": {
+      "materialization_status": "complete",
+      "selected_frames": [
+        "frame_0001",
+        "frame_0003",
+        "frame_0005",
+        "frame_0007",
+        "frame_0009"
+      ],
+      "requested_budget": 5,
+      "selected_count": 5,
+      "exhaustion_reason": null,
+      "k1_matches_q0": true,
+      "metrics": [
+        {
+          "requested_budget": 1,
+          "sample_count": 1,
+          "selected_frame_count": 1,
+          "selected_observation_count": 1,
+          "labelled_observation_count": 1,
+          "observed_instances": 1,
+          "total_instances": 2,
+          "observed_instance_recall": 0.5,
+          "cross_frame_instances": 0,
+          "eligible_cross_frame_instances": 2,
+          "cross_frame_instance_recall": 0.0,
+          "duplicate_observations": 0,
+          "duplicate_observation_rate": 0.0
+        },
+        {
+          "requested_budget": 3,
+          "sample_count": 1,
+          "selected_frame_count": 3,
+          "selected_observation_count": 3,
+          "labelled_observation_count": 3,
+          "observed_instances": 1,
+          "total_instances": 2,
+          "observed_instance_recall": 0.5,
+          "cross_frame_instances": 1,
+          "eligible_cross_frame_instances": 2,
+          "cross_frame_instance_recall": 0.5,
+          "duplicate_observations": 2,
+          "duplicate_observation_rate": 0.6666666666666666
+        },
+        {
+          "requested_budget": 5,
+          "sample_count": 1,
+          "selected_frame_count": 5,
+          "selected_observation_count": 5,
+          "labelled_observation_count": 5,
+          "observed_instances": 2,
+          "total_instances": 2,
+          "observed_instance_recall": 1.0,
+          "cross_frame_instances": 2,
+          "eligible_cross_frame_instances": 2,
+          "cross_frame_instance_recall": 1.0,
+          "duplicate_observations": 3,
+          "duplicate_observation_rate": 0.6
+        }
+      ]
+    }
+  },
+  "evidence_bytes": 36034,
+  "failures": []
+}

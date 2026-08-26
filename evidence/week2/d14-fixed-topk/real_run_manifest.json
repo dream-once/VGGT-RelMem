@@ -1,0 +1,19 @@
+{
+  "git_sha": "3ee7e98a3c3facdb35155d4a2a5caff725e5803f",
+  "env_lock": "D14 deterministic CPU cache replay; no model inference",
+  "dataset_split": "office-loop-multiview-s10-trash-can",
+  "seed": 0,
+  "config": {
+    "stage": "D14-prediction",
+    "policy_id": "Q1-fixed-topk-hybrid",
+    "candidate_cache": "../d11-candidate-cache/candidate_cache.json",
+    "candidate_cache_sha256": "d4ae6cea223a2fd81857720b54072ecf48e3a5961a141f91b082bb6181eac76d",
+    "development_replay": true,
+    "gpu_acceptance": "GPU_ACCEPTANCE_PENDING"
+  },
+  "command": "/root/autodl-tmp/VGGT-RelMem/scripts/run_fixed_topk_replay.py --cache evidence/week2/d11-candidate-cache/candidate_cache.json --output-dir evidence/week2/d14-fixed-topk --prefix real",
+  "runtime_seconds": 0.014791902154684067,
+  "peak_vram_mb": null,
+  "created_at": "2026-08-26T19:01:34.892530+00:00",
+  "schema_version": "0.1"
+}
