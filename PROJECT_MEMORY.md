@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-26 publication session
+- Updated: 2026-08-27 D10 publication session
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `4abe143a175f0627804de8ee336851f850240543`
-- Current milestone: D3 geometry schema 0.2 has real RTX 4090 acceptance; D6 → D7 → D8 remains reproducible from JSON; D9 exact-class spatial association is complete and independently validated.
-- Next milestone: D10 adds semantic similarity, OBB features, observation confidence, and explicit merge provenance without changing the frozen D8 input contract.
-- Publication state: this publication adds D9 source/labels/validators and a 73-test regression, while replacing the previous 12 MiB evidence snapshot with about 296 KiB of JSON/text-only evidence. Generated runs, images, masks, points, previews, and videos are intentionally local and ignored.
+- Publication target and pre-publication HEAD: `main` at `3fc3873d0d90159dd0fd108c6e9a76a6d92197f2`
+- Current milestone: D10 separates label-free D9 prediction from independent labelled evaluation and publishes a self-contained JSON-only CPU evidence bundle.
+- Next milestone: D11 defines persistent Visual Memory and policy-independent Candidate Outcome Cache contracts without requiring new GPU inference.
+- Publication state: this publication adds D10 prediction/evaluation schemas, runners, validators, anti-leakage tests, the revised D10–D21 plan, and about 86 KiB of Week 2 JSON/Markdown evidence.
 
 ## Document-day progress
 
@@ -24,7 +24,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D7 | Complete | Stride inputs resolve from the geometry manifest; the current true-multiview cache has 10 observations over four frames and a validated 40-second dynamic video. |
 | D8 | Complete | The true-multiview D7 cache produces 10 pending observations, zero objects/decisions, exact round trip, and a relative source reference that survives bundle moves. |
 | D9 | Complete | Exact-class plus center-distance/AABB-overlap gating reached pairwise F1=1.0 on 45 manually labelled pairs; only the cross-frame component became permanent. |
-| D10+ | Pending | Add semantic similarity, OBB features, confidence-aware fusion, and per-merge provenance. |
+| D10 | Complete | Prediction is label-free and deterministic; evaluation alone reads manual labels. Both real JSON bundles pass independent validators. |
+| D11+ | Pending | Build Visual Memory/Candidate Outcome Cache, then A2 and Q0/Q1/Q2 under the revised route. |
 
 ## D3 acceptance evidence
 
@@ -108,16 +109,27 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The real model-free run took `0.0125 s`, recorded no GPU allocation, round-tripped exactly, and passed an independent validator that recomputes every pair and rejects tampering or absolute source paths.
 - The generated D9 run directory was intentionally deleted after validation. Source, manual labels, tests, README metrics, and the tracked D8 JSON input are sufficient to reproduce it.
 
+## D10 acceptance evidence
+
+- `run_d9_association` no longer accepts labels or F1 thresholds and saves only label-free pair predictions, components, ObjectMemory, provenance, and integrity acceptance.
+- `evaluate_d9_association` independently attaches frozen manual labels and is the only D9 path that writes pairwise metrics, expected relations, or failure cases.
+- The real prediction bundle preserves all 10 observations, produces 45 pairs, 17 predicted edges, three components, one permanent object, four pending observations, and six association decisions.
+- The separate development evaluation contains 17 positive and 28 negative pairs with precision/recall/F1 `1.0`; this remains a regression fixture, not held-out evidence.
+- Prediction and evaluation validators both report `PASS`; tests cover label non-interference, observation-order invariance, zero-match legality, A1 bridge behavior, tampering, and path escape.
+- Week 2 D10 evidence is self-contained, JSON/Markdown-only, and about 86 KiB.
+
 ## Publication verification
 
-- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 73 tests passed.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 86 tests passed.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
 - The real D9 validator passed for 45 pairs, one permanent cross-frame object, four pending observations, and exact JSON round trip before generated runs were purged.
 - D9 tests cover class mismatch, distance/overlap alternatives, insufficient frame support, explicit failure cases, label coverage, pair tampering, and source-path escape.
 - Project compileall, `git diff --check`, and `git diff --cached --check` passed.
 - Git evidence is JSON/text-only and about 296 KiB; 50 binary evidence files were removed from the current tree.
-- The current instance has an RTX 4090 and about 24.56 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
+- Both tracked D10 validators pass directly against `evidence/week2/d9-office-loop-trash-can`.
+- The D10 Week 2 bundle adds about 86 KiB; evidence policy rejects non-JSON/Markdown files and ground-truth fields in prediction.
+- The current instance is in no-GPU mode and has about 24.56 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
 - Generated `runs/` artifacts were intentionally deleted and are no longer instance-baseline requirements.
 
 ## Fixed upstream sources
@@ -147,9 +159,9 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Start D10 from the frozen D8 input and the D9 gate.
-2. Add semantic similarity, oriented-box features, observation-quality weighting, and explicit per-merge reasons without using them to rewrite D9 metrics.
-3. Regenerate only the small outputs needed for D10 validation; keep Git evidence JSON/text-only.
+1. Define Visual Memory manifest and Candidate Outcome Cache 0.1 schemas.
+2. Convert retained Week 1 D5/D6/D7 evidence into an honest partial eight-candidate cache.
+3. Validate on CPU and mark real embedding/outcome generation as GPU acceptance pending.
 
 ## Publication history
 
@@ -161,6 +173,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-25: Closed the D7/D8 stride and portability gaps, added query-specific same-pair validation, upgraded D3 source to confidence-preserving schema 0.2, published 12 MiB of D4–D8 evidence, and recorded a 64-test no-GPU regression in the commit containing this entry (parent `d0399ffb872c78ec09eae6ab9168f92d47a1fbce`).
 - 2026-08-26: Completed the real D3 schema-0.2 GPU addendum and D9 exact-class spatial association, raised the regression to 73 tests, and replaced binary evidence with a 296 KiB JSON/text-only snapshot. Generated local runs were intentionally purged.
 
+- 2026-08-27: Published D10 label-free prediction/independent evaluation, 86 CPU tests, revised post-D9 positioning, and an 86 KiB self-contained JSON/Markdown evidence bundle (pre-publication HEAD `3fc3873`).
 ## Scope reminder
 
 The project is currently a semantic-navigation perception front end. It does not yet include path planning, control, or closed-loop navigation. Ground-truth depth, poses, and OBBs belong only in evaluation/oracle paths, not the primary inference input.
