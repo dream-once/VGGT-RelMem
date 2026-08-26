@@ -1,0 +1,1875 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D12-A2-prediction",
+  "association_id": "A2-evidence-aware-complete-link",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query": "trash can",
+  "source": {
+    "d8_memory": "source_memory.json",
+    "d8_memory_sha256": "cdf1eccd7dabcae658f927ae122f5dcec77c220b0c4338f220adc88702411879"
+  },
+  "config": {
+    "semantic_rule": "cosine_when_both_embeddings_else_normalized_exact_class",
+    "semantic_threshold": 0.7,
+    "min_observation_quality": 0.25,
+    "center_distance_threshold": 0.15,
+    "overlap_measure": "aabb_iou_from_observation_obb",
+    "min_overlap_iou": 0.0,
+    "spatial_rule": "center_pass OR overlap_pass",
+    "obb_shape_measure": "mean_sorted_extent_ratio",
+    "quality_measure": "min_pair_geometric_mean_retrieval_sam_valid_points",
+    "weights": {
+      "semantic": 0.25,
+      "center": 0.25,
+      "overlap": 0.2,
+      "obb_shape": 0.15,
+      "quality": 0.15
+    },
+    "cluster_rule": "complete_link_all_cross_pairs_gate_pass",
+    "min_distinct_frames": 2
+  },
+  "counts": {
+    "input_observations": 10,
+    "pair_count": 45,
+    "gate_pass_pairs": 17,
+    "predicted_match_pairs": 17,
+    "merge_count": 7,
+    "cluster_count": 3,
+    "promoted_clusters": 1,
+    "deferred_clusters": 2,
+    "permanent_objects": 1,
+    "pending_observations": 4,
+    "association_decisions": 6
+  },
+  "pairs": [
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0001_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0001",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5778298736603242,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.7782161615638635,
+        0.8009237346331781,
+        0.9482473539600497
+      ],
+      "obb_shape_similarity": 0.8424624167190303,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.531759836276045,
+      "pair_quality": 0.531759836276045,
+      "quality_pass": true,
+      "pair_score": 0.4561333379492613,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0001_003",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0001",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.06105866600056334,
+      "center_score": 0.5929422266629111,
+      "center_pass": true,
+      "aabb_iou": 0.008953610113664653,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.2400643894259552,
+        0.2446294507806927,
+        0.39491312192078565
+      ],
+      "obb_shape_similarity": 0.29320232070914454,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.5299449421708742,
+      "pair_quality": 0.5299449421708742,
+      "quality_pass": true,
+      "pair_score": 0.5234983681204635,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0001_005",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0001",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5192216422215,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.916454651324659,
+        0.8534062515715469,
+        0.7961377647493414
+      ],
+      "obb_shape_similarity": 0.8553328892151825,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.535666551759764,
+      "pair_quality": 0.535666551759764,
+      "quality_pass": true,
+      "pair_score": 0.45864991614624195,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0021_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5932899510111656,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.7849157182023904,
+        0.9000164966196537,
+        0.8558447259762973
+      ],
+      "obb_shape_similarity": 0.8469256469327805,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.5141784698479458,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.45416561751710893,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0021_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5236936587891764,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8043319923557098,
+        0.8292257624923052,
+        0.8089847854800537
+      ],
+      "obb_shape_similarity": 0.8141808467760229,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.5348592646001978,
+      "pair_quality": 0.5348592646001978,
+      "quality_pass": true,
+      "pair_score": 0.4523560167064331,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0041_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5780135487742774,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8362424893628162,
+        0.9913868965132207,
+        0.7972438441406526
+      ],
+      "obb_shape_similarity": 0.8749577433388964,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.5511993217012073,
+      "pair_quality": 0.5511993217012073,
+      "quality_pass": true,
+      "pair_score": 0.4639235597560155,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0041_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5150690956360766,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.752709872513628,
+        0.6160382441548886,
+        0.5890552385160919
+      ],
+      "obb_shape_similarity": 0.6526011183948696,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.5622578325762362,
+      "pair_quality": 0.5622578325762362,
+      "quality_pass": true,
+      "pair_score": 0.43222884264566586,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 1.1601446958213775,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.9298186297665817,
+        0.916925131625062,
+        0.7815035173222167
+      ],
+      "obb_shape_similarity": 0.8760824262379533,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.5733054280713688,
+      "quality_pass": true,
+      "pair_score": 0.4674081781463983,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 1.2122611851967655,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.9410754738975591,
+        0.860001064658474,
+        0.8212381415115415
+      ],
+      "obb_shape_similarity": 0.8741048933558583,
+      "quality_a": 0.5733054280713688,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.46020101767004185,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0001_003",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0001",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.635603819001288,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.3084803442574799,
+        0.30543413836116695,
+        0.41646635793029974
+      ],
+      "obb_shape_similarity": 0.3434602801829822,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.5299449421708742,
+      "pair_quality": 0.5299449421708742,
+      "quality_pass": true,
+      "pair_score": 0.3810107833530785,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0001_005",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0001",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.059152669176182705,
+      "center_score": 0.6056488721587819,
+      "center_pass": true,
+      "aabb_iou": 0.2176297985991234,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.713199821001225,
+        0.9385023055060561,
+        0.8395887016447011
+      ],
+      "obb_shape_similarity": 0.8304302760506608,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.535666551759764,
+      "pair_quality": 0.531759836276045,
+      "quality_pass": true,
+      "pair_score": 0.6492666946085262,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0021_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.01773673561413015,
+      "center_score": 0.881755095905799,
+      "center_pass": true,
+      "aabb_iou": 0.633236969713342,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9914646165401425,
+        0.8898989492318694,
+        0.8115524968076877
+      ],
+      "obb_shape_similarity": 0.8976386875265665,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.5141784698479458,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.808858741525295,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0021_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.05487007550627548,
+      "center_score": 0.6341994966248301,
+      "center_pass": true,
+      "aabb_iou": 0.14597051424175528,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9675310306688675,
+        0.9658693336130042,
+        0.8531368762608083
+      ],
+      "obb_shape_similarity": 0.92884574684756,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.5348592646001978,
+      "pair_quality": 0.531759836276045,
+      "quality_pass": true,
+      "pair_score": 0.6568348144730993,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0041_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.006345380468035947,
+      "center_score": 0.957697463546427,
+      "center_pass": true,
+      "aabb_iou": 0.8167328087292102,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9306106439973334,
+        0.8078821068243737,
+        0.8407551477061556
+      ],
+      "obb_shape_similarity": 0.8597492995092875,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.5511993217012073,
+      "pair_quality": 0.531759836276045,
+      "quality_pass": true,
+      "pair_score": 0.8614972980002487,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0041_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.06346656549390131,
+      "center_score": 0.5768895633739912,
+      "center_pass": true,
+      "aabb_iou": 0.061487924063817305,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9672246731563896,
+        0.7691596808989974,
+        0.62120419957524
+      ],
+      "obb_shape_similarity": 0.7858628512102089,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.5622578325762362,
+      "pair_quality": 0.531759836276045,
+      "quality_pass": true,
+      "pair_score": 0.6041633787791993,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5823300477890905,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8369547959683536,
+        0.8734886928158516,
+        0.8241557585776739
+      ],
+      "obb_shape_similarity": 0.844866415787293,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.531759836276045,
+      "quality_pass": true,
+      "pair_score": 0.4564939378095007,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6344667123833968,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8269434101186409,
+        0.9313055152451969,
+        0.8660589856453644
+      ],
+      "obb_shape_similarity": 0.874769303669734,
+      "quality_a": 0.531759836276045,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.46030067921712325,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0001_005",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0001",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.577175549644789,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.22000812630683092,
+        0.28665064303221094,
+        0.49603616284314983
+      ],
+      "obb_shape_similarity": 0.3342316440607305,
+      "quality_a": 0.5299449421708742,
+      "quality_b": 0.535666551759764,
+      "pair_quality": 0.5299449421708742,
+      "quality_pass": true,
+      "pair_score": 0.3796264879347407,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0021_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6508121977844598,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.30584734622941345,
+        0.2718055187871439,
+        0.3379843126147389
+      ],
+      "obb_shape_similarity": 0.30521239254376537,
+      "quality_a": 0.5299449421708742,
+      "quality_b": 0.5141784698479458,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.3729086293587567,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0021_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5815236856748507,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.29846430542052654,
+        0.2950094676815625,
+        0.48815889867006973
+      ],
+      "obb_shape_similarity": 0.3605442239240529,
+      "quality_a": 0.5299449421708742,
+      "quality_b": 0.5348592646001978,
+      "pair_quality": 0.5299449421708742,
+      "quality_pass": true,
+      "pair_score": 0.3835733749142391,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0041_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6358206725560128,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.28707509182997243,
+        0.24675477519530684,
+        0.49534797267260383
+      ],
+      "obb_shape_similarity": 0.34305927989929436,
+      "quality_a": 0.5299449421708742,
+      "quality_b": 0.5511993217012073,
+      "pair_quality": 0.5299449421708742,
+      "quality_pass": true,
+      "pair_score": 0.3809506333105253,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0041_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5725565680799974,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.31893349375673136,
+        0.3971010778986414,
+        0.670417808210354
+      ],
+      "obb_shape_similarity": 0.46215079328857556,
+      "quality_a": 0.5299449421708742,
+      "quality_b": 0.5622578325762362,
+      "pair_quality": 0.5299449421708742,
+      "quality_pass": true,
+      "pair_score": 0.3988143603189175,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 1.2178572842570785,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.25818410358826654,
+        0.2667932662584317,
+        0.5053248170576838
+      ],
+      "obb_shape_similarity": 0.3434340623014607,
+      "quality_a": 0.5299449421708742,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.5299449421708742,
+      "quality_pass": true,
+      "pair_score": 0.3810068506708502,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 1.26984589216736,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.2550957878348527,
+        0.28445249759991936,
+        0.48087528082161735
+      ],
+      "obb_shape_similarity": 0.3401411887521298,
+      "quality_a": 0.5299449421708742,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.3801064619794826,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0021_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.07577377474630237,
+      "center_score": 0.49484150169131746,
+      "center_pass": true,
+      "aabb_iou": 0.1606424228901894,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.7193396608444159,
+        0.9482117880914752,
+        0.681370307111282
+      ],
+      "obb_shape_similarity": 0.7829739186823911,
+      "quality_a": 0.535666551759764,
+      "quality_b": 0.5141784698479458,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.6004117182804177,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0021_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.005965599778938267,
+      "center_score": 0.9602293348070782,
+      "center_pass": true,
+      "aabb_iou": 0.44180933779588705,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.7371337956036204,
+        0.9716659105382537,
+        0.9841195768309922
+      ],
+      "obb_shape_similarity": 0.8976397609909554,
+      "quality_a": 0.535666551759764,
+      "quality_b": 0.5348592646001978,
+      "pair_quality": 0.5348592646001978,
+      "quality_pass": true,
+      "pair_score": 0.7932940550996199,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0041_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.06021808024585939,
+      "center_score": 0.5985461316942707,
+      "center_pass": true,
+      "aabb_iou": 0.1995813123780636,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.7663783190118646,
+        0.8608205883828386,
+        0.998612620969807
+      ],
+      "obb_shape_similarity": 0.8752705094548366,
+      "quality_a": 0.535666551759764,
+      "quality_b": 0.5511993217012073,
+      "pair_quality": 0.535666551759764,
+      "quality_pass": true,
+      "pair_score": 0.6511933545813705,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0041_001",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.015831288212550285,
+      "center_score": 0.8944580785829981,
+      "center_pass": true,
+      "aabb_iou": 0.18083905100368905,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.6898244637631055,
+        0.7218581338260116,
+        0.7398910899567136
+      ],
+      "obb_shape_similarity": 0.7171912291819437,
+      "quality_a": 0.535666551759764,
+      "quality_b": 0.5622578325762362,
+      "pair_quality": 0.535666551759764,
+      "quality_pass": true,
+      "pair_score": 0.6977109969877434,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6410035573441454,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8521366081379048,
+        0.9307262088662126,
+        0.9816184483702614
+      ],
+      "obb_shape_similarity": 0.9214937551247929,
+      "quality_a": 0.535666551759764,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.535666551759764,
+      "quality_pass": true,
+      "pair_score": 0.46857404603268354,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0001",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6932604786526689,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8624529953009757,
+        0.9923316221828794,
+        0.9694359339959525
+      ],
+      "obb_shape_similarity": 0.9414068504932692,
+      "quality_a": 0.535666551759764,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.4702963112406535,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0021_001",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0021",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.07131911807816181,
+      "center_score": 0.5245392128122546,
+      "center_pass": true,
+      "aabb_iou": 0.09758651889757532,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9758603731570424,
+        0.9213450704590089,
+        0.6923653620481702
+      ],
+      "obb_shape_similarity": 0.8631902685547406,
+      "quality_a": 0.5141784698479458,
+      "quality_b": 0.5348592646001978,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.6072574177429816,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0041_000",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.017571878868600014,
+      "center_score": 0.8828541408759999,
+      "center_pass": true,
+      "aabb_iou": 0.6187071602919476,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9386221439196006,
+        0.9078357801430266,
+        0.6823169393248468
+      ],
+      "obb_shape_similarity": 0.8429249544624914,
+      "quality_a": 0.5141784698479458,
+      "quality_b": 0.5511993217012073,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.7980204809239551,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0041_001",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.0782950249854553,
+      "center_score": 0.4780331667636313,
+      "center_pass": true,
+      "aabb_iou": 0.03918714293533277,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9589690396791645,
+        0.6844743918235379,
+        0.5041398191927071
+      ],
+      "obb_shape_similarity": 0.7158610835651364,
+      "quality_a": 0.5141784698479458,
+      "quality_b": 0.5622578325762362,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.5618516532899367,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.567077265883812,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8441600254873715,
+        0.9815594158975213,
+        0.668845663632145
+      ],
+      "obb_shape_similarity": 0.831521701672346,
+      "quality_a": 0.5141784698479458,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.45185502572804376,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6190501022594167,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8340624529843316,
+        0.9555392238792596,
+        0.7028523321832288
+      ],
+      "obb_shape_similarity": 0.8308180030156067,
+      "quality_a": 0.5141784698479458,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.5141784698479458,
+      "quality_pass": true,
+      "pair_score": 0.4517494709295329,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0041_000",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.056310871087823344,
+      "center_score": 0.6245941927478443,
+      "center_pass": true,
+      "aabb_iou": 0.14616833276869048,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9618406175086596,
+        0.8364300208210861,
+        0.985486820580397
+      ],
+      "obb_shape_similarity": 0.9279191529700475,
+      "quality_a": 0.5348592646001978,
+      "quality_b": 0.5511993217012073,
+      "pair_quality": 0.5348592646001978,
+      "quality_pass": true,
+      "pair_score": 0.6547989773762359,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0041_001",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.016500349570504717,
+      "center_score": 0.8899976695299685,
+      "center_pass": true,
+      "aabb_iou": 0.2989022498892499,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.93581988490736,
+        0.7429077484319057,
+        0.7281413063492226
+      ],
+      "obb_shape_similarity": 0.8022896465628294,
+      "quality_a": 0.5348592646001978,
+      "quality_b": 0.5622578325762362,
+      "pair_quality": 0.5348592646001978,
+      "quality_pass": true,
+      "pair_score": 0.7328522040347962,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6365905245472964,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8650418120334139,
+        0.9043549291998054,
+        0.9660299320196367
+      ],
+      "obb_shape_similarity": 0.9118088910842853,
+      "quality_a": 0.5348592646001978,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.5348592646001978,
+      "quality_pass": true,
+      "pair_score": 0.4670002233526725,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0021",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6888389249515049,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8546944582717555,
+        0.9642148092242299,
+        0.9850794119121956
+      ],
+      "obb_shape_similarity": 0.9346628931360604,
+      "quality_a": 0.5348592646001978,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.4692847176370722,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0041_000",
+      "obs_id_b": "d6_frame_0041_001",
+      "frame_id_a": "frame_0041",
+      "frame_id_b": "frame_0041",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.06390663790181574,
+      "center_score": 0.5739557473212284,
+      "center_pass": true,
+      "aabb_iou": 0.061886538722836795,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9001095759761779,
+        0.6213903434890451,
+        0.7388645805738809
+      ],
+      "obb_shape_similarity": 0.753454833346368,
+      "quality_a": 0.5511993217012073,
+      "quality_b": 0.5622578325762362,
+      "pair_quality": 0.5511993217012073,
+      "quality_pass": true,
+      "pair_score": 0.6015643678320107,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0041_000",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0041",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.5821971714932901,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8993608673690948,
+        0.9248913162459115,
+        0.9802565715193419
+      ],
+      "obb_shape_similarity": 0.9348362517114494,
+      "quality_a": 0.5511993217012073,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.5511993217012073,
+      "quality_pass": true,
+      "pair_score": 0.47290533601189844,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0041_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0041",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6342567150695376,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.888603000032966,
+        0.8674726967676897,
+        0.9707827776645569
+      ],
+      "obb_shape_similarity": 0.9089528248217374,
+      "quality_a": 0.5511993217012073,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.46542820738992374,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0041_001",
+      "obs_id_b": "d6_frame_0071_000",
+      "frame_id_a": "frame_0041",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6453048050476234,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.8095233289771636,
+        0.6718522842351229,
+        0.7537461130494468
+      ],
+      "obb_shape_similarity": 0.7450405754205778,
+      "quality_a": 0.5622578325762362,
+      "quality_b": 0.5741886034938867,
+      "pair_quality": 0.5622578325762362,
+      "quality_pass": true,
+      "pair_score": 0.44609476119952207,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0041_001",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0041",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.6973156162763031,
+      "center_score": 0.0,
+      "center_pass": false,
+      "aabb_iou": 0.0,
+      "overlap_pass": false,
+      "extent_ratios": [
+        0.7998400695708326,
+        0.7163226529254721,
+        0.71727700984747
+      ],
+      "obb_shape_similarity": 0.7444799107812582,
+      "quality_a": 0.5622578325762362,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.44075727028385187,
+      "gate_pass": false,
+      "predicted_same": false,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "spatial_reject",
+        "gate_reject",
+        "not_mergeable"
+      ]
+    },
+    {
+      "obs_id_a": "d6_frame_0071_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "frame_id_a": "frame_0071",
+      "frame_id_b": "frame_0071",
+      "semantic_mode": "exact_class",
+      "semantic_similarity": 1.0,
+      "semantic_score": 1.0,
+      "semantic_compatible": true,
+      "center_distance": 0.053331072622283544,
+      "center_score": 0.644459515851443,
+      "center_pass": true,
+      "aabb_iou": 0.20193399324638514,
+      "overlap_pass": true,
+      "extent_ratios": [
+        0.9880383195150586,
+        0.9379185224580968,
+        0.951616197323482
+      ],
+      "obb_shape_similarity": 0.9591910130988791,
+      "quality_a": 0.5741886034938867,
+      "quality_b": 0.527235224444421,
+      "pair_quality": 0.527235224444421,
+      "quality_pass": true,
+      "pair_score": 0.6744656132436327,
+      "gate_pass": true,
+      "predicted_same": true,
+      "reasons": [
+        "semantic_exact_class_pass",
+        "quality_pass",
+        "center_distance_pass",
+        "aabb_overlap_pass",
+        "gate_accept",
+        "complete_link_member"
+      ]
+    }
+  ],
+  "merge_decisions": [
+    {
+      "step": 1,
+      "left_observation_ids": [
+        "d6_frame_0001_001"
+      ],
+      "right_observation_ids": [
+        "d6_frame_0041_000"
+      ],
+      "cross_pairs": [
+        [
+          "d6_frame_0001_001",
+          "d6_frame_0041_000"
+        ]
+      ],
+      "complete_link_score": 0.8614972980002487,
+      "accepted": true,
+      "reason": "all_cross_pairs_gate_pass"
+    },
+    {
+      "step": 2,
+      "left_observation_ids": [
+        "d6_frame_0001_001",
+        "d6_frame_0041_000"
+      ],
+      "right_observation_ids": [
+        "d6_frame_0021_000"
+      ],
+      "cross_pairs": [
+        [
+          "d6_frame_0001_001",
+          "d6_frame_0021_000"
+        ],
+        [
+          "d6_frame_0021_000",
+          "d6_frame_0041_000"
+        ]
+      ],
+      "complete_link_score": 0.7980204809239551,
+      "accepted": true,
+      "reason": "all_cross_pairs_gate_pass"
+    },
+    {
+      "step": 3,
+      "left_observation_ids": [
+        "d6_frame_0001_005"
+      ],
+      "right_observation_ids": [
+        "d6_frame_0021_001"
+      ],
+      "cross_pairs": [
+        [
+          "d6_frame_0001_005",
+          "d6_frame_0021_001"
+        ]
+      ],
+      "complete_link_score": 0.7932940550996199,
+      "accepted": true,
+      "reason": "all_cross_pairs_gate_pass"
+    },
+    {
+      "step": 4,
+      "left_observation_ids": [
+        "d6_frame_0001_005",
+        "d6_frame_0021_001"
+      ],
+      "right_observation_ids": [
+        "d6_frame_0041_001"
+      ],
+      "cross_pairs": [
+        [
+          "d6_frame_0001_005",
+          "d6_frame_0041_001"
+        ],
+        [
+          "d6_frame_0021_001",
+          "d6_frame_0041_001"
+        ]
+      ],
+      "complete_link_score": 0.6977109969877434,
+      "accepted": true,
+      "reason": "all_cross_pairs_gate_pass"
+    },
+    {
+      "step": 5,
+      "left_observation_ids": [
+        "d6_frame_0071_000"
+      ],
+      "right_observation_ids": [
+        "d6_frame_0071_002"
+      ],
+      "cross_pairs": [
+        [
+          "d6_frame_0071_000",
+          "d6_frame_0071_002"
+        ]
+      ],
+      "complete_link_score": 0.6744656132436327,
+      "accepted": true,
+      "reason": "all_cross_pairs_gate_pass"
+    },
+    {
+      "step": 6,
+      "left_observation_ids": [
+        "d6_frame_0001_001",
+        "d6_frame_0021_000",
+        "d6_frame_0041_000"
+      ],
+      "right_observation_ids": [
+        "d6_frame_0001_005",
+        "d6_frame_0021_001",
+        "d6_frame_0041_001"
+      ],
+      "cross_pairs": [
+        [
+          "d6_frame_0001_001",
+          "d6_frame_0001_005"
+        ],
+        [
+          "d6_frame_0001_001",
+          "d6_frame_0021_001"
+        ],
+        [
+          "d6_frame_0001_001",
+          "d6_frame_0041_001"
+        ],
+        [
+          "d6_frame_0001_005",
+          "d6_frame_0021_000"
+        ],
+        [
+          "d6_frame_0001_005",
+          "d6_frame_0041_000"
+        ],
+        [
+          "d6_frame_0021_000",
+          "d6_frame_0021_001"
+        ],
+        [
+          "d6_frame_0021_000",
+          "d6_frame_0041_001"
+        ],
+        [
+          "d6_frame_0021_001",
+          "d6_frame_0041_000"
+        ],
+        [
+          "d6_frame_0041_000",
+          "d6_frame_0041_001"
+        ]
+      ],
+      "complete_link_score": 0.5618516532899367,
+      "accepted": true,
+      "reason": "all_cross_pairs_gate_pass"
+    },
+    {
+      "step": 7,
+      "left_observation_ids": [
+        "d6_frame_0001_000"
+      ],
+      "right_observation_ids": [
+        "d6_frame_0001_003"
+      ],
+      "cross_pairs": [
+        [
+          "d6_frame_0001_000",
+          "d6_frame_0001_003"
+        ]
+      ],
+      "complete_link_score": 0.5234983681204635,
+      "accepted": true,
+      "reason": "all_cross_pairs_gate_pass"
+    }
+  ],
+  "clusters": [
+    {
+      "cluster_id": "a2_cluster_0001",
+      "observation_ids": [
+        "d6_frame_0001_000",
+        "d6_frame_0001_003"
+      ],
+      "frame_ids": [
+        "frame_0001"
+      ],
+      "distinct_frame_count": 1,
+      "promoted": false,
+      "object_id": null,
+      "deferred_reason": "insufficient_distinct_frames"
+    },
+    {
+      "cluster_id": "a2_cluster_0002",
+      "observation_ids": [
+        "d6_frame_0001_001",
+        "d6_frame_0001_005",
+        "d6_frame_0021_000",
+        "d6_frame_0021_001",
+        "d6_frame_0041_000",
+        "d6_frame_0041_001"
+      ],
+      "frame_ids": [
+        "frame_0001",
+        "frame_0021",
+        "frame_0041"
+      ],
+      "distinct_frame_count": 3,
+      "promoted": true,
+      "object_id": "obj_0001",
+      "deferred_reason": null
+    },
+    {
+      "cluster_id": "a2_cluster_0003",
+      "observation_ids": [
+        "d6_frame_0071_000",
+        "d6_frame_0071_002"
+      ],
+      "frame_ids": [
+        "frame_0071"
+      ],
+      "distinct_frame_count": 1,
+      "promoted": false,
+      "object_id": null,
+      "deferred_reason": "insufficient_distinct_frames"
+    }
+  ],
+  "acceptance": {
+    "observation_conservation": true,
+    "deterministic_recompute": true,
+    "complete_link_pass": true,
+    "cross_frame_object_pass": true,
+    "round_trip_equal": true
+  },
+  "artifacts": {
+    "source_memory": "source_memory.json",
+    "object_memory": "object_memory.json"
+  },
+  "created_at": "2026-08-26T18:34:51.894514+00:00"
+}

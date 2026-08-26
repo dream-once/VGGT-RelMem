@@ -88,7 +88,24 @@
     "evidence/week2/d11-candidate-cache/run_manifest.json",
     "evidence/week2/d11-candidate-cache/source_d5_retrieval.json",
     "evidence/week2/d11-candidate-cache/source_d6_result.json",
-    "evidence/week2/d11-candidate-cache/source_d7_observations.json"
+    "evidence/week2/d11-candidate-cache/source_d7_observations.json",
+    "relground/a2_association.py",
+    "scripts/run_a2_association.py",
+    "scripts/evaluate_a2_association.py",
+    "scripts/validate_a2_association.py",
+    "scripts/validate_a2_evaluation.py",
+    "tests/test_a2_association.py",
+    "tests/test_validate_a2.py",
+    "evidence/week2/d12-a2-office-loop-trash-can/README.md",
+    "evidence/week2/d12-a2-office-loop-trash-can/prediction/a2_result.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/prediction/source_memory.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/prediction/object_memory.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/prediction/run_manifest.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/evaluation/a2_evaluation.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/evaluation/pair_labels.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/evaluation/run_manifest.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/validation/prediction.json",
+    "evidence/week2/d12-a2-office-loop-trash-can/validation/evaluation.json"
   ],
   "upstream_repositories": [
     {

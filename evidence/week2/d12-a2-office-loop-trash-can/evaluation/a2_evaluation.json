@@ -1,0 +1,399 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D12-A2-evaluation",
+  "association_id": "A2-evidence-aware-complete-link",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query": "trash can",
+  "source": {
+    "prediction_result": "../prediction/a2_result.json",
+    "prediction_result_sha256": "0e7add33fa6b4d7dbb6508dd65469406b7714ae4b00990dd5b8b7a696bd1834b",
+    "pair_labels": "pair_labels.json",
+    "pair_labels_sha256": "b9de0a1336146890d002437c152da4eda5b526a1daa1ff46afec178b08df5e6d"
+  },
+  "metrics": {
+    "pair_count": 45,
+    "positive_pairs": 17,
+    "negative_pairs": 28,
+    "true_positive": 17,
+    "false_positive": 0,
+    "true_negative": 28,
+    "false_negative": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "accuracy": 1.0
+  },
+  "pairs": [
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0001_001",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0001_003",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0001_005",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0021_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0021_001",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0041_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0041_001",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0001_003",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0001_005",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0021_000",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0021_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0041_000",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0041_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_001",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0001_005",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0021_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0021_001",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0041_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0041_001",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_003",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0021_000",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0021_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0041_000",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0041_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0001_005",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0021_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0041_000",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0041_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0041_000",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0041_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0021_001",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0041_000",
+      "obs_id_b": "d6_frame_0041_001",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0041_000",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0041_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0041_001",
+      "obs_id_b": "d6_frame_0071_000",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0041_001",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": false,
+      "gate_pass": false,
+      "predicted_same": false,
+      "error_type": null
+    },
+    {
+      "obs_id_a": "d6_frame_0071_000",
+      "obs_id_b": "d6_frame_0071_002",
+      "expected_same": true,
+      "gate_pass": true,
+      "predicted_same": true,
+      "error_type": null
+    }
+  ],
+  "failure_cases": [],
+  "acceptance": {
+    "prediction_valid": true,
+    "evaluation_recomputed": true,
+    "thresholds_frozen_before_evaluation": true
+  },
+  "artifacts": {
+    "pair_labels": "pair_labels.json"
+  },
+  "created_at": "2026-08-26T18:34:53.383383+00:00"
+}

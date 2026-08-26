@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-27 D11 publication session
+- Updated: 2026-08-27 D12 publication session
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `09fe5c84e8f7522714fd5adf5f66d6e89e263563`
-- Current milestone: D11 freezes Visual Memory and policy-independent Candidate Outcome Cache 0.1 contracts with deterministic CPU replay.
-- Next milestone: D12 adds label-free evidence-aware A2 association while keeping the A1/D10 baseline frozen.
-- Publication state: this publication adds D11 schemas, builder, independent validator, 10 new CPU tests, and a 67,029-byte JSON/Markdown evidence bundle.
+- Publication target and pre-publication HEAD: `main` at `70f336f4d8399b19cd6f7d4d3c0c4d5819d3fd16`
+- Current milestone: D12 adds label-free evidence-aware A2 association with complete-link clustering while preserving the frozen A1 baseline.
+- Next milestone: D13 freezes the upstream-aligned Q0 Top-1 protocol and a static source/evidence audit.
+- Publication state: this publication adds A2 prediction/evaluation contracts, runners, independent validators, 16 new CPU tests, and a 111,875-byte JSON/Markdown evidence bundle.
 
 ## Document-day progress
 
@@ -26,7 +26,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D9 | Complete | Exact-class plus center-distance/AABB-overlap gating reached pairwise F1=1.0 on 45 manually labelled pairs; only the cross-frame component became permanent. |
 | D10 | Complete | Prediction is label-free and deterministic; evaluation alone reads manual labels. Both real JSON bundles pass independent validators. |
 | D11 | CPU complete; GPU acceptance pending | Cache 0.1 conserves all eight ranked candidates: four retained outcomes are available and four are explicitly unmaterialized. |
-| D12+ | Pending | Add A2, then freeze and replay Q0/Q1/Q2 under the revised route. |
+| D12 | CPU complete; GPU acceptance pending | A2 records semantic/geometric/OBB/quality evidence, uses complete-link, and matches A1 at F1=1.0 on the current development fixture. |
+| D13+ | Pending | Freeze Q0, then replay Q1/Q2 under the revised route. |
 
 ## D3 acceptance evidence
 
@@ -128,9 +129,21 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The independent replay validator reports `PASS_WITH_UNMATERIALIZED_OUTCOMES`; a complete synthetic cache reports the strict `complete` contract in CPU tests.
 - The D11 evidence bundle is JSON/Markdown-only and 67,029 bytes. New PE/SAM inference remains `GPU_ACCEPTANCE_PENDING`.
 
+
+## D12 acceptance evidence
+
+- Frozen A1 prediction and ObjectMemory hashes remain `6aabd271…0362` and `1d8029e8…9f3`; both D10 validators still report `PASS`.
+- A2 pair records save semantic mode/similarity, center distance, AABB IoU, sorted OBB extent ratios, both observation qualities, fixed thresholds, weighted score, gate result, final cluster membership, and reasons.
+- Default weights are semantic `0.25`, center `0.25`, overlap `0.20`, OBB shape `0.15`, and quality `0.15`; quality must be at least `0.25`, with center `<=0.15` or positive overlap.
+- Deterministic complete-link blocks A–B–C bridge merges unless every cross-cluster pair passes. Same-frame duplicates may cluster, but promotion still requires two distinct frames.
+- Real D8 prediction has 45 pairs, 17 gate passes/final matches, seven merges, three clusters, one permanent object, four pending observations, and exact conservation/round-trip.
+- Separate frozen-label evaluation is precision/recall/F1 `1.0`, equal to A1 on this development fixture; it is recorded as parity, not improvement or held-out evidence.
+- Both independent validators report `PASS`; 15 dedicated tests cover bridge splitting, conflicts, quality, fallback, ordering, conservation, leakage, paths, and tampering.
+- The D12 evidence bundle is JSON/Markdown-only and 111,875 bytes. Visual inference remains `GPU_ACCEPTANCE_PENDING`.
+
 ## Publication verification
 
-- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 96 tests passed.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 112 tests passed.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
 - The real D9 validator passed for 45 pairs, one permanent cross-frame object, four pending observations, and exact JSON round trip before generated runs were purged.
@@ -141,6 +154,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The D10 Week 2 bundle adds about 86 KiB; evidence policy rejects non-JSON/Markdown files and ground-truth fields in prediction.
 - The tracked D11 validator reports `PASS_WITH_UNMATERIALIZED_OUTCOMES` with eight candidates, four available outcomes, four unmaterialized outcomes, 10 observations, and five rejections.
 - D11 tests cover strict schema round-trip, complete synthetic replay, universe conservation, duplicate frames, illegal states, path escape, source tampering, and GT/policy leakage.
+- Both tracked D12 validators report `PASS`; the real A2 development evaluation remains precision/recall/F1 `1.0` with no post-label threshold tuning.
+- D12 tests freeze A1 hashes and cover complete-link bridge splitting, embedding fallback/conflict, low quality, same-frame deferral, order invariance, conservation, label isolation, paths, and tampering.
 - The current instance is in no-GPU mode and has about 24.56 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
 - Generated `runs/` artifacts were intentionally deleted and are no longer instance-baseline requirements.
 
@@ -171,9 +186,9 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Implement A2 semantic/geometric/quality pair evidence without changing A1.
-2. Use deterministic complete-link clustering so bridge pairs cannot silently merge incompatible endpoints.
-3. Run the real D8 label-free prediction and separate frozen-label evaluation, then publish actual development metrics without threshold tuning.
+1. Freeze the `Q0-vggt-slam-upstream-top1` protocol as `upstream-aligned`, not FOUND-IT official.
+2. Statistically audit pinned upstream `main.py --run_os`, the local single-view runner, and retained D4/D5 evidence for each protocol step.
+3. Make preprocess, SAM-threshold, lifting, PCA, or robust-parameter tampering fail without running the visual models.
 
 ## Publication history
 
@@ -187,6 +202,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 - 2026-08-27: Published D10 label-free prediction/independent evaluation, 86 CPU tests, revised post-D9 positioning, and an 86 KiB self-contained JSON/Markdown evidence bundle (pre-publication HEAD `3fc3873`).
 - 2026-08-27: Published D11 Visual Memory/Candidate Outcome Cache 0.1, deterministic partial-cache replay, 96 CPU tests, and a 67,029-byte JSON/Markdown evidence bundle (pre-publication HEAD `09fe5c8`).
+- 2026-08-27: Published D12 A2 evidence-aware complete-link association, frozen A1 hashes, 112 CPU tests, and a 111,875-byte JSON/Markdown development bundle (pre-publication HEAD `70f336f`).
 ## Scope reminder
 
 The project is currently a semantic-navigation perception front end. It does not yet include path planning, control, or closed-loop navigation. Ground-truth depth, poses, and OBBs belong only in evaluation/oracle paths, not the primary inference input.

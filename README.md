@@ -2,7 +2,7 @@
 
 面向语义导航的感知前端：在 VGGT-SLAM 2.0 与开放词汇分割输出之上，构建 top-K 多视角对象观察、稳健 3D 提升、跨帧对象记忆、关系约束定位及置信度拒答。
 
-项目已完成 D1–D11 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+项目已完成 D1–D12 工程链路：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
 
 VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
 
@@ -86,6 +86,7 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D9：精确同类 + 3D 中心距离/AABB 重叠 gate、跨帧组件提升及独立人工 pairwise 评测已完成。
 - D10：D9 已拆成无标签的确定性预测和独立标签评测，并补齐可移动轻量证据、无匹配合法性与排列不变回归验收。
 - D11：Visual Memory 与 Candidate Outcome Cache 0.1 已冻结；真实 8 候选开发缓存诚实保留 4 个历史 outcome 和 4 个未物化 outcome，无卡验收为 `CPU_COMPLETE / GPU_ACCEPTANCE_PENDING`。
+- D12：A1 代码与已发布哈希保持冻结；A2 新增语义/几何/OBB/质量 pair 证据和 complete-link 聚类，真实 D8 CPU prediction/evaluation 均通过独立重算。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -437,6 +438,38 @@ python -m scripts.validate_d9_evaluation \
 
 `prediction/` 仅包含 `source_memory.json`、`d9_result.json`、`object_memory.json` 和 `run_manifest.json`，不含人工标签、F1 或失败案例；`evaluation/` 才包含 `pair_labels.json`、`d9_evaluation.json` 和评测 `run_manifest.json`。真实 D8 的 10 条观测对应全部 45 个 pair，其中 17 个同实例正对和 28 个不同实例负对，独立评测的 precision/recall/F1 为 `1.0`。这只是小型人工开发样例的回归基线，不是 held-out 测试，也不代表跨场景泛化。
 
+
+## D12 A2 evidence-aware association（无卡完成）
+
+D12 不修改 A1；已发布的 A1 prediction/result 和 ObjectMemory SHA-256 继续由回归测试固定。A2 是独立的 label-free predictor：
+
+- 双方都有 embedding 时使用 cosine，否则退化为规范化 exact-class；
+- 每条观测质量为 retrieval、SAM、valid-point ratio 的几何均值，pair 取两者较小值，门槛固定为 `0.25`；
+- 空间门槛固定为中心距离不超过 `0.15`，或 AABB IoU 大于 `0`；
+- pair score 按 semantic/center/overlap/OBB-shape/quality 的 `0.25/0.25/0.20/0.15/0.15` 加权；
+- cluster 只有所有跨 cluster pair 均通过 gate 才能合并。相同帧重复 mask 可以聚类，但永久对象仍要求至少两个不同帧。
+
+无标签预测和独立评测命令：
+
+```bash
+python -m scripts.run_a2_association \
+  --memory evidence/week1/runs/office-loop-mv-d8-trash-can/object_memory.json \
+  --output-dir runs/office-loop-mv-d12-a2-trash-can/prediction
+
+python -m scripts.validate_a2_association \
+  runs/office-loop-mv-d12-a2-trash-can/prediction
+
+python -m scripts.evaluate_a2_association \
+  --prediction-dir runs/office-loop-mv-d12-a2-trash-can/prediction \
+  --labels configs/d9_office_loop_trash_can_labels.json \
+  --output-dir runs/office-loop-mv-d12-a2-trash-can/evaluation
+
+python -m scripts.validate_a2_evaluation \
+  runs/office-loop-mv-d12-a2-trash-can/evaluation
+```
+
+真实 D8 CPU 重放保存了 45 个完整 pair 特征和 7 次 complete-link merge，最终仍为 3 个 cluster、1 个永久对象和 4 条 pending。独立开发评测仍是 17/28 个正/负 pair、precision/recall/F1=`1.0`，与 A1 持平；桥接修复的增益只由合成 A–B–C 回归证明，不能用这个无桥接真实样例宣称性能提升。阈值在评测前冻结，评测分数不会反向改变 prediction 状态。状态为 `CPU_COMPLETE / GPU_ACCEPTANCE_PENDING`。
+
 如果需要开发安装：
 
 ```bash
@@ -510,6 +543,7 @@ python -m scripts.evaluate \
 - 已完成 D9：无标签预测得到 3 个空间组件，仅跨 3 帧的 6-observation 组件成为永久对象；独立开发集评测的 45 个人工标注 pair 达到 precision/recall/F1=1.0。
 - 已完成 D10：D9 预测 API 已去除标签依赖，预测与评测产物/状态完全分离，并补上确定性、顺序不变、bridge 已知失败和零匹配合法性回归验收。
 - 已完成 D11（无卡口径）：`VisualMemoryManifest 0.1` 和 `CandidateOutcomeCache 0.1` 冻结 8 个 D5 候选；4 个 D6/D7 outcome 为 `available`，其余 4 个明确为 `unmaterialized`。独立重放状态为 `PASS_WITH_UNMATERIALIZED_OUTCOMES`，真实 embedding 和新 PE/SAM 推理仍为 `GPU_ACCEPTANCE_PENDING`。
-- 下一步 D12：保持 A1 结果不变，新增 label-free、complete-link 的 A2 evidence-aware association，并将人工标签限制在独立 evaluator。
+- 已完成 D12（无卡口径）：A2 对每个 pair 保存语义、中心/AABB、排序 OBB extent ratio、保守质量、固定阈值与加权分数，并以 complete-link 阻断 A1 的桥接误合并。真实开发样例与 A1 同为 F1=1.0，因此当前结论是持平而非提升。
+- 下一步 D13：冻结 `Q0-vggt-slam-upstream-top1` 的 upstream-aligned 静态协议和差异审计，不升级为 FOUND-IT 官方实现。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

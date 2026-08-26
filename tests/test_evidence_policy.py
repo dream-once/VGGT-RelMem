@@ -59,6 +59,26 @@ class EvidencePolicyTests(unittest.TestCase):
         ):
             self.assertNotIn(forbidden, serialized)
 
+    def test_d12_prediction_is_label_free(self) -> None:
+        result = json.loads(
+            (
+                self.week2
+                / "d12-a2-office-loop-trash-can"
+                / "prediction"
+                / "a2_result.json"
+            ).read_text(encoding="utf-8")
+        )
+        serialized = json.dumps(result, sort_keys=True).lower()
+        for forbidden in (
+            "pair_labels",
+            "expected_same",
+            "error_type",
+            "failure_cases",
+            '"metrics"',
+            '"f1"',
+        ):
+            self.assertNotIn(forbidden, serialized)
+
     def test_prediction_evidence_contains_no_ground_truth(self) -> None:
         root = self.week2 / "d9-office-loop-trash-can"
         result = json.loads(

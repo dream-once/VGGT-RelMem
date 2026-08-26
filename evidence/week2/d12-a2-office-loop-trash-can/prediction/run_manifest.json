@@ -1,0 +1,39 @@
+{
+  "git_sha": "70f336f4d8399b19cd6f7d4d3c0c4d5819d3fd16",
+  "env_lock": "D12 A2 prediction is deterministic and model-free",
+  "dataset_split": "office-loop-multiview-s10-trash-can",
+  "seed": 0,
+  "config": {
+    "stage": "D12-A2-prediction",
+    "status": "CPU_COMPLETE",
+    "gpu_acceptance": "PENDING",
+    "association_id": "A2-evidence-aware-complete-link",
+    "source_memory": "source_memory.json",
+    "source_memory_sha256": "cdf1eccd7dabcae658f927ae122f5dcec77c220b0c4338f220adc88702411879",
+    "association_config": {
+      "semantic_rule": "cosine_when_both_embeddings_else_normalized_exact_class",
+      "semantic_threshold": 0.7,
+      "min_observation_quality": 0.25,
+      "center_distance_threshold": 0.15,
+      "overlap_measure": "aabb_iou_from_observation_obb",
+      "min_overlap_iou": 0.0,
+      "spatial_rule": "center_pass OR overlap_pass",
+      "obb_shape_measure": "mean_sorted_extent_ratio",
+      "quality_measure": "min_pair_geometric_mean_retrieval_sam_valid_points",
+      "weights": {
+        "semantic": 0.25,
+        "center": 0.25,
+        "overlap": 0.2,
+        "obb_shape": 0.15,
+        "quality": 0.15
+      },
+      "cluster_rule": "complete_link_all_cross_pairs_gate_pass",
+      "min_distinct_frames": 2
+    }
+  },
+  "command": "/root/autodl-tmp/VGGT-RelMem/scripts/run_a2_association.py --output-dir evidence/week2/d12-a2-office-loop-trash-can/prediction",
+  "runtime_seconds": 0.1574731646105647,
+  "peak_vram_mb": null,
+  "created_at": "2026-08-26T18:34:51.959453+00:00",
+  "schema_version": "0.1"
+}
