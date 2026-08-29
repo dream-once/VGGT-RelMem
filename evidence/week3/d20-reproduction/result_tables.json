@@ -1,0 +1,243 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D20-derived-results",
+  "sources": {
+    "d15_5_manifest": {
+      "path": "evidence/week3/d20-reproduction/sources/visualization_manifest.json",
+      "sha256": "2f1ea716893aba95bb5a8157fa41365002523c4452e280eb1ebb0e406b5241f4"
+    },
+    "d15_5_viewpoint_audit": {
+      "path": "evidence/week3/d20-reproduction/sources/viewpoint_audit.json",
+      "sha256": "315696ddbe41b4d8cce078d1d98960df0a8f61f0028907b71542fc073b4992c4"
+    },
+    "d17_evaluation": {
+      "path": "evidence/week3/d17-relations/evaluation.json",
+      "sha256": "1073e3871f4d0e3d8b1ddf1fcd0a64ea383d292fb75fd6749db57c293c034b8c"
+    },
+    "d18_prediction": {
+      "path": "evidence/week3/d18-qxa/synthetic/prediction.json",
+      "sha256": "4da52cffecadf4661eac255b7212190168a3103fb66481e52d1eaf577eb1b73e"
+    },
+    "d18_evaluation": {
+      "path": "evidence/week3/d18-qxa/synthetic/evaluation.json",
+      "sha256": "25b55acaee4b71226878c64e5d2284282bc4c75bc34300fc7379d32106048ea9"
+    },
+    "d19_prediction": {
+      "path": "evidence/week3/d19-ablations/synthetic/prediction.json",
+      "sha256": "02263752d1a171776df9e075bd305f4745677b87bae028613cb33037ea0140c0"
+    },
+    "d19_evaluation": {
+      "path": "evidence/week3/d19-ablations/synthetic/evaluation.json",
+      "sha256": "15bee8a9a914b0fb027d3a33448be4e2cec42e29f56b4a3bcb59bbd83efe6b4a"
+    }
+  },
+  "d15_5": {
+    "anchor_cameras": 95,
+    "selected_cameras": 20,
+    "observations": 40,
+    "predicted_objects": 8,
+    "ply_points": 132204,
+    "video_frames": 120,
+    "strict_multiview_objects": 3,
+    "diagnostic_parallax_objects": 5,
+    "binary_artifacts_retained_in_git": false,
+    "binary_release_status": "OPTIONAL_BINARY_RELEASE_PENDING"
+  },
+  "qxa": {
+    "scope": "synthetic_correctness_not_performance",
+    "rows": [
+      {
+        "combination_id": "Q0-vggt-slam-upstream-top1__A1-exact-class-spatial-gate",
+        "matrix_role": "required",
+        "status": "PASS",
+        "selected_count": 1,
+        "observation_count": 1,
+        "pair_count": 0,
+        "f1": 0.0,
+        "scope": "synthetic_correctness_not_performance"
+      },
+      {
+        "combination_id": "Q0-vggt-slam-upstream-top1__A2-evidence-aware-complete-link",
+        "matrix_role": "required",
+        "status": "PASS",
+        "selected_count": 1,
+        "observation_count": 1,
+        "pair_count": 0,
+        "f1": 0.0,
+        "scope": "synthetic_correctness_not_performance"
+      },
+      {
+        "combination_id": "Q1-fixed-topk-hybrid__A1-exact-class-spatial-gate",
+        "matrix_role": "required",
+        "status": "PASS",
+        "selected_count": 5,
+        "observation_count": 5,
+        "pair_count": 10,
+        "f1": 0.0,
+        "scope": "synthetic_correctness_not_performance"
+      },
+      {
+        "combination_id": "Q1-fixed-topk-hybrid__A2-evidence-aware-complete-link",
+        "matrix_role": "required",
+        "status": "PASS",
+        "selected_count": 5,
+        "observation_count": 5,
+        "pair_count": 10,
+        "f1": 0.0,
+        "scope": "synthetic_correctness_not_performance"
+      },
+      {
+        "combination_id": "Q2-gain-based-sequential-search__A2-evidence-aware-complete-link",
+        "matrix_role": "required",
+        "status": "PASS",
+        "selected_count": 5,
+        "observation_count": 5,
+        "pair_count": 10,
+        "f1": 0.0,
+        "scope": "synthetic_correctness_not_performance"
+      },
+      {
+        "combination_id": "Q2-gain-based-sequential-search__A1-exact-class-spatial-gate",
+        "matrix_role": "diagnostic",
+        "status": "PASS",
+        "selected_count": 5,
+        "observation_count": 5,
+        "pair_count": 10,
+        "f1": 0.0,
+        "scope": "synthetic_correctness_not_performance"
+      }
+    ]
+  },
+  "relations": {
+    "scope": "synthetic_correctness_not_real_calibration",
+    "rows": [
+      {
+        "metric": "query_count",
+        "value": 5
+      },
+      {
+        "metric": "positive_count",
+        "value": 2
+      },
+      {
+        "metric": "negative_count",
+        "value": 3
+      },
+      {
+        "metric": "task_accuracy",
+        "value": 1.0
+      },
+      {
+        "metric": "negative_rejection_accuracy",
+        "value": 1.0
+      },
+      {
+        "metric": "brier",
+        "value": 0.008947506776214868
+      },
+      {
+        "metric": "ece_10",
+        "value": 0.05982476669813219
+      },
+      {
+        "metric": "aurc_discrete",
+        "value": 0.0
+      }
+    ]
+  },
+  "ablations": {
+    "scope": "synthetic_correctness_not_real_ablation",
+    "q2_rows": [
+      {
+        "variant_id": "base",
+        "changed_factor": null,
+        "observed_instance_recall": 1.0,
+        "recall_delta": 0.0,
+        "sam_calls": 5,
+        "sam_call_delta": 0
+      },
+      {
+        "variant_id": "retrieval_only",
+        "changed_factor": "pose_novelty",
+        "observed_instance_recall": 1.0,
+        "recall_delta": 0.0,
+        "sam_calls": 5,
+        "sam_call_delta": 0
+      },
+      {
+        "variant_id": "no_gain_patience",
+        "changed_factor": "gain_patience",
+        "observed_instance_recall": 1.0,
+        "recall_delta": 0.0,
+        "sam_calls": 5,
+        "sam_call_delta": 0
+      }
+    ],
+    "a2_rows": [
+      {
+        "variant_id": "base",
+        "changed_factor": null,
+        "f1": 0.0,
+        "f1_delta": 0.0,
+        "failure_count": 4
+      },
+      {
+        "variant_id": "without_semantic",
+        "changed_factor": "semantic",
+        "f1": 0.0,
+        "f1_delta": 0.0,
+        "failure_count": 4
+      },
+      {
+        "variant_id": "without_obb_shape",
+        "changed_factor": "obb_shape",
+        "f1": 0.0,
+        "f1_delta": 0.0,
+        "failure_count": 4
+      },
+      {
+        "variant_id": "without_quality",
+        "changed_factor": "quality",
+        "f1": 0.0,
+        "f1_delta": 0.0,
+        "failure_count": 4
+      },
+      {
+        "variant_id": "without_complete_link",
+        "changed_factor": "complete_link",
+        "f1": 0.0,
+        "f1_delta": 0.0,
+        "failure_count": 4
+      }
+    ],
+    "all_reported_deltas_zero": true,
+    "historical_success_ablation": {
+      "status": "NOT_IMPLEMENTED",
+      "reason": "Q2_has_no_historical_success_candidate_score_feature"
+    }
+  },
+  "failure_audit": {
+    "frozen_query_ids": [
+      "synthetic-d14-trash-can"
+    ],
+    "denominator_query_count": 1,
+    "failed_query_count": 1,
+    "category_counts": {
+      "retrieval": 0,
+      "segmentation": 0,
+      "lifting": 0,
+      "association": 1,
+      "relation": 0,
+      "abstention": 0
+    },
+    "uncategorized_failed_queries": 0,
+    "classification_rule": "base_A2_has_any_false_positive_or_false_negative"
+  },
+  "claim_boundary": {
+    "clio_held_out": "PENDING",
+    "real_calibration": "PENDING",
+    "real_ablation": "PENDING",
+    "performance_improvement": null
+  }
+}

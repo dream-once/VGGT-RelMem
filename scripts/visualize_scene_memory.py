@@ -628,6 +628,29 @@ def _input_record(path: Path, output_root: Path) -> dict[str, Any]:
     return {"path": display, "bytes": resolved.stat().st_size, "sha256": _sha256(resolved)}
 
 
+def _require_input_path(
+    path: Path,
+    *,
+    label: str,
+    directory: bool = False,
+) -> None:
+    valid = path.is_dir() if directory else path.is_file()
+    if valid:
+        return
+    expected = "directory" if directory else "file"
+    project_root = Path(__file__).resolve().parents[1]
+    message = (
+        f"required {label} {expected} not found: {path}. "
+        "Relative input paths are resolved from the current working "
+        f"directory ({Path.cwd().resolve()}). Run "
+        f"'cd {project_root}' before the documented command, or pass "
+        "absolute paths for every input."
+    )
+    if path.exists() and directory:
+        raise NotADirectoryError(message)
+    raise FileNotFoundError(message)
+
+
 def run(args: argparse.Namespace) -> dict[str, Any]:
     geometry = Path(args.geometry)
     geometry_manifest = Path(args.geometry_manifest)
@@ -636,13 +659,17 @@ def run(args: argparse.Namespace) -> dict[str, Any]:
     observation_root = Path(args.observation_root)
     output_root = Path(args.output_dir).resolve()
     upstream = Path(args.upstream)
-    for path in (geometry, geometry_manifest, anchor_poses, memory):
-        if not path.is_file():
-            raise FileNotFoundError(path)
-    if not observation_root.is_dir():
-        raise NotADirectoryError(observation_root)
-    if not upstream.is_dir():
-        raise NotADirectoryError(upstream)
+    for path, label in (
+        (geometry, "geometry"),
+        (geometry_manifest, "geometry manifest"),
+        (anchor_poses, "anchor poses"),
+        (memory, "object memory"),
+    ):
+        _require_input_path(path, label=label)
+    _require_input_path(
+        observation_root, label="observation root", directory=True
+    )
+    _require_input_path(upstream, label="upstream checkout", directory=True)
     if args.max_background_points <= 0:
         raise ValueError("--max-background-points must be positive")
     if not (1 <= args.port <= 65535):

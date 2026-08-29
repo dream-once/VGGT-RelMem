@@ -1,0 +1,91 @@
+{
+  "artifact_status": "PASS",
+  "artifacts": [
+    {
+      "bytes": 30183,
+      "kind": "viewpoint_audit",
+      "path": "viewpoint_audit.json",
+      "sha256": "315696ddbe41b4d8cce078d1d98960df0a8f61f0028907b71542fc073b4992c4",
+      "status": "available"
+    },
+    {
+      "bytes": 530226,
+      "kind": "three_view_overview",
+      "path": "overview.png",
+      "sha256": "510819089205b62cfc5b1bf3780169850fb42219ad13cf8b274aeb54846deace",
+      "status": "available"
+    },
+    {
+      "bytes": 3319724,
+      "kind": "dynamic_object_parallax_video",
+      "path": "object_parallax.mp4",
+      "sha256": "dc00849c040047c7bab516256f27a1425cf5ef4eb8096dd42756332980fb0430",
+      "status": "available"
+    },
+    {
+      "bytes": 3569717,
+      "kind": "colored_scene_point_cloud",
+      "path": "scene_memory.ply",
+      "sha256": "a48095b9f0d5d6295ceaf07a5377c098a1c13bdf6b4f79b7d82558935dae0257",
+      "status": "available"
+    }
+  ],
+  "coordinate_contract": {
+    "camera_frusta": "schematic (intrinsics are not retained)",
+    "finite_values_required": true,
+    "units": "VGGT-SLAM reconstruction units"
+  },
+  "counts": {
+    "anchor_cameras": 95,
+    "background_points": 60000,
+    "observation_clouds": 40,
+    "observations": 40,
+    "pending_objects": 0,
+    "ply_points": 132204,
+    "predicted_objects": 8,
+    "selected_cameras": 20,
+    "video_frames": 120
+  },
+  "created_at_utc": "2026-08-29T11:00:29.092269+00:00",
+  "inputs": {
+    "anchor_poses": {
+      "bytes": 41311,
+      "path": "runs/office-loop-d15_5-s5/geometry.anchor_poses.json",
+      "sha256": "06d3841bd421b391fb87f7f8bb66adc11cebbac8506a600a0cea1d619d9215c0"
+    },
+    "geometry": {
+      "bytes": 76046062,
+      "path": "runs/office-loop-d15_5-s5/geometry.npz",
+      "sha256": "6b2cce0316e7e3daac335b369939f0e05f733cc9b461bd59db53685eeeedbb65"
+    },
+    "geometry_manifest": {
+      "bytes": 21416,
+      "path": "runs/office-loop-d15_5-s5/geometry.manifest.json",
+      "sha256": "b16ce0819382d23b9713cb54ada24146944a743e4d259d77474901dc857331bb"
+    },
+    "memory": {
+      "bytes": 101432,
+      "path": "runs/office-loop-d15_5-s5/d12-trash-can-k24/object_memory.json",
+      "sha256": "46bb6d401267666338e9303ccbb04aa7c8b01da7532fb1e24ccd0b25a9e265b6"
+    },
+    "scene_cache": {
+      "bytes": 68708,
+      "path": "runs/office-loop-d15_5-s5/d7-trash-can-k24/observations.json",
+      "sha256": "3707c9b2c454d15228a0bc1d837969ad1e7d3bfaa1451e8ee1bdaf9fdbe0b1ad"
+    }
+  },
+  "manifest_inventory_note": "visualization_manifest.json omits its own recursive hash",
+  "query": "trash can",
+  "render": {
+    "dynamic_camera": true,
+    "max_background_points": 60000,
+    "orbit_degrees": 360.0,
+    "video_fps": 12,
+    "video_seconds": 10.0
+  },
+  "scene_id": "office-loop-d15_5-s5-trash-can-k24",
+  "schema_version": "d15.5-scene-memory-visualization/0.1",
+  "source_counts": {},
+  "status": "PASS",
+  "viewpoint_evidence_status": "STRONG_OBJECT_CENTRIC_MULTIVIEW"
+}

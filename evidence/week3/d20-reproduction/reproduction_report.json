@@ -1,0 +1,31 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D20-reproduction",
+  "validators": {
+    "D16": "PASS",
+    "D17": "PASS",
+    "D18": "PASS",
+    "D19": "PASS"
+  },
+  "readme_checks": {
+    "d15_5_counts": true,
+    "d17_query_counts": true,
+    "d19_zero_delta_boundary": true,
+    "project_scope": true
+  },
+  "retained_output_checks": {
+    "result_tables.json": true,
+    "qxa_table.md": true,
+    "relation_table.md": true,
+    "ablation_table.md": true
+  },
+  "output_sha256": {
+    "result_tables.json": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c",
+    "qxa_table.md": "31834838dda330aba17623562805583b13d7410fb6b885cb90b0fe8cd6297138",
+    "relation_table.md": "3d7f3495cf8fee06e5c10b007d220787ded44caaeb3944ba8cb50d9e8c836429",
+    "ablation_table.md": "3a81f1355c2bb8374d295fadc2502427cd3c12dd4da731f2b9ddd7bca08c2f1f"
+  },
+  "source_status": "CPU_COMPLETE",
+  "optional_binary_release_status": "OPTIONAL_BINARY_RELEASE_PENDING"
+}

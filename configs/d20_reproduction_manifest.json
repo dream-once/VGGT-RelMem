@@ -1,0 +1,71 @@
+{
+  "schema_version": "0.1",
+  "stage": "D20-reproduction-package",
+  "status": "CPU_COMPLETE",
+  "optional_binary_release_status": "OPTIONAL_BINARY_RELEASE_PENDING",
+  "repository_base_commit": "3ad14ad46f05e000d8622e0309102704a61ed716",
+  "inputs": [
+    {
+      "input_id": "d15_5_manifest",
+      "path": "evidence/week3/d20-reproduction/sources/visualization_manifest.json",
+      "sha256": "2f1ea716893aba95bb5a8157fa41365002523c4452e280eb1ebb0e406b5241f4"
+    },
+    {
+      "input_id": "d15_5_viewpoint_audit",
+      "path": "evidence/week3/d20-reproduction/sources/viewpoint_audit.json",
+      "sha256": "315696ddbe41b4d8cce078d1d98960df0a8f61f0028907b71542fc073b4992c4"
+    },
+    {
+      "input_id": "d17_evaluation",
+      "path": "evidence/week3/d17-relations/evaluation.json",
+      "sha256": "1073e3871f4d0e3d8b1ddf1fcd0a64ea383d292fb75fd6749db57c293c034b8c"
+    },
+    {
+      "input_id": "d18_prediction",
+      "path": "evidence/week3/d18-qxa/synthetic/prediction.json",
+      "sha256": "4da52cffecadf4661eac255b7212190168a3103fb66481e52d1eaf577eb1b73e"
+    },
+    {
+      "input_id": "d18_evaluation",
+      "path": "evidence/week3/d18-qxa/synthetic/evaluation.json",
+      "sha256": "25b55acaee4b71226878c64e5d2284282bc4c75bc34300fc7379d32106048ea9"
+    },
+    {
+      "input_id": "d19_prediction",
+      "path": "evidence/week3/d19-ablations/synthetic/prediction.json",
+      "sha256": "02263752d1a171776df9e075bd305f4745677b87bae028613cb33037ea0140c0"
+    },
+    {
+      "input_id": "d19_evaluation",
+      "path": "evidence/week3/d19-ablations/synthetic/evaluation.json",
+      "sha256": "15bee8a9a914b0fb027d3a33448be4e2cec42e29f56b4a3bcb59bbd83efe6b4a"
+    }
+  ],
+  "validators": [
+    "D16",
+    "D17",
+    "D18",
+    "D19"
+  ],
+  "outputs": [
+    "result_tables.json",
+    "qxa_table.md",
+    "relation_table.md",
+    "ablation_table.md"
+  ],
+  "readme_checks": [
+    "d15_5_counts",
+    "d17_query_counts",
+    "d19_zero_delta_boundary",
+    "project_scope"
+  ],
+  "evidence_policy": {
+    "extensions": [
+      ".json",
+      ".md"
+    ],
+    "bundle_limit_bytes": 131072,
+    "week_limit_bytes": 786432
+  },
+  "frozen_at": "2026-08-30T00:00:00+00:00"
+}

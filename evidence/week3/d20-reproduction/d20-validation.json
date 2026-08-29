@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D20-validation",
+  "checks": {
+    "rebuild_pass": true,
+    "all_stage_validators_pass": true,
+    "readme_numbers_match": true,
+    "moved_output_matches": true,
+    "optional_binaries_explicit": true
+  },
+  "source_status": "CPU_COMPLETE",
+  "optional_binary_release_status": "OPTIONAL_BINARY_RELEASE_PENDING"
+}

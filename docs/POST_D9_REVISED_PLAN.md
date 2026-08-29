@@ -309,6 +309,13 @@ fixture 的全部指标变化为 0，只证明消融路径；office-loop 只报�
 
 **产物与算力**：`evidence/week2+`、自动表格、复现报告、Release 清单；CPU。
 
+**当前状态（2026-08-30）**：D20 已按 CPU/source 口径完成。一个 CPU 命令
+重跑 D16–D19 validator，从规范 JSON 重建 Q×A、关系/拒答和消融表，检查
+README 数字，并在移动临时目录与 retained outputs 逐字节比较。D15.5 的两个
+轻量 JSON 快照进入 evidence；PLY/PNG/MP4 只保留 hash/reference，状态为
+`OPTIONAL_BINARY_RELEASE_PENDING`。clean-tree、路径逃逸、hash 篡改和 evidence
+扩展名/体积门槛均有测试。
+
 ### D21：最终审阅与对外表述
 
 **任务**
