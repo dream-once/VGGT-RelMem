@@ -1,10 +1,16 @@
 # VGGT-RelMem
 
-面向语义导航的感知前端：在 VGGT-SLAM 2.0 与开放词汇分割输出之上，构建 top-K 多视角对象观察、稳健 3D 提升、跨帧对象记忆、关系约束定位及置信度拒答。
+**项目定位：VGGT-SLAM 几何之上的可审计语义定位可靠性层。** 本仓库不是完整闭环导航系统；它在固定 VGGT-SLAM 几何之上，提供候选检索、开放词汇分割、3D lifting、对象关联、关系定位、可靠拒答、缓存重放与可审计证据。
 
-项目已完成 D1–D15 工程链路及 D15.5 场景记忆可视化：固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码均位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证的文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+项目已完成 D1–D21 工程链路，其中 D16–D21 按 CPU/source 口径验收；固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
 
 VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
+
+## 最终结果边界
+
+在没有 Clio held-out 的当前阶段，结论固定为：**完成可复现基准、查询策略与关联策略隔离、可靠拒答协议和失败分析**。office-loop 是开发工程样例，
+synthetic fixture 只验证正确性；二者都不支持跨场景性能提升、SOTA、优于
+FOUND-IT 或完整闭环导航的结论。
 
 ## 目录
 
@@ -29,7 +35,7 @@ runs/                 manifest、日志和指标（大文件不进 Git）
 最低依赖为 Python 3.10+、NumPy 和 PyYAML。当前环境无需安装项目也可在仓库根目录运行：
 
 ```bash
-python -m unittest discover -v
+python -m unittest discover -s tests -v
 python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```
 
@@ -93,13 +99,17 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D15.5：95 帧长轨迹的场景级 RGB 点云、轨迹、Top-K 相机、40 条 3D 观测、8 个关联对象、PLY/MP4/Viser 与对象中心多视角审计均已完成；独立 validator 为 `PASS`。
 - D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已在 CPU 完成；官方大小和数据许可仍未确认，因此状态为 `DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN / DATA_LICENSE_UNVERIFIED`，没有下载数据。
 - D17：正式关系预测已与标签/evaluator 隔离，冻结 anchor 坐标约定和 0.60 未校准工程阈值；synthetic 正负查询、ECE/AURC 和拒答重算为 `PASS`，真实数据校准仍为 `REAL_DATA_CALIBRATION_PENDING`。
+- D18：Q0/Q1/Q2 × A1/A2 协议已冻结；office-loop 是 development replay，complete synthetic 只验证标签隔离和完整评测路径，Clio held-out 仍为 `PENDING`。
+- D19：Q2/A2 单因素消融与六类失败审计已完成；当前 synthetic 数值变化为 0，真实消融仍为 `REAL_ABLATION_PENDING`。
+- D20：单入口 CPU 复现命令、三张 JSON 派生表、README 数字检查及移动目录逐字节复验均为 `PASS`；可选二进制 Release 仍为 `PENDING`。
+- D21：最终结果卡与 README 高风险声明审计均为 `PASS`；所有结果均绑定 evidence/config 哈希、样本量、预算、验证状态和适用边界。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
 ```bash
 conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
   python -m scripts.run_vggt_geometry --check-only
-python -m unittest discover -v
+python -m unittest discover -s tests -v
 ```
 
 今天的源码接入验收标准是：check-only 所有模块无 `ERROR`；VGGT-SLAM commit 为 `35327ac28b7d193df9ccc39ba6346052bb6f1207`；全部单测通过。这个结果只说明“接线完成”，不代替 D3 的 GPU 验收。
@@ -722,6 +732,7 @@ python -m scripts.evaluate \
 - 已完成 D18 CPU/source：冻结 Q0/Q1/Q2 × A1/A2 正式矩阵与 Q2×A1 诊断项；office-loop partial cache 中 Q2 遇到未物化 outcome 后明确阻塞，complete synthetic 的六项标签分离重放全部通过。
 - 已完成 D19 CPU/source：Q2 的 pose-novelty/gain-patience 与 A2 的 semantic/OBB/quality/complete-link 单因素消融均可确定性重放；synthetic 数值无变化，历史成功特征明确为 `NOT_IMPLEMENTED`。
 - 已完成 D20 CPU/source：单个 CPU 命令可重跑 D16–D19 validator、从规范 JSON 重建 Q×A/关系/消融表、核对 README 数字，并在移动目录中逐字节复验 retained outputs。
-- Clio 仍未下载、真实 calibration/held-out/ablation 未运行，下一步为 D21 最终结果卡和声明边界审查。
+- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。
+- Clio 仍未下载，真实 calibration、held-out、ablation 与新 GPU inference 仍待后续外部验收；这些缺口不影响 D16–D21 源码与 CPU 正确性验收，也不被写成性能结论。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

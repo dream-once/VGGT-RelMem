@@ -334,6 +334,12 @@ README 数字，并在移动临时目录与 retained outputs 逐字节比较。D
 
 **产物与算力**：最终 README、结果卡、复现卡和演示脚本；CPU，演示补录可选 GPU。
 
+**当前状态（2026-08-30）**：D21 已按 CPU/source 口径完成。最终结果卡逐项
+绑定 tracked evidence、配置 hash、样本量、预算、验证状态和适用边界；README
+高风险表述由行级 claim audit 自动审查。项目定位冻结为“VGGT-SLAM 几何之上
+的可审计语义定位可靠性层”。Clio 数据、held-out、真实校准/消融与新 GPU
+实验仍是显式缺口，不生成性能提升占位数字。
+
 ## 5. Candidate Outcome Cache 最小契约
 
 候选缓存是公平比较 Q0/Q1/Q2 的核心。建议顶层至少包含：

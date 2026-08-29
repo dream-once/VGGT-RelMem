@@ -1,0 +1,164 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D21-final-result-card",
+  "project_positioning": "VGGT-SLAM 几何之上的可审计语义定位可靠性层",
+  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、可靠拒答协议和失败分析",
+  "results": [
+    {
+      "result_id": "D15.5-scene-visualization",
+      "description": "long-trajectory scene-memory visualization audit",
+      "evidence": {
+        "path": "evidence/week3/d20-reproduction/result_tables.json",
+        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+      },
+      "config": {
+        "path": "evidence/week3/d20-reproduction/sources/visualization_manifest.json",
+        "sha256": "2f1ea716893aba95bb5a8157fa41365002523c4452e280eb1ebb0e406b5241f4"
+      },
+      "sample_size": {
+        "anchor_cameras": 95,
+        "selected_cameras": 20,
+        "observations": 40,
+        "predicted_objects": 8
+      },
+      "budget": {
+        "retrieval_top_k": 24
+      },
+      "validation_status": "PASS",
+      "scope": "office_loop_engineering_visualization"
+    },
+    {
+      "result_id": "D16-clio-readiness",
+      "description": "fail-closed Clio data and disk feasibility audit",
+      "evidence": {
+        "path": "evidence/week3/d16-clio-feasibility/feasibility_report.json",
+        "sha256": "a48daa53aab5d952261c045ed2aee0708c87819f560b7e5a8187361bf40e59c4"
+      },
+      "config": {
+        "path": "configs/clio_dataset_manifest.json",
+        "sha256": "fcf5802f4ed2682ec3fd15f797b88ff18864b611c901d72fa58118fc12e4560c"
+      },
+      "sample_size": {
+        "scene_roles": 2
+      },
+      "budget": {
+        "available_bytes": 26189692928,
+        "safety_reserve_bytes": 10737418240,
+        "maximum_peak_bytes": 15452274688
+      },
+      "validation_status": "PASS",
+      "scope": "metadata_readiness_no_download"
+    },
+    {
+      "result_id": "D17-relation-reliability",
+      "description": "label-separated relation and abstention protocol",
+      "evidence": {
+        "path": "evidence/week3/d20-reproduction/result_tables.json",
+        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+      },
+      "config": {
+        "path": "configs/relation_calibration_manifest.json",
+        "sha256": "26067fa8b39dccb31434f53d69af5d9b9576851c3846e26786ba9899041c8eef"
+      },
+      "sample_size": {
+        "queries": 5,
+        "positive": 2,
+        "negative": 3
+      },
+      "budget": {
+        "engineering_threshold": 0.6
+      },
+      "validation_status": "PASS",
+      "scope": "synthetic_correctness_real_calibration_pending"
+    },
+    {
+      "result_id": "D18-QxA-protocol",
+      "description": "frozen query-policy by association-policy matrix",
+      "evidence": {
+        "path": "evidence/week3/d20-reproduction/result_tables.json",
+        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+      },
+      "config": {
+        "path": "configs/d18_experiment_manifest.json",
+        "sha256": "a2359dc63b7b8e2efa84e30f7e3f01a8d7d1cadfe0c41ef7b11e20b569a4d167"
+      },
+      "sample_size": {
+        "frozen_queries": 1,
+        "matrix_rows": 6
+      },
+      "budget": {
+        "Q0": 1,
+        "Q1": [
+          1,
+          3,
+          5
+        ],
+        "Q2": 5
+      },
+      "validation_status": "PASS",
+      "scope": "synthetic_correctness_office_development_replay"
+    },
+    {
+      "result_id": "D19-ablation-audit",
+      "description": "one-factor ablations and six-class failure audit",
+      "evidence": {
+        "path": "evidence/week3/d20-reproduction/result_tables.json",
+        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+      },
+      "config": {
+        "path": "configs/d19_ablation_manifest.json",
+        "sha256": "8251dc96eb9e77eecb844a303fe3d3be94916d2f02f52f222eee6b67b61c328d"
+      },
+      "sample_size": {
+        "frozen_queries": 1,
+        "q2_variants": 3,
+        "a2_variants": 5
+      },
+      "budget": {
+        "association_input_q1_k": 5
+      },
+      "validation_status": "PASS",
+      "scope": "synthetic_correctness_real_ablation_pending"
+    },
+    {
+      "result_id": "D20-reproduction-package",
+      "description": "JSON-derived tables and moved-directory replay",
+      "evidence": {
+        "path": "evidence/week3/d20-reproduction/reproduction_report.json",
+        "sha256": "844e22e41a769440fe3acf6d47514d3851aab209f3bff1975c27399a4afbfdc4"
+      },
+      "config": {
+        "path": "configs/d20_reproduction_manifest.json",
+        "sha256": "80d8d893d08b60f03b418b8fcb8c876818b17ead6bfc6d9c407c837034af1126"
+      },
+      "sample_size": {
+        "canonical_inputs": 7,
+        "derived_tables": 3,
+        "stage_validators": 4
+      },
+      "budget": {
+        "cpu_only": true
+      },
+      "validation_status": "PASS",
+      "scope": "tracked_json_markdown_reproduction"
+    }
+  ],
+  "gaps": {
+    "clio_download": "DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN",
+    "data_license": "DATA_LICENSE_UNVERIFIED",
+    "clio_held_out": "CLIO_HELD_OUT_PENDING",
+    "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
+    "real_ablation": "REAL_ABLATION_PENDING",
+    "new_gpu_inference": "PENDING",
+    "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING"
+  },
+  "claim_boundary": {
+    "official_found_it_reproduction": false,
+    "closed_loop_navigation": false,
+    "held_out_performance": false,
+    "sota_or_superiority_claim": false,
+    "performance_improvement": null
+  },
+  "source_status": "CPU_COMPLETE"
+}

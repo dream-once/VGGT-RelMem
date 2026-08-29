@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D21-validation",
+  "checks": {
+    "result_card_matches": true,
+    "result_card_markdown_matches": true,
+    "claim_audit_matches": true,
+    "claim_audit_pass": true,
+    "positioning_frozen": true,
+    "conclusion_frozen": true,
+    "result_inventory_complete": true,
+    "source_references_match": true,
+    "external_gaps_explicit": true,
+    "claim_boundary_honest": true,
+    "d20_reproduction_still_passes": true
+  },
+  "source_status": "CPU_COMPLETE",
+  "external_gaps": {
+    "clio_download": "DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN",
+    "data_license": "DATA_LICENSE_UNVERIFIED",
+    "clio_held_out": "CLIO_HELD_OUT_PENDING",
+    "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
+    "real_ablation": "REAL_ABLATION_PENDING",
+    "new_gpu_inference": "PENDING",
+    "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema_version": "0.1",
+  "stage": "D21-final-result-card",
+  "status": "CPU_COMPLETE",
+  "repository_base_commit": "849fba16c8a2b094127443cfe4486208cc2b1871",
+  "project_positioning": "VGGT-SLAM 几何之上的可审计语义定位可靠性层",
+  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、可靠拒答协议和失败分析",
+  "inputs": [
+    {
+      "input_id": "readme",
+      "path": "README.md",
+      "sha256": "0921c857f85cddcde300eddd369154820de1cc6db052d73b9f1d305802b80742"
+    },
+    {
+      "input_id": "d16_config",
+      "path": "configs/clio_dataset_manifest.json",
+      "sha256": "fcf5802f4ed2682ec3fd15f797b88ff18864b611c901d72fa58118fc12e4560c"
+    },
+    {
+      "input_id": "d16_report",
+      "path": "evidence/week3/d16-clio-feasibility/feasibility_report.json",
+      "sha256": "a48daa53aab5d952261c045ed2aee0708c87819f560b7e5a8187361bf40e59c4"
+    },
+    {
+      "input_id": "d17_config",
+      "path": "configs/relation_calibration_manifest.json",
+      "sha256": "26067fa8b39dccb31434f53d69af5d9b9576851c3846e26786ba9899041c8eef"
+    },
+    {
+      "input_id": "d18_config",
+      "path": "configs/d18_experiment_manifest.json",
+      "sha256": "a2359dc63b7b8e2efa84e30f7e3f01a8d7d1cadfe0c41ef7b11e20b569a4d167"
+    },
+    {
+      "input_id": "d19_config",
+      "path": "configs/d19_ablation_manifest.json",
+      "sha256": "8251dc96eb9e77eecb844a303fe3d3be94916d2f02f52f222eee6b67b61c328d"
+    },
+    {
+      "input_id": "d20_config",
+      "path": "configs/d20_reproduction_manifest.json",
+      "sha256": "80d8d893d08b60f03b418b8fcb8c876818b17ead6bfc6d9c407c837034af1126"
+    },
+    {
+      "input_id": "d20_results",
+      "path": "evidence/week3/d20-reproduction/result_tables.json",
+      "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+    },
+    {
+      "input_id": "d20_report",
+      "path": "evidence/week3/d20-reproduction/reproduction_report.json",
+      "sha256": "844e22e41a769440fe3acf6d47514d3851aab209f3bff1975c27399a4afbfdc4"
+    }
+  ],
+  "claim_terms": [
+    "官方",
+    "复现",
+    "改进",
+    "导航",
+    "优于",
+    "SOTA",
+    "state-of-the-art",
+    "性能提升"
+  ],
+  "required_gaps": {
+    "clio_download": "DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN",
+    "data_license": "DATA_LICENSE_UNVERIFIED",
+    "clio_held_out": "CLIO_HELD_OUT_PENDING",
+    "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
+    "real_ablation": "REAL_ABLATION_PENDING",
+    "new_gpu_inference": "PENDING",
+    "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING"
+  },
+  "result_ids": [
+    "D15.5-scene-visualization",
+    "D16-clio-readiness",
+    "D17-relation-reliability",
+    "D18-QxA-protocol",
+    "D19-ablation-audit",
+    "D20-reproduction-package"
+  ],
+  "frozen_at": "2026-08-30T00:00:00+00:00"
+}
