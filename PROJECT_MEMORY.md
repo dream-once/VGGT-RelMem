@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-29 GPU completion and D15.5 publication session
+- Updated: 2026-08-30 D16–D21 and portable GPU-evidence publication session
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `3073b46728da2a531e7e38a1f61f1dfbbce9c77e`
-- Current milestone: D11–D15 engineering GPU acceptance is complete, and D15.5 adds a validated long-trajectory scene-memory PLY/MP4/Viser package with object-centric viewpoint auditing.
-- Next milestone: decide whether to begin D16/Clio feasibility and data-protocol work; do not download Clio or claim held-out performance without a separate user decision and disk/license audit.
-- Publication state: this publication adds the GPU follow-up validator/tests, D15.5 scene visualization/audit/validator/tests, updated documentation and recoverable memory. Large runs, geometry, masks, point clouds, images, and videos remain local-only.
+- Publication target and pre-publication HEAD: `main` at `806c84558d6234fc5952a0ef74094c46e934c52e`
+- Current milestone: D16–D21 are complete at CPU/source scope, with fail-closed Clio readiness, relation reliability, frozen Q×A experiments, ablation audit, reproducible result tables and a final claim-audited result card. D15 floating replay and public GPU/D15/D15.5 evidence are hardened separately.
+- Next milestone: verify the Clio data licence and reliable archive/extracted sizes before any download, then run real calibration, held-out and any required GPU experiments. Do not turn the legacy D15 observation-count signal into an object/spatial-coverage claim.
+- Publication state: seven ordered commits publish D16 through D21 and the D15/public-evidence correction. Large run trees, geometry, masks, point clouds and videos remain local-only; one hash-pinned overview PNG is retained under the explicit evidence-policy exception.
 
 ## Document-day progress
 
@@ -29,8 +29,14 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D12 | Complete at engineering scope | A2 complete-link and evidence contracts remain frozen; label-free CPU prediction over the complete real GPU outcome cache passes. No new labelled evaluator or F1 claim was added. |
 | D13 | Complete at engineering scope | Q0 remains upstream-aligned; 10/10 static checks and real `frame_0001` B0/B1 single-view GPU acceptance pass. |
 | D14 | Complete at engineering scope | Q1 prediction replay over the complete real GPU outcome cache passes and K=1 matches Q0. No new labelled recall result was produced. |
-| D15 | Complete at engineering scope | Q2 now completes five real-cache steps, stops at `max_budget_reached`, records observed gain 14 and keeps `performance_claim=null`; the earlier blocked trace remains historical partial-cache evidence. |
+| D15 | Complete at engineering scope | Q2 completes five real-cache steps and records 14 new frame-scoped observations under the legacy `observed_gain` field; this is neither object nor spatial coverage. Float replay now tolerates harmless cross-environment ULP drift. |
 | D15.5 | Complete | A 95-anchor long-trajectory run yields 40 3D observations, eight predicted objects, a 132,204-point PLY and a validated 10-second MP4; three objects pass strict object-centric multiview and five remain diagnostic. |
+| D16 | CPU complete; data blocked | Fail-closed Clio manifest and disk gate pass; download remains blocked by unknown archive/extracted sizes, unverified data licence and missing checksum. No Clio data or ROS stack was downloaded. |
+| D17 | CPU complete; real calibration pending | Formal relation prediction is label-free, negative-query abstention is evaluated correctly, and ECE/Brier/coverage-risk/AURC paths pass synthetic and office-loop replay. Default threshold `0.60` is not claimed as calibrated. |
+| D18 | CPU complete; Clio held-out pending | The Q×A matrix, shared-cache rule, frozen hashes/budgets and blocked-outcome behavior pass development and complete-synthetic replay. No held-out score is reported. |
+| D19 | CPU complete; real ablation pending | One-factor Q2/A2 ablations and six-stage failure accounting pass synthetic evaluation; office-loop results remain engineering structure only. Unimplemented history-success scoring is recorded honestly. |
+| D20 | CPU complete; optional binaries pending | Canonical JSON now rebuilds Q×A, relation and ablation tables automatically; clean-clone, relocation, hash, path and evidence-policy checks pass. |
+| D21 | CPU complete | The final result card and README claim audit pass, positioning the project as an auditable semantic-localization reliability layer over VGGT-SLAM rather than closed-loop navigation. |
 
 ## D3 acceptance evidence
 
@@ -171,7 +177,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## D15 acceptance evidence
 
-- `Q2-gain-based-sequential-search` freezes max budget `5`, low-gain threshold `1`, patience `2`, and retrieval/novelty weights `0.65/0.35`.
+- Historical schema 0.1 retains policy ID `Q2-gain-based-sequential-search`; the corrected method name is `retrieval-pose-novelty-sequential-search`, with max budget `5`, empty-observation threshold `1`, patience `2`, and retrieval/novelty weights `0.65/0.35`.
 - Retrieval uses candidate-universe min-max normalization; pose novelty averages translation clipped at `0.15 m` and view angle clipped at `3°`.
 - Step one is retrieval-only and selects Q0 `frame_0001`; later selection reads metadata only and reveals exactly one selected outcome afterward.
 - The retained partial-cache trace reveals 4/2/2 new observations from `frame_0001/0071/0041`, then selects unmaterialized `frame_0061` and immediately returns `BLOCKED_MISSING_OUTCOME`.
@@ -179,7 +185,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Complete synthetic replay selects five frames and stops at `max_budget_reached`. Zero-gain, exhaustion, missing-outcome, tie-break, and budget-one paths are independently tested.
 - Synthetic Q0/Q1/Q2 comparison contains selected frames and SAM/lifting counts only; Q1 and Q2 are equal on this fixture, so no improvement is claimed.
 - The D15 validator reports `PASS`; nine dedicated tests and 136 total CPU tests pass. Evidence is JSON/Markdown-only at about 46 KiB.
-- The 2026-08-29 complete real-outcome trace runs five steps through `frame_0001/0071/0041/0061/0031`, stops at `max_budget_reached`, records observed gain 14 and still makes no performance claim.
+- The 2026-08-29 complete real-outcome trace runs five steps through `frame_0001/0071/0041/0061/0031`, stops at `max_budget_reached`, records 14 new frame-scoped observations through the legacy `observed_gain` field and makes no coverage/performance claim.
 
 
 ## 2026-08-29 GPU completion addendum
@@ -188,7 +194,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The final report is `PASS / COMPLETE` with scope `ENGINEERING_REPLAY_NO_NEW_MANUAL_LABELS`. D3/D5/D6/D13 execute real GPU model inference; D7/D8/D11/D12/D14/D15 are CPU assembly/replay over those outcomes.
 - The D11 candidate universe and raw ranking stay frozen. All eight outcomes are available with 21 observations and eight rejections; retained frames `0001/0071/0041/0021` do not drift, and `0061/0031/0011/0051` are newly materialized. PE embedding binaries remain `not_retained`.
 - D12 label-free prediction passes without a new labelled evaluation. D13 Q0 selects `frame_0001` and both B0/B1 pass. D14 complete-cache prediction passes with K=1 equal to Q0.
-- D15 complete-cache trace selects `0001/0071/0041/0061/0031`, stops at `max_budget_reached`, records observed gain 14, and keeps `performance_claim=null`.
+- D15 complete-cache trace selects `0001/0071/0041/0061/0031`, stops at `max_budget_reached`, records 14 new frame-scoped observations, and keeps `performance_claim=null` and `coverage_aware=false`.
 - Creation-time manifests inside the ignored local bundle may still contain the earlier pending snapshot. The additive validator/report is authoritative for completion; those large artifacts are not published.
 
 ## D15.5 acceptance evidence
@@ -204,7 +210,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Publication verification
 
-- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 147 tests passed.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -v`: all 190 tests passed after D16–D21 and the D15/public-evidence corrections.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
 - The real D9 validator passed for 45 pairs, one permanent cross-frame object, four pending observations, and exact JSON round trip before generated runs were purged.
@@ -225,6 +231,10 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - D15 tests cover Q0 budget-one reduction, frozen novelty math, deterministic ties, low-gain/exhaustion stops, missing outcome, future-outcome non-interference, replay, and tampering.
 - The local GPU acceptance validator replays D3/D5/D6/D7/D8/D11/D12/D13 plus D14/D15 contracts and reports `PASS / COMPLETE`; its three focused anti-drift/leakage tests pass.
 - The local D15.5 validator reports `PASS` for hashes, PNG/MP4 decoding, video motion, PLY vertices and independently reclassified recorded object-centric pair metrics; its eight focused tests pass.
+- D16, D17, D18, D19, D20 and D21 dedicated validators report `PASS` with deferred real-data work represented only by explicit `*_PENDING` or `BLOCKED_*` states.
+- D15 replay accepts a one-ULP finite drift, still rejects material drift and NaN/Inf, and the retained D15 validator reports `PASS` across environments.
+- The portable public evidence validator reports `PASS` for the sanitized GPU report, complete candidate cache and D15 trace, D15.5 validation report and hash-pinned overview PNG; it contains no absolute paths.
+- Week 3 evidence remains below the frozen 768 KiB limit. Structured daily bundles stay below 128 KiB; the sole PNG exception is exact-path, SHA-256 and size constrained.
 - Week 2 evidence remains JSON/Markdown-only at about 323 KiB total; the D15 daily bundle is about 46 KiB.
 - The current instance has an NVIDIA GeForce RTX 4090 with 24,564 MiB VRAM and about 24.39 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
 - Generated runs remain optional and ignored: the current local GPU acceptance bundle is about 27 MiB and the D15.5 long-trajectory tree is about 142 MiB. Neither is an instance-baseline requirement or Git publication payload.
@@ -258,23 +268,22 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Ask for a separate user decision before starting D16/Clio; first audit official source, licence, archive/extracted sizes, coordinate/GT protocol and available disk without downloading data.
-2. If D16 is authorized, freeze a development/held-out scene and query split before new inference; do not tune Q/A thresholds from held-out labels.
-3. Preserve the complete GPU bundle and D15.5 run as optional local evidence only. Do not claim loop-closure accuracy, held-out performance, full 360° object coverage, path planning or closed-loop navigation.
+1. Resolve `DATA_LICENSE_UNVERIFIED`, archive/extracted-size uncertainty and checksum availability before authorizing a Clio scene download; retain at least 10 GiB free space.
+2. If the data gate later passes, materialize the frozen development/held-out protocol and run real relation calibration, Q×A evaluation and ablations without tuning on held-out labels.
+3. Design any genuine object/spatial-coverage policy as a new protocol version. Preserve the legacy D15 trace for compatibility and do not relabel observation count as coverage gain.
 
 ## Publication history
 
-- 2026-08-25: Corrected D4/D6 controlled baselines, true-multiview pose gate and query evidence, D8 frozen object-memory schema, 56-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `7b646deda5e8a01d128cb95f274f97316d01f53c`).
-- 2026-08-25: Closed the D7/D8 stride and portability gaps, added query-specific same-pair validation, upgraded D3 source to confidence-preserving schema 0.2, published 12 MiB of D4–D8 evidence, and recorded a 64-test no-GPU regression in the commit containing this entry (parent `d0399ffb872c78ec09eae6ab9168f92d47a1fbce`).
-- 2026-08-26: Completed the real D3 schema-0.2 GPU addendum and D9 exact-class spatial association, raised the regression to 73 tests, and replaced binary evidence with a 296 KiB JSON/text-only snapshot. Generated local runs were intentionally purged.
-
-- 2026-08-27: Published D10 label-free prediction/independent evaluation, 86 CPU tests, revised post-D9 positioning, and an 86 KiB self-contained JSON/Markdown evidence bundle (pre-publication HEAD `3fc3873`).
-- 2026-08-27: Published D11 Visual Memory/Candidate Outcome Cache 0.1, deterministic partial-cache replay, 96 CPU tests, and a 67,029-byte JSON/Markdown evidence bundle (pre-publication HEAD `09fe5c8`).
-- 2026-08-27: Published D13 Q0 upstream-aligned protocol freeze, 10/10 static source checks, explicit lightweight-D4 limitation, 120 CPU tests, and an 8,725-byte JSON/Markdown bundle (pre-publication HEAD `d7a0efd`).
-- 2026-08-27: Published D12 A2 evidence-aware complete-link association, frozen A1 hashes, 112 CPU tests, and a 111,875-byte JSON/Markdown development bundle (pre-publication HEAD `70f336f`).
 - 2026-08-27: Published D14 Q1 Fixed Top-K metadata-only replay, real 1/3/4 and synthetic 1/3/5 budget curves, 127 CPU tests, and an approximately 39 KiB JSON/Markdown development bundle (pre-publication HEAD `3ee7e98`).
 - 2026-08-27: Published D15 Q2 gain-based sequential search, real blocked readiness trace, complete synthetic Q0/Q1/Q2 engineering comparison, 136 CPU tests, and an approximately 46 KiB JSON/Markdown bundle (pre-publication HEAD `94bcb81`).
 - 2026-08-29: Published the D11–D15 GPU completion validator, D15.5 long-trajectory scene-memory visualization/audit/validator, 147-test regression, updated documentation, memory and baseline without publishing binary run artifacts (pre-publication HEAD `3073b46`).
+- 2026-08-30: Published D16 fail-closed Clio data protocol without downloading data (`db44e9f`).
+- 2026-08-30: Published D17 label-free relation prediction, abstention evaluation and calibration boundaries (`5ea7b86`).
+- 2026-08-30: Published D18 frozen Q×A experiment protocol and development/synthetic replay (`79d7d12`).
+- 2026-08-30: Published D19 one-factor ablation and complete failure-accounting audit (`3ad14ad`).
+- 2026-08-30: Published D20 reproducible package and automatically rebuilt result tables (`849fba1`).
+- 2026-08-30: Published D21 final result card, claim audit and explicit held-out boundaries (`5dc3a59`).
+- 2026-08-30: Published tolerant D15 replay, corrected Q2 semantics and portable GPU/D15/D15.5 evidence; 190 tests and final validators pass (commit containing this entry, pre-publication parent `5dc3a59`).
 
 ## Scope reminder
 

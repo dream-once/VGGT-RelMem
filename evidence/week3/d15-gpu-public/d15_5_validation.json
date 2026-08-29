@@ -1,0 +1,182 @@
+{
+  "status": "PASS",
+  "artifact_status": "PASS",
+  "viewpoint_evidence_status": "STRONG_OBJECT_CENTRIC_MULTIVIEW",
+  "errors": [],
+  "scene_id": "office-loop-d15_5-s5-trash-can-k24",
+  "query": "trash can",
+  "status_counts": {
+    "STRICT_MULTIVIEW": 3,
+    "DIAGNOSTIC_PARALLAX": 5,
+    "WEAK_OR_SINGLE_VIEW": 0
+  },
+  "objects": [
+    {
+      "object_id": "obj_0001",
+      "status": "DIAGNOSTIC_PARALLAX",
+      "distinct_frame_count": 2,
+      "strict_qualifying_pair_count": 1,
+      "strict_covered_frames": [
+        "frame_0001",
+        "frame_0041"
+      ],
+      "strict_pairs": [
+        [
+          "frame_0001",
+          "frame_0041"
+        ]
+      ]
+    },
+    {
+      "object_id": "obj_0002",
+      "status": "DIAGNOSTIC_PARALLAX",
+      "distinct_frame_count": 2,
+      "strict_qualifying_pair_count": 1,
+      "strict_covered_frames": [
+        "frame_0061",
+        "frame_0076"
+      ],
+      "strict_pairs": [
+        [
+          "frame_0061",
+          "frame_0076"
+        ]
+      ]
+    },
+    {
+      "object_id": "obj_0003",
+      "status": "DIAGNOSTIC_PARALLAX",
+      "distinct_frame_count": 2,
+      "strict_qualifying_pair_count": 0,
+      "strict_covered_frames": [],
+      "strict_pairs": []
+    },
+    {
+      "object_id": "obj_0004",
+      "status": "STRICT_MULTIVIEW",
+      "distinct_frame_count": 4,
+      "strict_qualifying_pair_count": 4,
+      "strict_covered_frames": [
+        "frame_0116",
+        "frame_0126",
+        "frame_0136",
+        "frame_0146"
+      ],
+      "strict_pairs": [
+        [
+          "frame_0116",
+          "frame_0136"
+        ],
+        [
+          "frame_0116",
+          "frame_0146"
+        ],
+        [
+          "frame_0126",
+          "frame_0146"
+        ],
+        [
+          "frame_0136",
+          "frame_0146"
+        ]
+      ]
+    },
+    {
+      "object_id": "obj_0005",
+      "status": "STRICT_MULTIVIEW",
+      "distinct_frame_count": 3,
+      "strict_qualifying_pair_count": 2,
+      "strict_covered_frames": [
+        "frame_0181",
+        "frame_0191",
+        "frame_0211"
+      ],
+      "strict_pairs": [
+        [
+          "frame_0181",
+          "frame_0211"
+        ],
+        [
+          "frame_0191",
+          "frame_0211"
+        ]
+      ]
+    },
+    {
+      "object_id": "obj_0006",
+      "status": "DIAGNOSTIC_PARALLAX",
+      "distinct_frame_count": 2,
+      "strict_qualifying_pair_count": 1,
+      "strict_covered_frames": [
+        "frame_0246",
+        "frame_0271"
+      ],
+      "strict_pairs": [
+        [
+          "frame_0246",
+          "frame_0271"
+        ]
+      ]
+    },
+    {
+      "object_id": "obj_0007",
+      "status": "STRICT_MULTIVIEW",
+      "distinct_frame_count": 5,
+      "strict_qualifying_pair_count": 6,
+      "strict_covered_frames": [
+        "frame_0326",
+        "frame_0336",
+        "frame_0346",
+        "frame_0356",
+        "frame_0366"
+      ],
+      "strict_pairs": [
+        [
+          "frame_0326",
+          "frame_0356"
+        ],
+        [
+          "frame_0326",
+          "frame_0366"
+        ],
+        [
+          "frame_0336",
+          "frame_0356"
+        ],
+        [
+          "frame_0336",
+          "frame_0366"
+        ],
+        [
+          "frame_0346",
+          "frame_0366"
+        ],
+        [
+          "frame_0356",
+          "frame_0366"
+        ]
+      ]
+    },
+    {
+      "object_id": "obj_0008",
+      "status": "DIAGNOSTIC_PARALLAX",
+      "distinct_frame_count": 2,
+      "strict_qualifying_pair_count": 0,
+      "strict_covered_frames": [],
+      "strict_pairs": []
+    }
+  ],
+  "overview_probe": {
+    "width": 2931,
+    "height": 1010
+  },
+  "video_probe": {
+    "fps": 12.0,
+    "frame_count": 120,
+    "duration_seconds": 10.0,
+    "motion_ratio": 1.0
+  },
+  "ply_probe": {
+    "vertices": 132204
+  }
+}

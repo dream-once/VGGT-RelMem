@@ -1,0 +1,15 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D15-public-evidence-validation",
+  "checks": {
+    "artifact_hashes": true,
+    "d15_trace_replays": true,
+    "gpu_report_portable": true,
+    "d15_5_validator_pass": true,
+    "q2_boundary_honest": true,
+    "thumbnail_is_bounded": true,
+    "large_binaries_are_hash_only": true
+  },
+  "failures": []
+}

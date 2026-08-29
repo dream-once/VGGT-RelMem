@@ -1,4 +1,5 @@
 import json
+from hashlib import sha256
 import unittest
 from pathlib import Path
 
@@ -44,20 +45,44 @@ class EvidencePolicyTests(unittest.TestCase):
             ) > 128 * 1024
         }
         self.assertEqual(oversized, {})
-    def test_week3_is_lightweight_json_or_markdown_only(self) -> None:
+    def test_week3_obeys_hash_pinned_preview_policy(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        policy = json.loads(
+            (root / "configs/evidence_policy.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        base_extensions = set(policy["base_extensions"])
+        preview_exceptions = {
+            item["path"]: item for item in policy["preview_exceptions"]
+        }
         files = sorted(
             path for path in self.week3.rglob("*") if path.is_file()
         )
         self.assertTrue(files)
-        unexpected = [
-            path.relative_to(self.week3).as_posix()
-            for path in files
-            if path.suffix.lower() not in {".json", ".md"}
-        ]
+        unexpected = []
+        seen_previews = set()
+        for path in files:
+            if path.suffix.lower() in base_extensions:
+                continue
+            reference = path.relative_to(root).as_posix()
+            exception = preview_exceptions.get(reference)
+            if exception is None:
+                unexpected.append(reference)
+                continue
+            seen_previews.add(reference)
+            self.assertLessEqual(
+                path.stat().st_size, exception["max_bytes"]
+            )
+            self.assertEqual(
+                sha256(path.read_bytes()).hexdigest(),
+                exception["sha256"],
+            )
         self.assertEqual(unexpected, [])
+        self.assertEqual(seen_previews, set(preview_exceptions))
         self.assertLessEqual(
             sum(path.stat().st_size for path in files),
-            768 * 1024,
+            policy["week_limit_bytes"],
         )
         bundles = sorted(
             path for path in self.week3.iterdir() if path.is_dir()
@@ -67,15 +92,16 @@ class EvidencePolicyTests(unittest.TestCase):
                 item.stat().st_size
                 for item in path.rglob("*")
                 if item.is_file()
+                and item.suffix.lower() in base_extensions
             )
             for path in bundles
             if sum(
                 item.stat().st_size for item in path.rglob("*")
                 if item.is_file()
-            ) > 128 * 1024
+                and item.suffix.lower() in base_extensions
+            ) > policy["structured_bundle_limit_bytes"]
         }
         self.assertEqual(oversized, {})
-
 
     def test_d11_candidate_cache_contains_no_policy_or_ground_truth(self) -> None:
         cache = json.loads(

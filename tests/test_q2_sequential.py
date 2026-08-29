@@ -1,14 +1,20 @@
 import copy
 import json
+import math
 import tempfile
 import unittest
 from pathlib import Path
+import numpy as np
+
 
 from relground.candidate_cache import CandidateOutcomeCache
 from relground.q1_fixed_topk import replay_fixed_topk
 from relground.q1_synthetic import build_synthetic_complete_fixture
 from relground.q2_sequential import (
     GainBasedSequentialPolicy,
+    Q2_METHOD_NAME,
+    Q2_OBSERVATION_METRIC,
+    Q2_OBSERVATION_SEMANTICS,
     SequentialSearchConfig,
     build_engineering_comparison,
     run_sequential_search,
@@ -107,6 +113,15 @@ class SequentialSearchTests(unittest.TestCase):
         self.assertAlmostEqual(row["pose_novelty"], 0.5, places=5)
         self.assertAlmostEqual(row["policy_score"], 0.5, places=5)
 
+    def test_method_name_does_not_claim_object_coverage(self) -> None:
+        self.assertEqual(
+            Q2_METHOD_NAME, "retrieval-pose-novelty-sequential-search"
+        )
+        self.assertEqual(Q2_OBSERVATION_METRIC, "new_observation_count")
+        self.assertIn(
+            "not_object_or_spatial_coverage", Q2_OBSERVATION_SEMANTICS
+        )
+
     def test_ties_break_by_source_rank_then_frame_id(self) -> None:
         cache = fixture()
         for candidate in cache["candidates"]:
@@ -202,6 +217,26 @@ class SequentialSearchTests(unittest.TestCase):
         self.assertEqual(comparison["comparison_scope"], "synthetic_engineering_counts_not_performance")
         self.assertIsNone(q2["summary"]["performance_claim"])
         self.assertNotIn("instance_id", json.dumps(q2))
+
+    def test_one_ulp_replay_drift_passes_but_tamper_fails(self) -> None:
+        cache = fixture()
+        result = trace(cache)
+        score = result["steps"][1]["selected"]["policy_score"]
+        result["steps"][1]["selected"]["policy_score"] = float(
+            np.nextafter(score, math.inf)
+        )
+        validate_trace_payload(result, cache)
+
+        result["steps"][1]["selected"]["policy_score"] += 1e-6
+        with self.assertRaisesRegex(ValueError, "float differs"):
+            validate_trace_payload(result, cache)
+
+    def test_nonfinite_replay_float_fails_closed(self) -> None:
+        cache = fixture()
+        result = trace(cache)
+        result["steps"][1]["selected"]["policy_score"] = math.nan
+        with self.assertRaisesRegex(ValueError, "non-finite"):
+            validate_trace_payload(result, cache)
 
     def test_trace_tamper_and_missing_bundle_fail(self) -> None:
         cache = fixture()

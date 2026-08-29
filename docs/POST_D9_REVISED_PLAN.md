@@ -36,9 +36,12 @@ FOUND-IT 在本项目中的角色首先是**相关工作与设计参照**。在�
 | --- | --- | --- | --- | --- | --- |
 | Q0 | `official-top1` | PE 全序列排序后只取 Top-1；使用上游预处理图像、SAM 直接取点和普通 PCA OBB | 1 次候选帧 SAM | 相同 PE 排序、SAM 权重/阈值、VGGT 几何、候选全集 | D13 已冻结为 `upstream-aligned`；2026-08-29 B0/B1 单视角 GPU 补验通过 |
 | Q1 | `fixed-topk` | 按固定 K 和预先声明的时序/视角去冗余规则选择 | K 次或至候选耗尽 | 与 Q0/Q2 共用候选结果缓存；报告 K=1/3/5 等完整预算曲线 | D14 已实现；完整真实 GPU outcome cache 的无标签 CPU replay 通过 |
-| Q2 | `gain-based-sequential` | 每步根据尚未使用的可观测信号预测边际收益，选择下一候选；达到预算或收益阈值即停止 | 最大 B 次，实际次数可小于 B | 策略不得读取真值、人工标签或未来候选的实际成败；必须保存逐步 policy trace | D15 已实现；完整真实 GPU outcome cache trace 通过，尚无性能提升结论 |
+| Q2 | `retrieval-pose-novelty-sequential` | 首步按 retrieval，后续按 retrieval＋pose novelty 选择；连续两个空 observation 集或达到预算时停止 | 最大 B 次，实际次数可小于 B | 不读取真值、人工标签或未来 outcome；保存逐步 trace；legacy policy ID 保持兼容 | D15 已实现；完整真实 cache trace 通过，`coverage_aware=false` |
 
-Q2 暂时只称**基于收益的序贯搜索**。当前 geometry schema 0.2 没有可审计的相机内参和完整 camera model，无法精确投影视锥、判断可见体积，因此在补齐内参及坐标约定并通过投影单测前，不称“精确 frustum search”或“视锥覆盖算法”。相机位姿新颖度可以作为近似特征，但不能冒充几何可见性。
+Q2 当前只称**retrieval＋pose-novelty 序贯搜索**。schema 0.1 的
+`observed_gain` 是兼容字段，规范语义为 `new_observation_count`，不能解释为
+对象数或覆盖收益。当前 geometry schema 0.2 没有可审计的相机内参和完整 camera
+model，无法精确判断可见体积，因此不称“精确 frustum search”或覆盖算法。
 
 ### 2.2 关联策略矩阵
 
@@ -55,7 +58,7 @@ A1 的单链接连通分量存在已知“桥接”风险：A–B、B–C 通过
 | --- | --- | --- |
 | Q0 official Top-1 | 必做 | 必做 |
 | Q1 fixed Top-K | 必做 | 必做 |
-| Q2 gain-based sequential | 可做诊断 | 主结果 |
+| Q2 retrieval＋pose-novelty sequential | 可做诊断 | 主结果 |
 
 ## 3. D10：先拆预测与评测（今天）
 
@@ -158,14 +161,17 @@ D10 的目的不是增加模型能力，而是建立后续所有数字都可信�
 
 **产物与算力**：Q1 budget curve JSON/表格和消融报告；缓存齐全后 CPU 可重放，首次生成 candidate outcomes 需要 GPU。
 
-### D15：Q2 gain-based sequential search
+### D15：Q2 retrieval＋pose-novelty sequential search
 
 **任务**
 
-- 定义每一步可用的 policy state：PE 分数、已选帧位姿新颖度、历史可见成功/失败、已有对象覆盖和预测观测质量；
-- 定义预注册的边际收益与停止规则；
+- 定义每一步可用的 policy state：PE 分数与已选帧位姿新颖度；
+- 冻结连续空 observation 集、预算耗尽与候选耗尽停止规则；
 - 输出逐步 candidate scores、选择、停止原因和累计成本；
 - 和 Q0/Q1 在相同最大 SAM 预算 B 下比较。
+
+当前没有对象覆盖预测特征；`new_observation_count` 只在选中候选揭示后用于停止，
+不参与下一候选打分。真正覆盖感知的策略必须另行版本化，不能回写 D15。
 
 **门槛**
 
@@ -198,8 +204,9 @@ D15.5 是 2026-08-29 插入 D16 前的工程验收里程碑，不新增查询策
   都有负向单测，不能误升级为严格多视角；
 - MP4 是围绕最终静态场景的展示相机，不是机器人真实轨迹，也不是物体真实 360°
   表面覆盖；长序列关闭回环，坐标仍是 reconstruction units；
-- 大型 geometry、point cloud、PNG 和 MP4 只保留在本地 `runs/`，Git 只发布源码、
-  validator、测试和可恢复说明。
+- 大型 geometry、point cloud 和 MP4 只保留在本地 `runs/`；Git 发布 manifest、
+  audit、validator report、关键表与一个 hash-pinned 530 KB PNG 缩略图，完整
+  MP4/PLY 仅在可选 Release 中分发。
 
 ### D16：Clio 可行性、数据协议与分割冻结
 
@@ -408,13 +415,13 @@ Visual Memory 建议把可追踪 manifest 与大 embedding 分开：Git 保存 f
 
 ### 8.2 D15 左右：中期可以写（数字必须来自届时 JSON）
 
-> 构建了共享 Candidate Outcome Cache，在相同候选全集、视觉模型和最大 SAM 预算下，对比 official Top-1、fixed Top-K 与 gain-based sequential search。序贯策略在 `[开发场景数]` 个场景、`[查询数]` 个预注册查询上，以平均 `[SAM 调用数]` 次获得 Instance Recall@B=`[数值]`；相对 fixed Top-K 的差异为 `[数值及置信区间]`。关联部分单独比较 A1/A2，因此查询收益不由后处理变化混入。
+> 构建了共享 Candidate Outcome Cache，在相同候选全集、视觉模型和最大 SAM 预算下，对比 official Top-1、fixed Top-K 与 retrieval＋pose-novelty sequential search。当前序贯策略只报告 selected frames、SAM calls、new observation count 和停止原因；没有 held-out 标签时不填写覆盖或性能提升数字。
 
 若只有 development 数据，标题和正文必须写 `development result`；若差异不显著，也如实写“未观察到稳定提升”，转而报告效率或失败分析。
 
 ### 8.3 D21：最终结果模板（占位符不能提前填）
 
-> 在冻结的 `[development split]` 与 held-out `[test split]` 上，我们以 Q0 official Top-1、Q1 fixed Top-K 和 Q2 gain-based sequential 为查询轴，以 A1 legacy 与 A2 evidence-aware 为关联轴进行同预算比较。Q2+A2 在 test 的 `[N]` 个查询上取得 Instance Recall@`[B]`=`[X]`、duplicate rate=`[Y]`、关系 Acc@1=`[Z]`；在 coverage=`[C]` 时 selective risk=`[R]`，平均使用 `[S]` 次 SAM 调用、耗时 `[T]`。相对最强同预算 baseline 的差异为 `[Δ 与区间]`。所有预测不读取 GT，校准与阈值在 test 前冻结。
+> 在冻结的 `[development split]` 与 held-out `[test split]` 上，我们以 Q0 official Top-1、Q1 fixed Top-K 和 Q2 retrieval＋pose-novelty sequential 为查询轴，以 A1 legacy 与 A2 evidence-aware 为关联轴进行同预算比较。只有 held-out 标签与覆盖定义冻结后，才填写 recall、duplicate rate、关系/拒答、预算和差异数字；否则保持为空。
 
 简历式写法可压缩为：
 

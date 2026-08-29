@@ -449,9 +449,17 @@ def validate_output(output_dir: str | Path) -> dict[str, Any]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output_dir")
+    parser.add_argument("--report")
     args = parser.parse_args()
     result = validate_output(args.output_dir)
-    print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+    serialized = json.dumps(
+        result, ensure_ascii=False, indent=2, allow_nan=False
+    ) + "\n"
+    if args.report:
+        report = Path(args.report)
+        report.parent.mkdir(parents=True, exist_ok=True)
+        report.write_text(serialized, encoding="utf-8")
+    print(serialized, end="")
     return 0 if result["status"] != "FAIL" else 2
 
 

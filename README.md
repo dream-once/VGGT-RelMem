@@ -475,11 +475,21 @@ outcome 的 CPU 组装或确定性重放，不能写成策略算法本身在 GPU
 - D12 只运行无标签 A2 prediction，未运行新的人工标签 evaluator，因此没有新增 F1 数字。
 - D13 的 Q0 Top-1 仍是 `frame_0001`，`B0-official` 与 `B1-robust-single-view` 均通过真实单视角 GPU 验收；Q0 仍只称 `upstream-aligned`。
 - D14 在完整 cache 上通过 Q1 prediction replay，K=1 与 Q0 一致；没有新增 recall 结论。
-- D15 从原先的 `BLOCKED_MISSING_OUTCOME` 变为完整 trace `PASS`，依次选择 `0001/0071/0041/0061/0031`，以 `max_budget_reached` 停止，observed gain 为 14；`performance_claim` 仍为 `null`。
+- D15 从原先的 `BLOCKED_MISSING_OUTCOME` 变为完整 trace `PASS`，依次选择 `0001/0071/0041/0061/0031`，以 `max_budget_reached` 停止，`new_observation_count=14`；schema 0.1 仍使用 legacy JSON 字段 `observed_gain`，`performance_claim` 保持 `null`。
 
 本地 bundle 内少数阶段 manifest 保留的是产物创建当时的
 `GPU_ACCEPTANCE_PENDING` 快照；最终增量总报告和上述重算 validator 才是
-本次补验状态。完整 bundle、mask、点云和视频属于忽略的本地产物，不进入 Git。
+本次补验状态。完整 mask、点云和视频仍是忽略的本地产物；公开轻量包保留
+完整 D15 trace/cache、去绝对路径的 GPU report、D15.5 validator report、
+manifest/audit/result table 引用与一个 530 KB 缩略图：
+
+```bash
+python -m scripts.validate_public_gpu_evidence
+```
+
+公开包位于 `evidence/week3/d15-gpu-public`。缩略图是
+`configs/evidence_policy.json` 中唯一 hash-pinned PNG 例外；MP4/PLY 仅保存
+大小和 SHA-256，准备作为可选 GitHub Release，不进入 Git。
 
 ## D12 A2 evidence-aware association（完整 GPU outcome 重放通过）
 
@@ -560,9 +570,13 @@ python -m scripts.evaluate_fixed_topk_replay \
 python -m scripts.validate_d14 evidence/week2/d14-fixed-topk
 ```
 
-## D15 Q2 gain-based sequential search（完整 GPU outcome 重放通过）
+## D15 Q2 retrieval＋pose-novelty sequential search（完整重放通过）
 
-Q2 首步只按 retrieval score 选择，因此 budget=1 严格退化为 Q0。后续候选使用 `0.65 × candidate-universe min-max retrieval + 0.35 × pose novelty`；pose novelty 是最小平移按 `0.15 m` 截断归一化与最小视角差按 `3°` 截断归一化的均值。同分按 D5 原始 rank 和 frame ID 确定性排序。
+Q2 首步只按 retrieval score 选择，因此 budget=1 严格退化为 Q0。后续候选使用
+`0.65 × candidate-universe min-max retrieval + 0.35 × pose novelty`；pose
+novelty 是最小平移按 `0.15 m` 截断归一化与最小视角差按 `3°` 截断归一化
+的均值。同分按 D5 原始 rank 和 frame ID 确定性排序。历史 policy ID
+`Q2-gain-based-sequential-search` 仅为 schema 0.1 兼容名。
 
 ```bash
 python -m scripts.run_sequential_search \
@@ -573,13 +587,24 @@ python -m scripts.run_sequential_search \
 
 已发布的无卡 partial-cache trace 先揭示 `frame_0001/0071/0041` 的 8 条新 3D observation；第 4 步按 metadata 选择 `frame_0061` 后才发现 outcome 未物化，于是立即返回 `BLOCKED_MISSING_OUTCOME`，不偷看或跳过候选。它保留为策略 readiness 的历史证据。
 
-complete synthetic cache 跑满五步并以 `max_budget_reached` 停止。Q0/Q1/Q2 同预算文件只比较 selected frames、SAM calls、lifted/rejected counts；当前 synthetic fixture 上 Q1 与 Q2 同序，既不代表提升，也不使用实例标签。observed gain 仅指新 observation ID 数，不称精确 frustum coverage。
-2026-08-29 的完整真实 GPU outcome cache 重放依次选择 `frame_0001/0071/0041/0061/0031`，跑满 5 步并以 `max_budget_reached` 停止，observed gain 为 14。该 trace 已通过确定性重算，但 `performance_claim=null`，未运行新的人工标签评测，也不声称相对 Q0/Q1 有性能提升。
+complete synthetic cache 跑满五步并以 `max_budget_reached` 停止。Q0/Q1/Q2
+同预算文件只比较 selected frames、SAM calls、lifted/rejected counts；当前
+synthetic fixture 上 Q1 与 Q2 同序，既不代表提升，也不使用实例标签。
+`new_observation_count` 仅指此前未出现的 frame-scoped observation ID 数；
+legacy JSON 字段名为 `observed_gain`。它不是对象数、空间覆盖、instance
+recall，也不参与下一候选排序；当前停止规则实质是连续两个空 observation 集。
+2026-08-29 的完整真实 cache 重放跑满 5 步，`new_observation_count=14`，
+`performance_claim=null`，不声称相对 Q0/Q1 有性能提升。
 
 
 ```bash
 python -m scripts.validate_d15 evidence/week2/d15-sequential-search
 ```
+python -m scripts.validate_public_gpu_evidence
+
+
+D15 validator 对结构和离散字段保持严格比较，对有限浮点使用 `1e-12`
+容差；1 ULP 跨环境漂移通过，明显数值篡改和 NaN/Inf 仍失败。
 
 ## D15.5 长轨迹场景记忆可视化（已验收）
 
@@ -603,7 +628,8 @@ conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
 
 conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
   python -m scripts.validate_d15_5_visualization \
-  runs/office-loop-d15_5-s5/d15_5-trash-can-k24
+  runs/office-loop-d15_5-s5/d15_5-trash-can-k24 \
+  --report evidence/week3/d15-gpu-public/d15_5_validation.json
 ```
 
 独立 validator 的结果为 `PASS`：三视图 PNG 为 2931×1010；MP4 为 10 秒、
@@ -725,7 +751,7 @@ python -m scripts.evaluate \
 - 已完成 D12：A2 complete-link、证据记录和反桥接测试保持冻结；完整 GPU outcome 驱动的无标签 CPU prediction 重放为 PASS，没有新增标签评测或 F1 结论。
 - 已完成 D13：Q0 继续保持 `upstream-aligned`；10/10 静态语义检查与真实 `frame_0001` B0/B1 单视角 GPU 补验均通过，仍不称 FOUND-IT 官方复现。
 - 已完成 D14：Q1 在完整真实 GPU outcome cache 上按 metadata 先选后揭示，K=1 与 Q0 一致；本次只验收 prediction replay，不新增 recall 数字。
-- 已完成 D15：Q2 在完整真实 GPU outcome cache 上跑满 5 步并通过 trace 重算，observed gain=14、`performance_claim=null`；历史 blocked trace 继续作为诚实 partial-cache 证据。
+- 已完成 D15：Q2 retrieval＋pose-novelty search 在完整真实 cache 上跑满 5 步并通过 trace 重算；`new_observation_count=14`（legacy 字段 `observed_gain`）、`coverage_aware=false`、`performance_claim=null`。
 - 已完成 D15.5：95 帧长轨迹生成可审计的场景级 RGB 点云、轨迹、Top-K 视角、对象记忆、PLY/MP4/Viser；3/8 个预测对象满足严格对象中心多视角门槛。
 - 已完成 D16 CPU/source：Clio `apartment=development`、`cubicle=held-out` 场景角色和下载门槛已冻结；query 清单仍为 `PENDING_DATA_METADATA`。
 - 已完成 D17 CPU/source：synthetic 的 2 个正查询与 3 个负查询验证标签隔离和正确拒答；本地 office-loop 无标签 replay 对 8 个同类对象给出 `ambiguous_candidates`，没有产生人工指标。

@@ -1,0 +1,1790 @@
+{
+  "schema_version": "0.1",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query_id": "office-loop-trash-can",
+  "query_text": "trash can",
+  "materialization_status": "complete",
+  "candidate_universe": [
+    "frame_0001",
+    "frame_0071",
+    "frame_0041",
+    "frame_0061",
+    "frame_0031",
+    "frame_0011",
+    "frame_0051",
+    "frame_0021"
+  ],
+  "sources": {
+    "d5_retrieval_sha256": "2b6dfc4374241f70a0066e54b5d1734b14cec6d62461cd2a2e6d34aedfb387bc",
+    "d6_result_sha256": "241dbe34bfb0bab4f23e57681030633c0ea62d2296348adb3486bd4346db921a",
+    "d7_observations_sha256": "a392af68138df46375b00205a21319bcd7cad46ddd9dbbf4661fdd0e9d295337"
+  },
+  "inference_config": {
+    "retrieval_policy": {
+      "redundancy": "none",
+      "min_frame_gap": 3,
+      "min_camera_distance": 0.15,
+      "min_view_angle_deg": 12.0
+    },
+    "sam_threshold": 0.5,
+    "lifter_config": {
+      "confidence_threshold": 0.5,
+      "min_points": 30,
+      "outlier_mad_scale": 3.5
+    },
+    "mask_resizing_after_sam": false
+  },
+  "candidates": [
+    {
+      "rank": 1,
+      "frame_id": "frame_0001",
+      "geometry_index": 0,
+      "image_ref": "data/office_loop/frame_0001.jpg",
+      "image_sha256": "c23e57b9612522a10e61b1723749acddfe5b96b3a3642ec8c9db06e604d7f511",
+      "camera_center": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "view_direction": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "retrieval_score": 0.19639502856854218,
+      "retrieval_cosine": 0.19639502856854218,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 6,
+        "lifted_instances": 4,
+        "rejected_instances": 2,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0001_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0001",
+            "mask_ref": "masks/d6_frame_0001_000.npy",
+            "retrieval_score": 0.19639502856854218,
+            "sam_score": 0.96484375,
+            "valid_point_ratio": 0.994421906693712,
+            "points_ref": "points/d6_frame_0001_000.npz",
+            "center": [
+              0.07144351896522569,
+              0.09366936770180563,
+              0.3521497293678905
+            ],
+            "obb": {
+              "center": [
+                0.07144351896522569,
+                0.09366936770180563,
+                0.3521497293678905
+              ],
+              "extent": [
+                0.10087344002173937,
+                0.07576583921589716,
+                0.04890285822934204
+              ],
+              "rotation": [
+                [
+                  0.023749776579927703,
+                  -0.5613889544683807,
+                  -0.8272112123957833
+                ],
+                [
+                  -0.5926934076210918,
+                  0.658438584159777,
+                  -0.4638676055214106
+                ],
+                [
+                  0.8050779295663881,
+                  0.5012993842910312,
+                  -0.3170937631593079
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 1,
+              "retrieval_cosine": 0.19639502856854218,
+              "box_xyxy": [
+                322.6349792480469,
+                213.18441772460938,
+                387.4296875,
+                294.25927734375
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0001.png",
+              "preprocess_ref": "preprocess/frame_0001.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0001_001",
+            "class_text": "trash can",
+            "frame_id": "frame_0001",
+            "mask_ref": "masks/d6_frame_0001_001.npy",
+            "retrieval_score": 0.19639502856854218,
+            "sam_score": 0.81640625,
+            "valid_point_ratio": 0.937799043062201,
+            "points_ref": "points/d6_frame_0001_001.npz",
+            "center": [
+              0.01684310261267536,
+              -0.10108973312193341,
+              0.8934214264616541
+            ],
+            "obb": {
+              "center": [
+                0.01684310261267536,
+                -0.10108973312193341,
+                0.8934214264616541
+              ],
+              "extent": [
+                0.09565297258546213,
+                0.060682658902413256,
+                0.03805699462074036
+              ],
+              "rotation": [
+                [
+                  -0.2669600572164508,
+                  0.7996187300076738,
+                  -0.5379053954664372
+                ],
+                [
+                  0.7000790614621553,
+                  -0.22267287934144062,
+                  -0.6784586181249816
+                ],
+                [
+                  -0.6622851618096669,
+                  -0.5576976559272124,
+                  -0.5003515654217904
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 1,
+              "retrieval_cosine": 0.19639502856854218,
+              "box_xyxy": [
+                258.6692199707031,
+                87.34356689453125,
+                280.1689453125,
+                118.19217681884766
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0001.png",
+              "preprocess_ref": "preprocess/frame_0001.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0001_003",
+            "class_text": "trash can",
+            "frame_id": "frame_0001",
+            "mask_ref": "masks/d6_frame_0001_003.npy",
+            "retrieval_score": 0.19639502856854218,
+            "sam_score": 0.7578125,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0001_003.npz",
+            "center": [
+              0.09093405772572961,
+              0.09831605361141704,
+              0.29447228227935285
+            ],
+            "obb": {
+              "center": [
+                0.09093405772572961,
+                0.09831605361141704,
+                0.29447228227935285
+              ],
+              "extent": [
+                0.03983624511787422,
+                0.01853455563532319,
+                0.011739834802011045
+              ],
+              "rotation": [
+                [
+                  0.9999537840361777,
+                  0.005307429485549645,
+                  0.008016294903829201
+                ],
+                [
+                  0.00917864972172646,
+                  -0.278942145949434,
+                  -0.96026404264786
+                ],
+                [
+                  -0.0028604511908247253,
+                  0.9602932418825932,
+                  -0.2789779694054789
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 1,
+              "retrieval_cosine": 0.19639502856854218,
+              "box_xyxy": [
+                362.17547607421875,
+                276.7323303222656,
+                424.08465576171875,
+                294.0151062011719
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0001.png",
+              "preprocess_ref": "preprocess/frame_0001.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0001_005",
+            "class_text": "trash can",
+            "frame_id": "frame_0001",
+            "mask_ref": "masks/d6_frame_0001_005.npy",
+            "retrieval_score": 0.19639502856854218,
+            "sam_score": 0.796875,
+            "valid_point_ratio": 0.9821162444113264,
+            "points_ref": "points/d6_frame_0001_005.npz",
+            "center": [
+              0.02412651119100652,
+              -0.07442315315814868,
+              0.841125310514262
+            ],
+            "obb": {
+              "center": [
+                0.02412651119100652,
+                -0.07442315315814868,
+                0.841125310514262
+              ],
+              "extent": [
+                0.08030915506148434,
+                0.06465904084241131,
+                0.05336091443112545
+              ],
+              "rotation": [
+                [
+                  0.06220774611340944,
+                  0.7474572261927735,
+                  -0.6613908763626051
+                ],
+                [
+                  0.9495323420661301,
+                  -0.2484495766370973,
+                  -0.1914709879831853
+                ],
+                [
+                  -0.30743865679822957,
+                  -0.6161010492452129,
+                  -0.7251902987665019
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 1,
+              "retrieval_cosine": 0.19639502856854218,
+              "box_xyxy": [
+                262.5361328125,
+                94.21934509277344,
+                284.51434326171875,
+                129.24038696289062
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0001.png",
+              "preprocess_ref": "preprocess/frame_0001.json"
+            }
+          }
+        ],
+        "rejections": [
+          {
+            "obs_id": "d6_frame_0001_002",
+            "frame_id": "frame_0001",
+            "selected_rank": 1,
+            "sam_score": 0.50390625,
+            "box_xyxy": [
+              227.91317749023438,
+              29.093345642089844,
+              236.59083557128906,
+              41.63239669799805
+            ],
+            "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+          },
+          {
+            "obs_id": "d6_frame_0001_004",
+            "frame_id": "frame_0001",
+            "selected_rank": 1,
+            "sam_score": 0.76953125,
+            "box_xyxy": [
+              242.93467712402344,
+              52.369388580322266,
+              255.08872985839844,
+              74.1937255859375
+            ],
+            "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+          }
+        ]
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "rank": 2,
+      "frame_id": "frame_0071",
+      "geometry_index": 7,
+      "image_ref": "data/office_loop/frame_0071.jpg",
+      "image_sha256": "0a7ff80eec4e325db00b7d07ddf8f4f90bc51a15567a463bfe03e25a953fb3d5",
+      "camera_center": [
+        -0.1029637418461258,
+        -0.3715317855646636,
+        1.0435500435229332
+      ],
+      "view_direction": [
+        -0.0706020333822655,
+        0.006618146060436233,
+        0.9974826078809658
+      ],
+      "retrieval_score": 0.19541234191969525,
+      "retrieval_cosine": 0.19541234191969525,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 3,
+        "lifted_instances": 2,
+        "rejected_instances": 1,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0071_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0071",
+            "mask_ref": "masks/d6_frame_0071_000.npy",
+            "retrieval_score": 0.19541234191969525,
+            "sam_score": 0.96875,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0071_000.npz",
+            "center": [
+              -0.0426928818592002,
+              -0.29356001873414345,
+              1.4397902947799024
+            ],
+            "obb": {
+              "center": [
+                -0.0426928818592002,
+                -0.29356001873414345,
+                1.4397902947799024
+              ],
+              "extent": [
+                0.07883294818138098,
+                0.06947160209571979,
+                0.04547078863047622
+              ],
+              "rotation": [
+                [
+                  0.04230131762566148,
+                  -0.1666135317116282,
+                  -0.9851144753670564
+                ],
+                [
+                  -0.673564577336959,
+                  0.7234799566017865,
+                  -0.1512861941895573
+                ],
+                [
+                  0.7379169049994831,
+                  0.6699378205819218,
+                  -0.08162081762594897
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 2,
+              "retrieval_cosine": 0.19541234191969525,
+              "box_xyxy": [
+                332.12689208984375,
+                196.52682495117188,
+                389.23968505859375,
+                286.5624084472656
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0071.png",
+              "preprocess_ref": "preprocess/frame_0071.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0071_002",
+            "class_text": "trash can",
+            "frame_id": "frame_0071",
+            "mask_ref": "masks/d6_frame_0071_002.npy",
+            "retrieval_score": 0.19541234191969525,
+            "sam_score": 0.75,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0071_002.npz",
+            "center": [
+              -0.0493418230804455,
+              -0.3216881120898182,
+              1.4846099919213842
+            ],
+            "obb": {
+              "center": [
+                -0.0493418230804455,
+                -0.3216881120898182,
+                1.4846099919213842
+              ],
+              "extent": [
+                0.08284111641132919,
+                0.06515870239041432,
+                0.046021280483123206
+              ],
+              "rotation": [
+                [
+                  -0.24300087144460358,
+                  0.7420828781088411,
+                  -0.6247107958846734
+                ],
+                [
+                  0.7374273571596651,
+                  -0.2770757168242993,
+                  -0.6159788470871487
+                ],
+                [
+                  -0.6301995472782216,
+                  -0.6103622278319647,
+                  -0.47990257495279776
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 2,
+              "retrieval_cosine": 0.19541234191969525,
+              "box_xyxy": [
+                316.50091552734375,
+                169.15890502929688,
+                372.0700988769531,
+                239.4625701904297
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0071.png",
+              "preprocess_ref": "preprocess/frame_0071.json"
+            }
+          }
+        ],
+        "rejections": [
+          {
+            "obs_id": "d6_frame_0071_001",
+            "frame_id": "frame_0071",
+            "selected_rank": 2,
+            "sam_score": 0.546875,
+            "box_xyxy": [
+              262.9477233886719,
+              33.5598030090332,
+              275.1989440917969,
+              50.10990524291992
+            ],
+            "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+          }
+        ]
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "rank": 3,
+      "frame_id": "frame_0041",
+      "geometry_index": 4,
+      "image_ref": "data/office_loop/frame_0041.jpg",
+      "image_sha256": "6bdd14ce4b6a755f0d5747c88c2bc93125b660c8839e43ecbefcdcf841703bb9",
+      "camera_center": [
+        -0.06564869440997066,
+        -0.18275423035826374,
+        0.5204351113084064
+      ],
+      "view_direction": [
+        -0.0239760210292057,
+        -0.011406793394314621,
+        0.999647455596255
+      ],
+      "retrieval_score": 0.18803172994651282,
+      "retrieval_cosine": 0.18803172994651282,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 3,
+        "lifted_instances": 2,
+        "rejected_instances": 1,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0041_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0041",
+            "mask_ref": "masks/d6_frame_0041_000.npy",
+            "retrieval_score": 0.18803172994651282,
+            "sam_score": 0.890625,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0041_000.npz",
+            "center": [
+              0.011523008575013751,
+              -0.10420630650623262,
+              0.8919222856894625
+            ],
+            "obb": {
+              "center": [
+                0.011523008575013751,
+                -0.10420630650623262,
+                0.8919222856894625
+              ],
+              "extent": [
+                0.08042072909462306,
+                0.07511326020196796,
+                0.04089464790266187
+              ],
+              "rotation": [
+                [
+                  0.21099100806285698,
+                  -0.5683348597952679,
+                  -0.795285031707571
+                ],
+                [
+                  -0.5978445882763394,
+                  0.5686561280475515,
+                  -0.5649885452844695
+                ],
+                [
+                  0.773346392495183,
+                  0.5946643550570856,
+                  -0.21979459055951914
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 3,
+              "retrieval_cosine": 0.18803172994651282,
+              "box_xyxy": [
+                337.9765625,
+                207.39688110351562,
+                404.8964538574219,
+                293.5114440917969
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0041.png",
+              "preprocess_ref": "preprocess/frame_0041.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0041_001",
+            "class_text": "trash can",
+            "frame_id": "frame_0041",
+            "mask_ref": "masks/d6_frame_0041_001.npy",
+            "retrieval_score": 0.18803172994651282,
+            "sam_score": 0.9453125,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0041_001.npz",
+            "center": [
+              0.027397494362363113,
+              -0.08721832626928147,
+              0.8323952532053046
+            ],
+            "obb": {
+              "center": [
+                0.027397494362363113,
+                -0.08721832626928147,
+                0.8323952532053046
+              ],
+              "extent": [
+                0.05942002827194437,
+                0.04667465455748289,
+                0.03680966418336007
+              ],
+              "rotation": [
+                [
+                  0.10500359503158865,
+                  0.9925060136952761,
+                  -0.062498462454325276
+                ],
+                [
+                  -0.10075503814258757,
+                  0.07313992627349863,
+                  0.9922192164403958
+                ],
+                [
+                  0.9893546721572237,
+                  -0.09788954981722901,
+                  0.10767993646567785
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 3,
+              "retrieval_cosine": 0.18803172994651282,
+              "box_xyxy": [
+                364.91015625,
+                248.10743713378906,
+                441.97296142578125,
+                293.99432373046875
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0041.png",
+              "preprocess_ref": "preprocess/frame_0041.json"
+            }
+          }
+        ],
+        "rejections": [
+          {
+            "obs_id": "d6_frame_0041_002",
+            "frame_id": "frame_0041",
+            "selected_rank": 3,
+            "sam_score": 0.8828125,
+            "box_xyxy": [
+              272.446533203125,
+              86.56798553466797,
+              293.1689758300781,
+              119.45581817626953
+            ],
+            "reason": "too few valid points: 1 < 30 (ratio=0.002)"
+          }
+        ]
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "rank": 4,
+      "frame_id": "frame_0061",
+      "geometry_index": 6,
+      "image_ref": "data/office_loop/frame_0061.jpg",
+      "image_sha256": "d50ba24e32f3384e4eee45fa8db8a1cc6661eb295abfeaac89e57eee93e87f87",
+      "camera_center": [
+        -0.08886511852215143,
+        -0.3096449485498024,
+        0.867837854320467
+      ],
+      "view_direction": [
+        -0.04050262088259952,
+        -0.004490526068537636,
+        0.999169341441814
+      ],
+      "retrieval_score": 0.17922559350986866,
+      "retrieval_cosine": 0.17922559350986866,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 3,
+        "lifted_instances": 3,
+        "rejected_instances": 0,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0061_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0061",
+            "mask_ref": "masks/d6_frame_0061_000.npy",
+            "retrieval_score": 0.17922559350986866,
+            "sam_score": 0.9609375,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0061_000.npz",
+            "center": [
+              -0.038794825780247504,
+              -0.30042863644298146,
+              1.4307674344176033
+            ],
+            "obb": {
+              "center": [
+                -0.038794825780247504,
+                -0.30042863644298146,
+                1.4307674344176033
+              ],
+              "extent": [
+                0.08289191068697388,
+                0.05943341014037329,
+                0.043978355808783676
+              ],
+              "rotation": [
+                [
+                  -0.018023724456341098,
+                  0.08546352806564687,
+                  0.9961782625249832
+                ],
+                [
+                  0.7945694473772443,
+                  0.6060070699248143,
+                  -0.03761415286514084
+                ],
+                [
+                  -0.6069057082046132,
+                  0.790854864416799,
+                  -0.07882921271295011
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 4,
+              "retrieval_cosine": 0.17922559350986866,
+              "box_xyxy": [
+                297.5179138183594,
+                139.2060546875,
+                333.3571472167969,
+                194.9642333984375
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0061.png",
+              "preprocess_ref": "preprocess/frame_0061.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0061_001",
+            "class_text": "trash can",
+            "frame_id": "frame_0061",
+            "mask_ref": "masks/d6_frame_0061_001.npy",
+            "retrieval_score": 0.17922559350986866,
+            "sam_score": 0.859375,
+            "valid_point_ratio": 0.9080118694362018,
+            "points_ref": "points/d6_frame_0061_001.npz",
+            "center": [
+              -0.18342939962662577,
+              -0.21893929890917352,
+              1.1910165937167823
+            ],
+            "obb": {
+              "center": [
+                -0.18342939962662577,
+                -0.21893929890917352,
+                1.1910165937167823
+              ],
+              "extent": [
+                0.06575197686253487,
+                0.04549068529474176,
+                0.0044716050808139285
+              ],
+              "rotation": [
+                [
+                  -0.13610659052514493,
+                  0.15029974742760072,
+                  -0.9792267265239548
+                ],
+                [
+                  0.5434149951147774,
+                  0.8377857149746901,
+                  0.05305882460773109
+                ],
+                [
+                  0.8283568911405442,
+                  -0.5249048310956443,
+                  -0.19570329376999782
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 4,
+              "retrieval_cosine": 0.17922559350986866,
+              "box_xyxy": [
+                144.3997802734375,
+                241.52223205566406,
+                154.8079376220703,
+                294.3487854003906
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0061.png",
+              "preprocess_ref": "preprocess/frame_0061.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0061_002",
+            "class_text": "trash can",
+            "frame_id": "frame_0061",
+            "mask_ref": "masks/d6_frame_0061_002.npy",
+            "retrieval_score": 0.17922559350986866,
+            "sam_score": 0.796875,
+            "valid_point_ratio": 0.9850299401197605,
+            "points_ref": "points/d6_frame_0061_002.npz",
+            "center": [
+              -0.05085030824732438,
+              -0.32266508370310637,
+              1.4870732022806257
+            ],
+            "obb": {
+              "center": [
+                -0.05085030824732438,
+                -0.32266508370310637,
+                1.4870732022806257
+              ],
+              "extent": [
+                0.11992608335040766,
+                0.06792870663263001,
+                0.04337085532519486
+              ],
+              "rotation": [
+                [
+                  -0.0015262452216516724,
+                  0.7800231548578804,
+                  0.6257487902194319
+                ],
+                [
+                  -0.5640366343110981,
+                  -0.517383728695595,
+                  0.6435656551091362
+                ],
+                [
+                  0.8257483549668942,
+                  -0.3519630025536801,
+                  0.4407512893944453
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 4,
+              "retrieval_cosine": 0.17922559350986866,
+              "box_xyxy": [
+                288.24853515625,
+                124.82489776611328,
+                325.17120361328125,
+                171.01438903808594
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0061.png",
+              "preprocess_ref": "preprocess/frame_0061.json"
+            }
+          }
+        ],
+        "rejections": []
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "rank": 5,
+      "frame_id": "frame_0031",
+      "geometry_index": 3,
+      "image_ref": "data/office_loop/frame_0031.jpg",
+      "image_sha256": "d7384fe0dbcf4d483ca21561cb93e0fd8d8709b4762b59d59a8b46e8c993a0c8",
+      "camera_center": [
+        -0.04265551652823096,
+        -0.12030350307370863,
+        0.35484143082300085
+      ],
+      "view_direction": [
+        -0.031392729918515244,
+        0.0005992767605679038,
+        0.999506947137251
+      ],
+      "retrieval_score": 0.17639313396812545,
+      "retrieval_cosine": 0.17639313396812545,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 4,
+        "lifted_instances": 3,
+        "rejected_instances": 1,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0031_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0031",
+            "mask_ref": "masks/d6_frame_0031_000.npy",
+            "retrieval_score": 0.17639313396812545,
+            "sam_score": 0.95703125,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0031_000.npz",
+            "center": [
+              0.027357157713197307,
+              -0.07772240151240735,
+              0.8447071234360684
+            ],
+            "obb": {
+              "center": [
+                0.027357157713197307,
+                -0.07772240151240735,
+                0.8447071234360684
+              ],
+              "extent": [
+                0.07922104710264233,
+                0.06769275152955789,
+                0.04185054645288276
+              ],
+              "rotation": [
+                [
+                  -0.018245439839687922,
+                  -0.09911720540340699,
+                  0.9949084799709341
+                ],
+                [
+                  0.8451737617512595,
+                  0.5301083733924354,
+                  0.06831123557988458
+                ],
+                [
+                  -0.5341801347600647,
+                  0.8421169111544099,
+                  0.07409920090982328
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 5,
+              "retrieval_cosine": 0.17639313396812545,
+              "box_xyxy": [
+                314.9222412109375,
+                156.99441528320312,
+                357.4317932128906,
+                221.39337158203125
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0031.png",
+              "preprocess_ref": "preprocess/frame_0031.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0031_001",
+            "class_text": "trash can",
+            "frame_id": "frame_0031",
+            "mask_ref": "masks/d6_frame_0031_001.npy",
+            "retrieval_score": 0.17639313396812545,
+            "sam_score": 0.9140625,
+            "valid_point_ratio": 0.9945474372955289,
+            "points_ref": "points/d6_frame_0031_001.npz",
+            "center": [
+              0.019599266986191907,
+              -0.11057173062627491,
+              0.9017907065397632
+            ],
+            "obb": {
+              "center": [
+                0.019599266986191907,
+                -0.11057173062627491,
+                0.9017907065397632
+              ],
+              "extent": [
+                0.0939169921346047,
+                0.0690317817919105,
+                0.04019029074370803
+              ],
+              "rotation": [
+                [
+                  -0.2714073607352242,
+                  -0.6456303189567387,
+                  0.7137923618129851
+                ],
+                [
+                  0.6925203287951683,
+                  0.38403546992652754,
+                  0.6106818746644954
+                ],
+                [
+                  -0.6683963186195528,
+                  0.660059276945738,
+                  0.34288206744257993
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 5,
+              "retrieval_cosine": 0.17639313396812545,
+              "box_xyxy": [
+                303.32183837890625,
+                138.7249298095703,
+                343.2289733886719,
+                193.53372192382812
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0031.png",
+              "preprocess_ref": "preprocess/frame_0031.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0031_003",
+            "class_text": "trash can",
+            "frame_id": "frame_0031",
+            "mask_ref": "masks/d6_frame_0031_003.npy",
+            "retrieval_score": 0.17639313396812545,
+            "sam_score": 0.65625,
+            "valid_point_ratio": 0.9106699751861043,
+            "points_ref": "points/d6_frame_0031_003.npz",
+            "center": [
+              0.04671756664956286,
+              -0.16799266267019022,
+              1.0795071831927783
+            ],
+            "obb": {
+              "center": [
+                0.04671756664956286,
+                -0.16799266267019022,
+                1.0795071831927783
+              ],
+              "extent": [
+                0.061980615210587564,
+                0.05252682728797542,
+                0.028124656039434037
+              ],
+              "rotation": [
+                [
+                  -0.07390676666388458,
+                  -0.460855590464488,
+                  0.8843923985307192
+                ],
+                [
+                  0.9972047730861379,
+                  -0.024392989162948853,
+                  0.07062310255093746
+                ],
+                [
+                  -0.010974077433392385,
+                  0.887139846257243,
+                  0.4613702014729187
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 5,
+              "retrieval_cosine": 0.17639313396812545,
+              "box_xyxy": [
+                315.1961669921875,
+                103.4546890258789,
+                328.963134765625,
+                138.5921630859375
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0031.png",
+              "preprocess_ref": "preprocess/frame_0031.json"
+            }
+          }
+        ],
+        "rejections": [
+          {
+            "obs_id": "d6_frame_0031_002",
+            "frame_id": "frame_0031",
+            "selected_rank": 5,
+            "sam_score": 0.76953125,
+            "box_xyxy": [
+              267.218994140625,
+              69.15757751464844,
+              284.1326599121094,
+              96.20939636230469
+            ],
+            "reason": "too few valid points: 8 < 30 (ratio=0.019)"
+          }
+        ]
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "rank": 6,
+      "frame_id": "frame_0011",
+      "geometry_index": 1,
+      "image_ref": "data/office_loop/frame_0011.jpg",
+      "image_sha256": "421e2a71204d728e6ce99ecfab6432c272e1628bea1e88bbb15ae3fa0bc9c369",
+      "camera_center": [
+        -0.017324979443907713,
+        -0.01583910182113159,
+        0.05731387443479234
+      ],
+      "view_direction": [
+        -0.013501878429270517,
+        0.007555451585499444,
+        0.9998803000510713
+      ],
+      "retrieval_score": 0.16919499006439728,
+      "retrieval_cosine": 0.16919499006439728,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 5,
+        "lifted_instances": 3,
+        "rejected_instances": 2,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0011_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0011",
+            "mask_ref": "masks/d6_frame_0011_000.npy",
+            "retrieval_score": 0.16919499006439728,
+            "sam_score": 0.96484375,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0011_000.npz",
+            "center": [
+              0.07804927169326685,
+              0.08175760378380073,
+              0.35846814841618674
+            ],
+            "obb": {
+              "center": [
+                0.07804927169326685,
+                0.08175760378380073,
+                0.35846814841618674
+              ],
+              "extent": [
+                0.057868877513081285,
+                0.04589091938070497,
+                0.03234329481457038
+              ],
+              "rotation": [
+                [
+                  -0.13242912159990566,
+                  0.9881468947348149,
+                  0.07764175537827686
+                ],
+                [
+                  -0.20913954220888753,
+                  -0.10442455564622152,
+                  0.9722942785302945
+                ],
+                [
+                  0.9688772779031068,
+                  0.1125221160662737,
+                  0.22048944137766258
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 6,
+              "retrieval_cosine": 0.16919499006439728,
+              "box_xyxy": [
+                363.6131286621094,
+                243.45172119140625,
+                445.9685974121094,
+                294.0351257324219
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0011.png",
+              "preprocess_ref": "preprocess/frame_0011.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0011_001",
+            "class_text": "trash can",
+            "frame_id": "frame_0011",
+            "mask_ref": "masks/d6_frame_0011_001.npy",
+            "retrieval_score": 0.16919499006439728,
+            "sam_score": 0.890625,
+            "valid_point_ratio": 0.9743589743589743,
+            "points_ref": "points/d6_frame_0011_001.npz",
+            "center": [
+              0.011812169869109603,
+              -0.1032645416223037,
+              0.8990257157365925
+            ],
+            "obb": {
+              "center": [
+                0.011812169869109603,
+                -0.1032645416223037,
+                0.8990257157365925
+              ],
+              "extent": [
+                0.09593957699151034,
+                0.0710208566589039,
+                0.03904712673886615
+              ],
+              "rotation": [
+                [
+                  0.25948970151603423,
+                  0.6927245430717445,
+                  0.6729025206024736
+                ],
+                [
+                  -0.6561766896882484,
+                  -0.38476815208093895,
+                  0.6491422194357659
+                ],
+                [
+                  0.7085882067300386,
+                  -0.6099886692146522,
+                  0.35470632460226265
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 6,
+              "retrieval_cosine": 0.16919499006439728,
+              "box_xyxy": [
+                272.6395263671875,
+                87.8097152709961,
+                295.9447937011719,
+                121.49552917480469
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0011.png",
+              "preprocess_ref": "preprocess/frame_0011.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0011_004",
+            "class_text": "trash can",
+            "frame_id": "frame_0011",
+            "mask_ref": "masks/d6_frame_0011_004.npy",
+            "retrieval_score": 0.16919499006439728,
+            "sam_score": 0.93359375,
+            "valid_point_ratio": 0.9766233766233766,
+            "points_ref": "points/d6_frame_0011_004.npz",
+            "center": [
+              0.026468697422480435,
+              -0.0735738695355408,
+              0.842864605074197
+            ],
+            "obb": {
+              "center": [
+                0.026468697422480435,
+                -0.0735738695355408,
+                0.842864605074197
+              ],
+              "extent": [
+                0.08108102690563712,
+                0.06486311264957456,
+                0.044097419738956534
+              ],
+              "rotation": [
+                [
+                  0.020504759168142896,
+                  -0.36853935107784447,
+                  0.9293859809350354
+                ],
+                [
+                  0.9477537475332526,
+                  0.3031531560990486,
+                  0.0993025577911324
+                ],
+                [
+                  -0.31834319356337987,
+                  0.8787928713037602,
+                  0.3555006335543736
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 6,
+              "retrieval_cosine": 0.16919499006439728,
+              "box_xyxy": [
+                277.8241882324219,
+                95.68140411376953,
+                301.5536193847656,
+                133.71340942382812
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0011.png",
+              "preprocess_ref": "preprocess/frame_0011.json"
+            }
+          }
+        ],
+        "rejections": [
+          {
+            "obs_id": "d6_frame_0011_002",
+            "frame_id": "frame_0011",
+            "selected_rank": 6,
+            "sam_score": 0.84375,
+            "box_xyxy": [
+              252.98741149902344,
+              49.93710708618164,
+              265.96270751953125,
+              72.88700866699219
+            ],
+            "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+          },
+          {
+            "obs_id": "d6_frame_0011_003",
+            "frame_id": "frame_0011",
+            "selected_rank": 6,
+            "sam_score": 0.53125,
+            "box_xyxy": [
+              233.71502685546875,
+              21.756990432739258,
+              244.87078857421875,
+              38.67631149291992
+            ],
+            "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+          }
+        ]
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "rank": 7,
+      "frame_id": "frame_0051",
+      "geometry_index": 5,
+      "image_ref": "data/office_loop/frame_0051.jpg",
+      "image_sha256": "120a8343a432cdb17db6b5882415e939164735c1c5f4f792b979d0f355f27624",
+      "camera_center": [
+        -0.08085480762971621,
+        -0.2464812554893877,
+        0.6956333874658294
+      ],
+      "view_direction": [
+        -0.01879156167409263,
+        -0.010877455058490762,
+        0.9997642513019255
+      ],
+      "retrieval_score": 0.1687714131884503,
+      "retrieval_cosine": 0.1687714131884503,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 2,
+        "lifted_instances": 2,
+        "rejected_instances": 0,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0051_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0051",
+            "mask_ref": "masks/d6_frame_0051_000.npy",
+            "retrieval_score": 0.1687714131884503,
+            "sam_score": 0.703125,
+            "valid_point_ratio": 0.96875,
+            "points_ref": "points/d6_frame_0051_000.npz",
+            "center": [
+              -0.05384166018862432,
+              -0.32547940273757286,
+              1.5023283883523155
+            ],
+            "obb": {
+              "center": [
+                -0.05384166018862432,
+                -0.32547940273757286,
+                1.5023283883523155
+              ],
+              "extent": [
+                0.1297720304861958,
+                0.07183636698343943,
+                0.039966124883894366
+              ],
+              "rotation": [
+                [
+                  0.1012873634465046,
+                  0.7106060161034675,
+                  0.6962614163398785
+                ],
+                [
+                  -0.548789420106123,
+                  -0.5438389539929396,
+                  0.6348774405343526
+                ],
+                [
+                  0.829801809100005,
+                  -0.44640596097881946,
+                  0.3348890497118946
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 7,
+              "retrieval_cosine": 0.1687714131884503,
+              "box_xyxy": [
+                271.310302734375,
+                98.62242126464844,
+                299.1706848144531,
+                133.2170867919922
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0051.png",
+              "preprocess_ref": "preprocess/frame_0051.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0051_001",
+            "class_text": "trash can",
+            "frame_id": "frame_0051",
+            "mask_ref": "masks/d6_frame_0051_001.npy",
+            "retrieval_score": 0.1687714131884503,
+            "sam_score": 0.94140625,
+            "valid_point_ratio": 0.9780104712041885,
+            "points_ref": "points/d6_frame_0051_001.npz",
+            "center": [
+              -0.04159366516067553,
+              -0.2897110048211238,
+              1.431170128265679
+            ],
+            "obb": {
+              "center": [
+                -0.04159366516067553,
+                -0.2897110048211238,
+                1.431170128265679
+              ],
+              "extent": [
+                0.07822023657484645,
+                0.056480164655958065,
+                0.05029449442114192
+              ],
+              "rotation": [
+                [
+                  0.009879448086680719,
+                  0.21717590214363217,
+                  0.9760824883346703
+                ],
+                [
+                  0.9819912007157532,
+                  0.18206652802113077,
+                  -0.050448598505450165
+                ],
+                [
+                  -0.1886681696056225,
+                  0.9590028190273637,
+                  -0.21146610810064528
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 7,
+              "retrieval_cosine": 0.1687714131884503,
+              "box_xyxy": [
+                277.9598693847656,
+                108.27552795410156,
+                304.3525085449219,
+                149.73365783691406
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0051.png",
+              "preprocess_ref": "preprocess/frame_0051.json"
+            }
+          }
+        ],
+        "rejections": []
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    },
+    {
+      "rank": 8,
+      "frame_id": "frame_0021",
+      "geometry_index": 2,
+      "image_ref": "data/office_loop/frame_0021.jpg",
+      "image_sha256": "479f5bc23f822591115d94ef21e2a4c044fa0efe0e46503227fe5046144007cd",
+      "camera_center": [
+        -0.026171500770796344,
+        -0.06122552210562782,
+        0.18565264388284397
+      ],
+      "view_direction": [
+        -0.02405265749552721,
+        0.005466208723648889,
+        0.9996957488304091
+      ],
+      "retrieval_score": 0.16186135359168963,
+      "retrieval_cosine": 0.16186135359168963,
+      "outcome_status": "available",
+      "failure_reason": null,
+      "outcome": {
+        "sam_instances": 3,
+        "lifted_instances": 2,
+        "rejected_instances": 1,
+        "observations": [
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0021_000",
+            "class_text": "trash can",
+            "frame_id": "frame_0021",
+            "mask_ref": "masks/d6_frame_0021_000.npy",
+            "retrieval_score": 0.16186135359168963,
+            "sam_score": 0.83984375,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0021_000.npz",
+            "center": [
+              0.017067880147654375,
+              -0.11446770769944457,
+              0.9050649251415521
+            ],
+            "obb": {
+              "center": [
+                0.017067880147654375,
+                -0.11446770769944457,
+                0.9050649251415521
+              ],
+              "extent": [
+                0.11786418372406149,
+                0.06819050517453973,
+                0.03838462208923368
+              ],
+              "rotation": [
+                [
+                  0.2712205594087818,
+                  -0.5398256783140772,
+                  -0.7968862184695715
+                ],
+                [
+                  -0.6532065147229065,
+                  0.5048485704331647,
+                  -0.5643130071645905
+                ],
+                [
+                  0.7069375200663355,
+                  0.6735845588820578,
+                  -0.21569233819986064
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 8,
+              "retrieval_cosine": 0.16186135359168963,
+              "box_xyxy": [
+                284.2503967285156,
+                104.05748748779297,
+                312.0783386230469,
+                144.8484344482422
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0021.png",
+              "preprocess_ref": "preprocess/frame_0021.json"
+            }
+          },
+          {
+            "schema_version": "1.0",
+            "obs_id": "d6_frame_0021_001",
+            "class_text": "trash can",
+            "frame_id": "frame_0021",
+            "mask_ref": "masks/d6_frame_0021_001.npy",
+            "retrieval_score": 0.16186135359168963,
+            "sam_score": 0.9453125,
+            "valid_point_ratio": 1.0,
+            "points_ref": "points/d6_frame_0021_001.npz",
+            "center": [
+              0.027532488251389955,
+              -0.07695738682009662,
+              0.8453164154680015
+            ],
+            "obb": {
+              "center": [
+                0.027532488251389955,
+                -0.07695738682009662,
+                0.8453164154680015
+              ],
+              "extent": [
+                0.08160507823662189,
+                0.06282698579467172,
+                0.0393341333914955
+              ],
+              "rotation": [
+                [
+                  0.012898784402909265,
+                  -0.06515177906494456,
+                  0.9977919958817066
+                ],
+                [
+                  0.8983171230485547,
+                  0.4390165555292654,
+                  0.01705316419281832
+                ],
+                [
+                  -0.43915824915250673,
+                  0.8961136700530193,
+                  0.06418973863019589
+                ]
+              ]
+            },
+            "semantic_embedding": null,
+            "metadata": {
+              "selected_rank": 8,
+              "retrieval_cosine": 0.16186135359168963,
+              "box_xyxy": [
+                290.7512512207031,
+                115.07566833496094,
+                320.2724609375,
+                161.1898651123047
+              ],
+              "baseline_id": "B2-topk-multiframe",
+              "sam_mask_shape": [
+                294,
+                518
+              ],
+              "mask_resizing_after_sam": false,
+              "sam_input_ref": "sam_inputs/frame_0021.png",
+              "preprocess_ref": "preprocess/frame_0021.json"
+            }
+          }
+        ],
+        "rejections": [
+          {
+            "obs_id": "d6_frame_0021_002",
+            "frame_id": "frame_0021",
+            "selected_rank": 8,
+            "sam_score": 0.859375,
+            "box_xyxy": [
+              259.2488708496094,
+              54.9531135559082,
+              273.9871520996094,
+              80.56868743896484
+            ],
+            "reason": "too few valid points: 0 < 30 (ratio=0.000)"
+          }
+        ]
+      },
+      "cost": {
+        "sam_calls": 1,
+        "runtime_seconds": null,
+        "peak_vram_mb": null
+      }
+    }
+  ],
+  "counts": {
+    "candidate_count": 8,
+    "available_candidates": 8,
+    "rejected_candidates": 0,
+    "unmaterialized_candidates": 0,
+    "error_candidates": 0,
+    "total_observations": 21,
+    "total_rejections": 8
+  },
+  "costs": {
+    "sam_calls": 8,
+    "runtime_seconds": null,
+    "peak_vram_mb": null
+  },
+  "artifacts": {
+    "visual_memory_manifest": "visual_memory_manifest.json",
+    "d5_retrieval": "source_d5_retrieval.json",
+    "d6_result": "source_d6_result.json",
+    "d7_observations": "source_d7_observations.json"
+  },
+  "source_commits": {
+    "perception_models": "3e352cca660658d4b5c90f42a7808b11469e4c66",
+    "sam3": "8f0b7f4d4e7eda2ed606ebde6702c93359ad01da"
+  },
+  "created_at": "2026-08-29T08:55:25.014781+00:00"
+}

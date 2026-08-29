@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 import copy
+import math
 
 import numpy as np
 
@@ -14,6 +15,13 @@ from .q1_fixed_topk import Q1_POLICY_ID
 
 Q2_SCHEMA_VERSION = "0.1"
 Q2_POLICY_ID = "Q2-gain-based-sequential-search"
+Q2_METHOD_NAME = "retrieval-pose-novelty-sequential-search"
+Q2_OBSERVATION_METRIC = "new_observation_count"
+Q2_LEGACY_OBSERVATION_FIELD = "observed_gain"
+Q2_OBSERVATION_SEMANTICS = (
+    "frame_scoped_observation_ids_not_object_or_spatial_coverage"
+)
+REPLAY_FLOAT_REL_TOLERANCE = REPLAY_FLOAT_ABS_TOLERANCE = 1e-12
 Q2_METADATA_FIELDS = (
     "rank",
     "frame_id",
@@ -207,7 +215,7 @@ def run_sequential_search(
         str(item["frame_id"]): item for item in cache_payload["candidates"]
     }
     selected_ids: list[str] = []
-    observed_ids: set[str] = set()
+    seen_observation_ids: set[str] = set()
     low_gain_streak = 0
     cumulative = {
         "sam_calls": 0,
@@ -247,12 +255,14 @@ def run_sequential_search(
             observation_ids = [
                 str(item["obs_id"]) for item in outcome["observations"]
             ]
-            new_ids = sorted(set(observation_ids) - observed_ids)
-            observed_ids.update(observation_ids)
-            gain = len(new_ids)
+            new_ids = sorted(
+                set(observation_ids) - seen_observation_ids
+            )
+            seen_observation_ids.update(observation_ids)
+            new_observation_count = len(new_ids)
             low_gain_streak = (
                 low_gain_streak + 1
-                if gain < policy.config.low_gain_threshold
+                if new_observation_count < policy.config.low_gain_threshold
                 else 0
             )
             revealed = {
@@ -262,13 +272,14 @@ def run_sequential_search(
                 "lifted_instances": int(outcome["lifted_instances"]),
                 "rejected_instances": int(outcome["rejected_instances"]),
                 "new_observation_ids": new_ids,
-                "observed_gain": gain,
+                # Schema 0.1 keeps this legacy key for retained evidence.
+                "observed_gain": new_observation_count,
             }
             cumulative["sam_calls"] += int(candidate["cost"]["sam_calls"])
             cumulative["sam_instances"] += int(outcome["sam_instances"])
             cumulative["lifted_instances"] += int(outcome["lifted_instances"])
             cumulative["rejected_instances"] += int(outcome["rejected_instances"])
-            cumulative["observed_gain"] += gain
+            cumulative["observed_gain"] += new_observation_count
             if low_gain_streak >= policy.config.low_gain_patience:
                 stop_reason = "two_consecutive_low_gain"
             elif len(selected_ids) >= policy.config.max_budget:
@@ -414,6 +425,58 @@ def build_engineering_comparison(
     }
 
 
+def _assert_replay_equivalent(
+    actual: Any,
+    expected: Any,
+    *,
+    path: str = "$",
+) -> None:
+    """Compare JSON-like replay products with finite-float tolerance."""
+
+    if isinstance(expected, Mapping):
+        if not isinstance(actual, Mapping):
+            raise ValueError(f"{path}: expected mapping")
+        if set(actual) != set(expected):
+            raise ValueError(f"{path}: mapping keys differ")
+        for key in expected:
+            _assert_replay_equivalent(
+                actual[key], expected[key], path=f"{path}.{key}"
+            )
+        return
+    if isinstance(expected, list):
+        if not isinstance(actual, list) or len(actual) != len(expected):
+            raise ValueError(f"{path}: list length or type differs")
+        for index, (actual_item, expected_item) in enumerate(
+            zip(actual, expected)
+        ):
+            _assert_replay_equivalent(
+                actual_item,
+                expected_item,
+                path=f"{path}[{index}]",
+            )
+        return
+    if isinstance(expected, float):
+        if not isinstance(actual, float):
+            raise ValueError(f"{path}: float type differs")
+        if not math.isfinite(actual) or not math.isfinite(expected):
+            raise ValueError(f"{path}: non-finite float")
+        if not math.isclose(
+            actual,
+            expected,
+            rel_tol=REPLAY_FLOAT_REL_TOLERANCE,
+            abs_tol=REPLAY_FLOAT_ABS_TOLERANCE,
+        ):
+            raise ValueError(
+                f"{path}: float differs: {actual!r} != {expected!r}"
+            )
+        return
+    if type(actual) is not type(expected) or actual != expected:
+        raise ValueError(
+            f"{path}: value or type differs: "
+            f"{actual!r} != {expected!r}"
+        )
+
+
 def validate_trace_payload(
     payload: Mapping[str, Any],
     cache_payload: Mapping[str, Any],
@@ -425,8 +488,12 @@ def validate_trace_payload(
         created_at=str(payload["created_at"]),
         config=SequentialSearchConfig(),
     )
-    if dict(payload) != expected:
-        raise ValueError("Q2 trace differs from deterministic replay")
+    try:
+        _assert_replay_equivalent(dict(payload), expected)
+    except ValueError as error:
+        raise ValueError(
+            f"Q2 trace differs from deterministic replay: {error}"
+        ) from error
     if not payload["summary"]["budget1_matches_q0"]:
         raise ValueError("Q2 budget=1 must match Q0")
 
@@ -445,5 +512,9 @@ def validate_comparison_payload(
         q2_sha256=str(payload["source"]["q2_trace_sha256"]),
         created_at=str(payload["created_at"]),
     )
-    if dict(payload) != expected:
-        raise ValueError("D15 comparison differs from deterministic replay")
+    try:
+        _assert_replay_equivalent(dict(payload), expected)
+    except ValueError as error:
+        raise ValueError(
+            f"D15 comparison differs from deterministic replay: {error}"
+        ) from error
