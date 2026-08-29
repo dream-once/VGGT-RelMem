@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-27 D15 publication session
+- Updated: 2026-08-29 GPU completion and D15.5 publication session
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `94bcb81ecc82ab159f0cdb0f8aa86621a52be24b`
-- Current milestone: D15 completes Q2 gain-based sequential search contracts, deterministic trace replay, and synthetic Q0/Q1/Q2 engineering comparison.
-- Next milestone: on a future GPU instance, materialize the first selected missing real outcome and rerun Q2; D16/Clio requires a separate user decision.
-- Publication state: this publication adds Q2 policy/trace/comparison contracts, real blocked readiness evidence, complete synthetic replay, nine dedicated tests, and an approximately 46 KiB JSON/Markdown evidence bundle.
+- Publication target and pre-publication HEAD: `main` at `3073b46728da2a531e7e38a1f61f1dfbbce9c77e`
+- Current milestone: D11–D15 engineering GPU acceptance is complete, and D15.5 adds a validated long-trajectory scene-memory PLY/MP4/Viser package with object-centric viewpoint auditing.
+- Next milestone: decide whether to begin D16/Clio feasibility and data-protocol work; do not download Clio or claim held-out performance without a separate user decision and disk/license audit.
+- Publication state: this publication adds the GPU follow-up validator/tests, D15.5 scene visualization/audit/validator/tests, updated documentation and recoverable memory. Large runs, geometry, masks, point clouds, images, and videos remain local-only.
 
 ## Document-day progress
 
@@ -25,11 +25,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D8 | Complete | The true-multiview D7 cache produces 10 pending observations, zero objects/decisions, exact round trip, and a relative source reference that survives bundle moves. |
 | D9 | Complete | Exact-class plus center-distance/AABB-overlap gating reached pairwise F1=1.0 on 45 manually labelled pairs; only the cross-frame component became permanent. |
 | D10 | Complete | Prediction is label-free and deterministic; evaluation alone reads manual labels. Both real JSON bundles pass independent validators. |
-| D11 | CPU complete; GPU acceptance pending | Cache 0.1 conserves all eight ranked candidates: four retained outcomes are available and four are explicitly unmaterialized. |
-| D12 | CPU complete; GPU acceptance pending | A2 records semantic/geometric/OBB/quality evidence, uses complete-link, and matches A1 at F1=1.0 on the current development fixture. |
-| D13 | CPU complete; GPU acceptance pending | Q0 is frozen as upstream-aligned with 10/10 static source checks, D5 Top-1 agreement, and an explicit lightweight-D4 validator limitation. |
-| D14 | CPU complete; GPU acceptance pending | Q1 K=1/3/5 selects metadata first and reveals outcomes later; real 1/3/4 and synthetic 1/3/5 curves pass. |
-| D15 | CPU complete; GPU acceptance pending | Q2 passes complete synthetic replay; real partial cache stops honestly at selected unmaterialized `frame_0061` without skip-ahead. |
+| D11 | Complete at engineering scope | The historical 4+4 partial cache is retained; GPU materialization now provides 8/8 available outcomes, 21 observations and eight rejections without retained-outcome drift. PE embedding binaries remain not retained. |
+| D12 | Complete at engineering scope | A2 complete-link and evidence contracts remain frozen; label-free CPU prediction over the complete real GPU outcome cache passes. No new labelled evaluator or F1 claim was added. |
+| D13 | Complete at engineering scope | Q0 remains upstream-aligned; 10/10 static checks and real `frame_0001` B0/B1 single-view GPU acceptance pass. |
+| D14 | Complete at engineering scope | Q1 prediction replay over the complete real GPU outcome cache passes and K=1 matches Q0. No new labelled recall result was produced. |
+| D15 | Complete at engineering scope | Q2 now completes five real-cache steps, stops at `max_budget_reached`, records observed gain 14 and keeps `performance_claim=null`; the earlier blocked trace remains historical partial-cache evidence. |
+| D15.5 | Complete | A 95-anchor long-trajectory run yields 40 3D observations, eight predicted objects, a 132,204-point PLY and a validated 10-second MP4; three objects pass strict object-centric multiview and five remain diagnostic. |
 
 ## D3 acceptance evidence
 
@@ -129,7 +130,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - `CandidateOutcomeCache 0.1` conserves all eight D5 candidates. Four D6/D7 candidates are `available`; four are `unmaterialized`, not zero detections.
 - Available outcomes contain 10 observations and five explicit lifting rejections in total. The policy-independent cache contains no GT, labels, answers, metrics, or policy trace.
 - The independent replay validator reports `PASS_WITH_UNMATERIALIZED_OUTCOMES`; a complete synthetic cache reports the strict `complete` contract in CPU tests.
-- The D11 evidence bundle is JSON/Markdown-only and 67,029 bytes. New PE/SAM inference remains `GPU_ACCEPTANCE_PENDING`.
+- The published D11 evidence bundle remains the 67,029-byte JSON/Markdown-only partial snapshot. The 2026-08-29 local GPU addendum completes all candidate outcomes; PE embedding binaries remain intentionally not retained.
 
 
 ## D12 acceptance evidence
@@ -141,7 +142,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Real D8 prediction has 45 pairs, 17 gate passes/final matches, seven merges, three clusters, one permanent object, four pending observations, and exact conservation/round-trip.
 - Separate frozen-label evaluation is precision/recall/F1 `1.0`, equal to A1 on this development fixture; it is recorded as parity, not improvement or held-out evidence.
 - Both independent validators report `PASS`; 15 dedicated tests cover bridge splitting, conflicts, quality, fallback, ordering, conservation, leakage, paths, and tampering.
-- The D12 evidence bundle is JSON/Markdown-only and 111,875 bytes. Visual inference remains `GPU_ACCEPTANCE_PENDING`.
+- The published D12 evidence bundle remains the 111,875-byte JSON/Markdown development snapshot. The 2026-08-29 label-free A2 prediction over complete real GPU outcomes passes without a new labelled evaluation.
 
 
 ## D13 acceptance evidence
@@ -154,7 +155,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Retained D4 JSON records `frame_0004`, `294×518`, threshold `0.5`, no mask resize, and the direct finite-only PCA method.
 - The historical D4 validator report remains `PASS`, but its strict rerun now reports only missing `masks.json` and `preview.png`; this lightweight-publication gap is preserved as a limitation.
 - The D13 validator reports `PASS`; eight tests cover claim boundaries, source semantics, D5 agreement, the D4 gap, and preprocess/SAM/lifting/OBB/hash tampering.
-- The D13 evidence bundle is JSON/Markdown-only and 8,725 bytes. Full binary/GPU replay remains `GPU_ACCEPTANCE_PENDING`.
+- The published D13 evidence bundle remains the 8,725-byte static/retained snapshot. The 2026-08-29 real Q0 B0/B1 single-view GPU replay passes while protocol status remains `upstream-aligned`.
 
 
 ## D14 acceptance evidence
@@ -166,22 +167,44 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Separate development evaluation reports observed-instance recall `0.667/1.0/1.0`; this is one labelled development query, not held-out or new-GPU evidence.
 - The complete synthetic cache executes full 1/3/5 paths. Missing selected outcomes return `BLOCKED_MISSING_OUTCOME` without skip-ahead.
 - The D14 validator reports `PASS`; seven dedicated tests cover prefix determinism, Q0 compatibility, metadata-only selection, redundancy exhaustion, missing outcomes, label isolation, and tampering.
-- The D14 evidence bundle is JSON/Markdown-only and about 39 KiB. New visual inference remains `GPU_ACCEPTANCE_PENDING`.
+- The D14 evidence bundle remains the historical JSON/Markdown-only partial/synthetic publication. The 2026-08-29 complete real-outcome prediction replay passes separately without a new labelled evaluator.
 
 ## D15 acceptance evidence
 
 - `Q2-gain-based-sequential-search` freezes max budget `5`, low-gain threshold `1`, patience `2`, and retrieval/novelty weights `0.65/0.35`.
 - Retrieval uses candidate-universe min-max normalization; pose novelty averages translation clipped at `0.15 m` and view angle clipped at `3°`.
 - Step one is retrieval-only and selects Q0 `frame_0001`; later selection reads metadata only and reveals exactly one selected outcome afterward.
-- The real trace reveals 4/2/2 new observations from `frame_0001/0071/0041`, then selects unmaterialized `frame_0061` and immediately returns `BLOCKED_MISSING_OUTCOME`.
-- The real trace has `performance_claim=null`; it does not skip to `frame_0021` or report partial-cache performance improvement.
+- The retained partial-cache trace reveals 4/2/2 new observations from `frame_0001/0071/0041`, then selects unmaterialized `frame_0061` and immediately returns `BLOCKED_MISSING_OUTCOME`.
+- The retained trace has `performance_claim=null`; it does not skip to `frame_0021` or report partial-cache performance improvement.
 - Complete synthetic replay selects five frames and stops at `max_budget_reached`. Zero-gain, exhaustion, missing-outcome, tie-break, and budget-one paths are independently tested.
 - Synthetic Q0/Q1/Q2 comparison contains selected frames and SAM/lifting counts only; Q1 and Q2 are equal on this fixture, so no improvement is claimed.
 - The D15 validator reports `PASS`; nine dedicated tests and 136 total CPU tests pass. Evidence is JSON/Markdown-only at about 46 KiB.
+- The 2026-08-29 complete real-outcome trace runs five steps through `frame_0001/0071/0041/0061/0031`, stops at `max_budget_reached`, records observed gain 14 and still makes no performance claim.
+
+
+## 2026-08-29 GPU completion addendum
+
+- The additive validator command is `conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom env PYTHONDONTWRITEBYTECODE=1 OMP_NUM_THREADS=8 python -m scripts.validate_gpu_acceptance runs/gpu-acceptance-20260829`; the OpenCV-capable environment is required for the independent D7 video probe.
+- The final report is `PASS / COMPLETE` with scope `ENGINEERING_REPLAY_NO_NEW_MANUAL_LABELS`. D3/D5/D6/D13 execute real GPU model inference; D7/D8/D11/D12/D14/D15 are CPU assembly/replay over those outcomes.
+- The D11 candidate universe and raw ranking stay frozen. All eight outcomes are available with 21 observations and eight rejections; retained frames `0001/0071/0041/0021` do not drift, and `0061/0031/0011/0051` are newly materialized. PE embedding binaries remain `not_retained`.
+- D12 label-free prediction passes without a new labelled evaluation. D13 Q0 selects `frame_0001` and both B0/B1 pass. D14 complete-cache prediction passes with K=1 equal to Q0.
+- D15 complete-cache trace selects `0001/0071/0041/0061/0031`, stops at `max_budget_reached`, records observed gain 14, and keeps `performance_claim=null`.
+- Creation-time manifests inside the ignored local bundle may still contain the earlier pending snapshot. The additive validator/report is authoritative for completion; those large artifacts are not published.
+
+## D15.5 acceptance evidence
+
+- Long geometry uses 95 anchors selected at stride 5 from the 473-frame office-loop sequence, covers turns/return, and intentionally runs with `max_loops=0`.
+- Top-24 retrieval plus real SAM 3/Robust3DLifter produces 49 SAM instances, 40 world-space observations and nine explicit rejections over 20 frames with lifted evidence.
+- A2 produces 13 clusters and eight promoted predicted objects. Three objects pass strict object-centric multiview; five are diagnostic, and none is silently upgraded from weak evidence.
+- Frozen strict evidence requires at least three distinct frames, at least two same-frame-pair gates jointly satisfying angle `>=15°` and baseline/mean-depth `>=0.20`, and at least three covered frames.
+- The D15.5 validator reports `PASS`: overview `2931x1010`, MP4 `10.0 s / 12 FPS / 120 frames` with motion ratio `1.0`, and binary colored PLY with `132,204` vertices.
+- Eight dedicated tests reject in-place rotation, same-ray translation, split-pair angle/ratio evidence, duplicate same-frame masks, path escape, and nondeterministic OBB output.
+- The MP4 is an offline virtual orbit around the final static scene, not a robot-trajectory video or real 360° object coverage. Camera frusta are schematic, coordinates are reconstruction units, and no loop-closure/geometric-accuracy improvement is claimed.
+- The fixed upstream provides Viser incremental mapping, trajectory walkthrough, Top-1 single-frame OBB and PCD export but no built-in MP4 exporter at the pinned commit. D15.5's own contribution is the object-memory evidence package, audit, portable artifacts and independent validation, not the underlying SLAM geometry or video encoding primitive.
 
 ## Publication verification
 
-- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 136 tests passed.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 147 tests passed.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
 - The real D9 validator passed for 45 pairs, one permanent cross-frame object, four pending observations, and exact JSON round trip before generated runs were purged.
@@ -200,9 +223,11 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - D14 tests cover deterministic prefix selection, redundancy exhaustion, missing-outcome blocking, unselected-outcome non-interference, evaluator separation, and tampering.
 - The tracked D15 validator reports `PASS`: real evidence is an explicit blocked readiness trace, while synthetic replay and comparison complete.
 - D15 tests cover Q0 budget-one reduction, frozen novelty math, deterministic ties, low-gain/exhaustion stops, missing outcome, future-outcome non-interference, replay, and tampering.
+- The local GPU acceptance validator replays D3/D5/D6/D7/D8/D11/D12/D13 plus D14/D15 contracts and reports `PASS / COMPLETE`; its three focused anti-drift/leakage tests pass.
+- The local D15.5 validator reports `PASS` for hashes, PNG/MP4 decoding, video motion, PLY vertices and independently reclassified recorded object-centric pair metrics; its eight focused tests pass.
 - Week 2 evidence remains JSON/Markdown-only at about 323 KiB total; the D15 daily bundle is about 46 KiB.
-- The current instance is in no-GPU mode and has about 24.56 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
-- Generated `runs/` artifacts were intentionally deleted and are no longer instance-baseline requirements.
+- The current instance has an NVIDIA GeForce RTX 4090 with 24,564 MiB VRAM and about 24.39 GiB free under `/root/autodl-tmp`, above the 10 GiB baseline.
+- Generated runs remain optional and ignored: the current local GPU acceptance bundle is about 27 MiB and the D15.5 long-trajectory tree is about 142 MiB. Neither is an instance-baseline requirement or Git publication payload.
 
 ## Fixed upstream sources
 
@@ -216,7 +241,7 @@ These checkouts are intentionally ignored under `third_party/VGGT-SLAM`; a clean
 
 ## Current local-only instance assets
 
-The lightweight policy no longer treats generated `runs/` as required instance assets. They were intentionally deleted after validation and can be regenerated from source, weights, data, and retained JSON evidence.
+The lightweight policy does not treat generated `runs/` as required instance assets. Two regenerated bundles are currently retained locally for inspection, but a fresh clone may omit them and reproduce them from source, weights, data, and retained JSON evidence.
 
 Assets currently present:
 
@@ -226,18 +251,19 @@ Assets currently present:
 - PE-Core-L14-336 checkpoint revision `bafb0f76541d399057e980a25947f67acec76575`, `2,684,747,432` bytes
 - SAM 3 checkpoint: `/root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt`, `3,450,062,241` bytes, SHA-256 `9999e2341ceef5e136daa386eecb55cb414446a00ac2b55eb2dfd2f7c3cf8c9e`
 - Official `data/office_loop`: 473 files
+- Local GPU completion bundle: `runs/gpu-acceptance-20260829`, about 27 MiB, ignored and optional
+- Local D15.5 long-trajectory tree: `runs/office-loop-d15_5-s5`, about 142 MiB, ignored and optional
 
 Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` after migration. Missing generated runs are expected; missing tracked files, upstream pins, environments, weights, or the dataset require attention.
 
 ## Concrete next task
 
-1. On a future GPU instance, materialize the selected `frame_0061` outcome with the frozen D6 inference configuration; do not infer it from labels.
-2. Update the candidate cache from real inference and rerun Q2 from the beginning, preserving the frozen policy and thresholds.
-3. Keep D16/Clio, relation calibration, and new project scope out until the user explicitly authorizes the next phase.
+1. Ask for a separate user decision before starting D16/Clio; first audit official source, licence, archive/extracted sizes, coordinate/GT protocol and available disk without downloading data.
+2. If D16 is authorized, freeze a development/held-out scene and query split before new inference; do not tune Q/A thresholds from held-out labels.
+3. Preserve the complete GPU bundle and D15.5 run as optional local evidence only. Do not claim loop-closure accuracy, held-out performance, full 360° object coverage, path planning or closed-loop navigation.
 
 ## Publication history
 
-- 2026-08-24: D7 frozen self-contained observation cache, dynamic four-stage evidence video, independent cache/video validator, 38-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `745d82c1be62a94025b168de4630040edd4d69fe`).
 - 2026-08-25: Corrected D4/D6 controlled baselines, true-multiview pose gate and query evidence, D8 frozen object-memory schema, 56-test regression, documentation, memory, and baseline were published to public `main` in the commit containing this entry (parent `7b646deda5e8a01d128cb95f274f97316d01f53c`).
 - 2026-08-25: Closed the D7/D8 stride and portability gaps, added query-specific same-pair validation, upgraded D3 source to confidence-preserving schema 0.2, published 12 MiB of D4–D8 evidence, and recorded a 64-test no-GPU regression in the commit containing this entry (parent `d0399ffb872c78ec09eae6ab9168f92d47a1fbce`).
 - 2026-08-26: Completed the real D3 schema-0.2 GPU addendum and D9 exact-class spatial association, raised the regression to 73 tests, and replaced binary evidence with a 296 KiB JSON/text-only snapshot. Generated local runs were intentionally purged.
@@ -248,6 +274,8 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-27: Published D12 A2 evidence-aware complete-link association, frozen A1 hashes, 112 CPU tests, and a 111,875-byte JSON/Markdown development bundle (pre-publication HEAD `70f336f`).
 - 2026-08-27: Published D14 Q1 Fixed Top-K metadata-only replay, real 1/3/4 and synthetic 1/3/5 budget curves, 127 CPU tests, and an approximately 39 KiB JSON/Markdown development bundle (pre-publication HEAD `3ee7e98`).
 - 2026-08-27: Published D15 Q2 gain-based sequential search, real blocked readiness trace, complete synthetic Q0/Q1/Q2 engineering comparison, 136 CPU tests, and an approximately 46 KiB JSON/Markdown bundle (pre-publication HEAD `94bcb81`).
+- 2026-08-29: Published the D11–D15 GPU completion validator, D15.5 long-trajectory scene-memory visualization/audit/validator, 147-test regression, updated documentation, memory and baseline without publishing binary run artifacts (pre-publication HEAD `3073b46`).
+
 ## Scope reminder
 
 The project is currently a semantic-navigation perception front end. It does not yet include path planning, control, or closed-loop navigation. Ground-truth depth, poses, and OBBs belong only in evaluation/oracle paths, not the primary inference input.

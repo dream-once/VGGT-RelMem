@@ -144,7 +144,13 @@
     "evidence/week2/d15-sequential-search/synthetic_trace.json",
     "evidence/week2/d15-sequential-search/synthetic_run_manifest.json",
     "evidence/week2/d15-sequential-search/synthetic_comparison.json",
-    "evidence/week2/d15-sequential-search/validation.json"
+    "evidence/week2/d15-sequential-search/validation.json",
+    "scripts/validate_gpu_acceptance.py",
+    "tests/test_validate_gpu_acceptance.py",
+    "relground/scene_visualization.py",
+    "scripts/visualize_scene_memory.py",
+    "scripts/validate_d15_5_visualization.py",
+    "tests/test_d15_5_visualization.py"
   ],
   "upstream_repositories": [
     {
