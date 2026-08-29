@@ -284,6 +284,13 @@ Clio `cubicle` 仍为 `CLIO_HELD_OUT_PENDING`，没有 held-out 性能数字。
 
 **产物与算力**：消融表、失败分类 JSON 和轻量预览索引；主要 CPU，缺失候选时 GPU。
 
+**当前状态（2026-08-30）**：D19 已按 CPU/source 口径完成。Q2 的
+retrieval-only 与关闭 gain patience、A2 移除 semantic/OBB shape/quality/
+complete-link 均为单因素变体并保存 base/variant config hash。synthetic
+fixture 的全部指标变化为 0，只证明消融路径；office-loop 只报告工程结构。
+当前 Q2 不含历史成功候选特征，因此相应项为 `NOT_IMPLEMENTED`。六类失败分母
+覆盖完整冻结 synthetic 查询，真实数据仍为 `REAL_ABLATION_PENDING`。
+
 ### D20：结果固化、可复现包与轻量发布
 
 **任务**

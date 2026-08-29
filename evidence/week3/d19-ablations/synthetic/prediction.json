@@ -1,0 +1,314 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D19-ablation-prediction",
+  "source_id": "synthetic-correctness",
+  "scene_id": "synthetic-d14-scene",
+  "query_id": "synthetic-d14-trash-can",
+  "query_text": "trash can",
+  "source": {
+    "manifest": "configs/d19_ablation_manifest.json",
+    "manifest_sha256": "8251dc96eb9e77eecb844a303fe3d3be94916d2f02f52f222eee6b67b61c328d",
+    "candidate_cache": "evidence/week2/d14-fixed-topk/synthetic_cache.json",
+    "candidate_cache_sha256": "9733281e8d3117e390c318b75d1fedd9681b1e4c0beff9cae0b533c41f4e604c"
+  },
+  "q2_ablations": [
+    {
+      "variant_id": "base",
+      "changed_factor": null,
+      "base_config_sha256": "c2f9711f5e7e84f1ace1470ce7c5f63a9b022c8409914a435e3df70c40a782e6",
+      "variant_config_sha256": "c2f9711f5e7e84f1ace1470ce7c5f63a9b022c8409914a435e3df70c40a782e6",
+      "config": {
+        "max_budget": 5,
+        "low_gain_threshold": 1,
+        "low_gain_patience": 2,
+        "retrieval_weight": 0.65,
+        "novelty_weight": 0.35,
+        "translation_scale": 0.15,
+        "view_angle_scale_deg": 3.0,
+        "retrieval_normalization": "minmax_over_candidate_universe",
+        "all_equal_retrieval_value": 1.0,
+        "pose_novelty": "0.5*clip(min_translation/0.15)+0.5*clip(min_view_angle/3deg)",
+        "first_step": "retrieval_score_only",
+        "later_score": "0.65*normalized_retrieval+0.35*pose_novelty",
+        "selection_input": "candidate_metadata_only",
+        "outcome_access": "selected_candidate_only_after_selection",
+        "observed_gain": "new_3d_observation_ids"
+      },
+      "status": "PASS",
+      "selected_frames": [
+        "frame_0001",
+        "frame_0003",
+        "frame_0005",
+        "frame_0007",
+        "frame_0009"
+      ],
+      "selected_count": 5,
+      "stop_reason": "max_budget_reached",
+      "sam_calls": 5,
+      "observation_count": 5,
+      "lifted_instances": 5,
+      "rejected_instances": 0
+    },
+    {
+      "variant_id": "retrieval_only",
+      "changed_factor": "pose_novelty",
+      "base_config_sha256": "c2f9711f5e7e84f1ace1470ce7c5f63a9b022c8409914a435e3df70c40a782e6",
+      "variant_config_sha256": "ecadbc380a6cfb1af0cf1e5aff397103f1b95b74e3b0957e01a7cacd02cc7141",
+      "config": {
+        "max_budget": 5,
+        "low_gain_threshold": 1,
+        "low_gain_patience": 2,
+        "retrieval_weight": 1.0,
+        "novelty_weight": 0.0,
+        "translation_scale": 0.15,
+        "view_angle_scale_deg": 3.0,
+        "retrieval_normalization": "minmax_over_candidate_universe",
+        "all_equal_retrieval_value": 1.0,
+        "pose_novelty": "0.5*clip(min_translation/0.15)+0.5*clip(min_view_angle/3deg)",
+        "first_step": "retrieval_score_only",
+        "later_score": "1.0*normalized_retrieval",
+        "selection_input": "candidate_metadata_only",
+        "outcome_access": "selected_candidate_only_after_selection",
+        "observed_gain": "new_3d_observation_ids",
+        "ablation": "pose_novelty_removed"
+      },
+      "status": "PASS",
+      "selected_frames": [
+        "frame_0001",
+        "frame_0003",
+        "frame_0005",
+        "frame_0007",
+        "frame_0009"
+      ],
+      "selected_count": 5,
+      "stop_reason": "max_budget_reached",
+      "sam_calls": 5,
+      "observation_count": 5,
+      "lifted_instances": 5,
+      "rejected_instances": 0
+    },
+    {
+      "variant_id": "no_gain_patience",
+      "changed_factor": "gain_patience",
+      "base_config_sha256": "c2f9711f5e7e84f1ace1470ce7c5f63a9b022c8409914a435e3df70c40a782e6",
+      "variant_config_sha256": "65d691ae1edb3f2f120d708a3db9610a0d74b81a5c5f359dddd427ae2232f426",
+      "config": {
+        "max_budget": 5,
+        "low_gain_threshold": 1,
+        "low_gain_patience": null,
+        "retrieval_weight": 0.65,
+        "novelty_weight": 0.35,
+        "translation_scale": 0.15,
+        "view_angle_scale_deg": 3.0,
+        "retrieval_normalization": "minmax_over_candidate_universe",
+        "all_equal_retrieval_value": 1.0,
+        "pose_novelty": "0.5*clip(min_translation/0.15)+0.5*clip(min_view_angle/3deg)",
+        "first_step": "retrieval_score_only",
+        "later_score": "0.65*normalized_retrieval+0.35*pose_novelty",
+        "selection_input": "candidate_metadata_only",
+        "outcome_access": "selected_candidate_only_after_selection",
+        "observed_gain": "new_3d_observation_ids",
+        "ablation": "gain_patience_disabled"
+      },
+      "status": "PASS",
+      "selected_frames": [
+        "frame_0001",
+        "frame_0003",
+        "frame_0005",
+        "frame_0007",
+        "frame_0009"
+      ],
+      "selected_count": 5,
+      "stop_reason": "max_budget_reached",
+      "sam_calls": 5,
+      "observation_count": 5,
+      "lifted_instances": 5,
+      "rejected_instances": 0
+    }
+  ],
+  "a2_ablations": [
+    {
+      "variant_id": "base",
+      "changed_factor": null,
+      "base_config_sha256": "eaa904a3f6e2caf3fbb52ffca8880704e3eabf3057892e1ee723da4fbcce4095",
+      "variant_config_sha256": "eaa904a3f6e2caf3fbb52ffca8880704e3eabf3057892e1ee723da4fbcce4095",
+      "config": {
+        "semantic_rule": "cosine_when_both_embeddings_else_normalized_exact_class",
+        "semantic_threshold": 0.7,
+        "min_observation_quality": 0.25,
+        "center_distance_threshold": 0.15,
+        "overlap_measure": "aabb_iou_from_observation_obb",
+        "min_overlap_iou": 0.0,
+        "spatial_rule": "center_pass OR overlap_pass",
+        "obb_shape_measure": "mean_sorted_extent_ratio",
+        "quality_measure": "min_pair_geometric_mean_retrieval_sam_valid_points",
+        "weights": {
+          "semantic": 0.25,
+          "center": 0.25,
+          "overlap": 0.2,
+          "obb_shape": 0.15,
+          "quality": 0.15
+        },
+        "cluster_rule": "complete_link_all_cross_pairs_gate_pass",
+        "min_distinct_frames": 2
+      },
+      "input_observations": 5,
+      "pair_count": 10,
+      "cluster_count": 5,
+      "promoted_clusters": 0,
+      "predicted_match_pairs": 0,
+      "pair_prediction_sha256": "ae67dd728705f5b384ee2ab8f23b6f93beebd8cef74f542e86b9664a42dc733e"
+    },
+    {
+      "variant_id": "without_semantic",
+      "changed_factor": "semantic",
+      "base_config_sha256": "eaa904a3f6e2caf3fbb52ffca8880704e3eabf3057892e1ee723da4fbcce4095",
+      "variant_config_sha256": "8bb01733bfe640fde928fd42b0d71ae8b293468a4d47ce751e6a8abe11b46b6a",
+      "config": {
+        "semantic_rule": "cosine_when_both_embeddings_else_normalized_exact_class",
+        "semantic_threshold": 0.0,
+        "min_observation_quality": 0.25,
+        "center_distance_threshold": 0.15,
+        "overlap_measure": "aabb_iou_from_observation_obb",
+        "min_overlap_iou": 0.0,
+        "spatial_rule": "center_pass OR overlap_pass",
+        "obb_shape_measure": "mean_sorted_extent_ratio",
+        "quality_measure": "min_pair_geometric_mean_retrieval_sam_valid_points",
+        "weights": {
+          "semantic": 0.0,
+          "center": 0.3333333333333333,
+          "overlap": 0.26666666666666666,
+          "obb_shape": 0.19999999999999998,
+          "quality": 0.19999999999999998
+        },
+        "cluster_rule": "complete_link_all_cross_pairs_gate_pass",
+        "min_distinct_frames": 2,
+        "ablation": "semantic_removed"
+      },
+      "input_observations": 5,
+      "pair_count": 10,
+      "cluster_count": 5,
+      "promoted_clusters": 0,
+      "predicted_match_pairs": 0,
+      "pair_prediction_sha256": "52c0cbe70528b338b3d6c54080a4083860e4c3e3f79bd8bd25f6b0a4ad7834bf"
+    },
+    {
+      "variant_id": "without_obb_shape",
+      "changed_factor": "obb_shape",
+      "base_config_sha256": "eaa904a3f6e2caf3fbb52ffca8880704e3eabf3057892e1ee723da4fbcce4095",
+      "variant_config_sha256": "86da9d097b50e378fc33fdfa5ef30a405a6e5a423fa1f16e32a77aa8527fb1a0",
+      "config": {
+        "semantic_rule": "cosine_when_both_embeddings_else_normalized_exact_class",
+        "semantic_threshold": 0.7,
+        "min_observation_quality": 0.25,
+        "center_distance_threshold": 0.15,
+        "overlap_measure": "aabb_iou_from_observation_obb",
+        "min_overlap_iou": 0.0,
+        "spatial_rule": "center_pass OR overlap_pass",
+        "obb_shape_measure": "mean_sorted_extent_ratio",
+        "quality_measure": "min_pair_geometric_mean_retrieval_sam_valid_points",
+        "weights": {
+          "semantic": 0.29411764705882354,
+          "center": 0.29411764705882354,
+          "overlap": 0.23529411764705885,
+          "obb_shape": 0.0,
+          "quality": 0.17647058823529413
+        },
+        "cluster_rule": "complete_link_all_cross_pairs_gate_pass",
+        "min_distinct_frames": 2,
+        "ablation": "obb_shape_removed"
+      },
+      "input_observations": 5,
+      "pair_count": 10,
+      "cluster_count": 5,
+      "promoted_clusters": 0,
+      "predicted_match_pairs": 0,
+      "pair_prediction_sha256": "97a6f5c65af41f51ba1e68a1b5cff4b6653e9bc69ad2dec9dcf7b65c458776aa"
+    },
+    {
+      "variant_id": "without_quality",
+      "changed_factor": "quality",
+      "base_config_sha256": "eaa904a3f6e2caf3fbb52ffca8880704e3eabf3057892e1ee723da4fbcce4095",
+      "variant_config_sha256": "d169078ed10a94260499355219a67b975a0f544da08215bf21ffa0c3d9943ce9",
+      "config": {
+        "semantic_rule": "cosine_when_both_embeddings_else_normalized_exact_class",
+        "semantic_threshold": 0.7,
+        "min_observation_quality": 0.0,
+        "center_distance_threshold": 0.15,
+        "overlap_measure": "aabb_iou_from_observation_obb",
+        "min_overlap_iou": 0.0,
+        "spatial_rule": "center_pass OR overlap_pass",
+        "obb_shape_measure": "mean_sorted_extent_ratio",
+        "quality_measure": "min_pair_geometric_mean_retrieval_sam_valid_points",
+        "weights": {
+          "semantic": 0.29411764705882354,
+          "center": 0.29411764705882354,
+          "overlap": 0.23529411764705885,
+          "obb_shape": 0.17647058823529413,
+          "quality": 0.0
+        },
+        "cluster_rule": "complete_link_all_cross_pairs_gate_pass",
+        "min_distinct_frames": 2,
+        "ablation": "quality_removed"
+      },
+      "input_observations": 5,
+      "pair_count": 10,
+      "cluster_count": 5,
+      "promoted_clusters": 0,
+      "predicted_match_pairs": 0,
+      "pair_prediction_sha256": "aeca76703d2a2d56622188f103f3e9e7dffa202a7fa164170cda8fd4e93b4e5b"
+    },
+    {
+      "variant_id": "without_complete_link",
+      "changed_factor": "complete_link",
+      "base_config_sha256": "eaa904a3f6e2caf3fbb52ffca8880704e3eabf3057892e1ee723da4fbcce4095",
+      "variant_config_sha256": "81af86c7a7309b8c58e6200a065e75f79c98e2589d94e59f9e8e50e5dfdd8668",
+      "config": {
+        "semantic_rule": "cosine_when_both_embeddings_else_normalized_exact_class",
+        "semantic_threshold": 0.7,
+        "min_observation_quality": 0.25,
+        "center_distance_threshold": 0.15,
+        "overlap_measure": "aabb_iou_from_observation_obb",
+        "min_overlap_iou": 0.0,
+        "spatial_rule": "center_pass OR overlap_pass",
+        "obb_shape_measure": "mean_sorted_extent_ratio",
+        "quality_measure": "min_pair_geometric_mean_retrieval_sam_valid_points",
+        "weights": {
+          "semantic": 0.25,
+          "center": 0.25,
+          "overlap": 0.2,
+          "obb_shape": 0.15,
+          "quality": 0.15
+        },
+        "cluster_rule": "single_link_any_gate_pair",
+        "min_distinct_frames": 2,
+        "ablation": "complete_link_removed"
+      },
+      "input_observations": 5,
+      "pair_count": 10,
+      "cluster_count": 5,
+      "promoted_clusters": 0,
+      "predicted_match_pairs": 0,
+      "pair_prediction_sha256": "dc6ee52077dac13887549227926fa45c621a265cac52765522bc91c45107e48d"
+    }
+  ],
+  "historical_success_ablation": {
+    "status": "NOT_IMPLEMENTED",
+    "reason": "Q2_has_no_historical_success_candidate_score_feature"
+  },
+  "failure_audit_readiness": {
+    "taxonomy": [
+      "retrieval",
+      "segmentation",
+      "lifting",
+      "association",
+      "relation",
+      "abstention"
+    ],
+    "status": "SYNTHETIC_EVALUATOR_AVAILABLE",
+    "category_counts": null
+  },
+  "performance_claim": null,
+  "created_at": "2026-08-30T00:00:00+00:00"
+}
