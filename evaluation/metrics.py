@@ -121,3 +121,55 @@ def risk_coverage_curve(
         }
         for index in range(len(scores))
     ]
+
+
+def expected_calibration_error(
+    probabilities: Sequence[float],
+    labels: Sequence[int | bool],
+    *,
+    bins: int = 10,
+) -> float:
+    """Equal-width ECE with the rightmost edge included in the final bin."""
+    predictions = np.asarray(probabilities, dtype=np.float64)
+    targets = np.asarray(labels, dtype=np.float64)
+    if predictions.shape != targets.shape or predictions.size == 0:
+        raise ValueError("non-empty probabilities and labels must match")
+    if bins < 1:
+        raise ValueError("bins must be positive")
+    if (
+        not np.all(np.isfinite(predictions))
+        or np.any(predictions < 0.0)
+        or np.any(predictions > 1.0)
+        or not np.all(np.isin(targets, [0.0, 1.0]))
+    ):
+        raise ValueError("ECE inputs must be finite probabilities and binary labels")
+    indices = np.minimum((predictions * bins).astype(int), bins - 1)
+    error = 0.0
+    for index in range(bins):
+        selected = indices == index
+        if not np.any(selected):
+            continue
+        error += (
+            float(np.mean(selected))
+            * abs(
+                float(np.mean(predictions[selected]))
+                - float(np.mean(targets[selected]))
+            )
+        )
+    return float(error)
+
+
+def area_under_risk_coverage(
+    curve: Sequence[Mapping[str, float]],
+) -> float:
+    """Discrete AURC: the mean selective risk over retained coverages."""
+    if not curve:
+        raise ValueError("risk-coverage curve must be non-empty")
+    coverages = np.asarray([row["coverage"] for row in curve], dtype=np.float64)
+    risks = np.asarray([row["risk"] for row in curve], dtype=np.float64)
+    if (
+        not np.all(np.isfinite(coverages)) or not np.all(np.isfinite(risks))
+        or np.any(np.diff(coverages) <= 0.0) or coverages[-1] != 1.0
+    ):
+        raise ValueError("risk-coverage rows are not ordered or finite")
+    return float(np.mean(risks))

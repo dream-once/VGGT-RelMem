@@ -1,0 +1,122 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D17-evaluation",
+  "protocol_id": "D17-relation-grounding-reliable-abstention",
+  "scene_id": "synthetic-relations",
+  "split_role": "synthetic",
+  "source": {
+    "prediction": "prediction.json",
+    "prediction_sha256": "93d3801ad1292a2b6d328e82da62f0eab6f4598b8754b5b272b5f048cdd72dfe",
+    "labels": "labels.json",
+    "labels_sha256": "5d7ccdf5ee52012e6686bf8b2d9a19610ee39293f8de5f0e4a4a8d1ab5078372"
+  },
+  "metrics": {
+    "acc_at_1": 1.0,
+    "mrr": 1.0,
+    "negative_rejection_accuracy": 1.0,
+    "task_accuracy": 1.0,
+    "brier": 0.008947506776214868,
+    "ece_10": 0.05982476669813219,
+    "aurc_discrete": 0.0,
+    "query_count": 5,
+    "positive_count": 2,
+    "negative_count": 3
+  },
+  "risk_coverage": [
+    {
+      "coverage": 0.2,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.4,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.6,
+      "risk": 0.0,
+      "threshold": 1.0
+    },
+    {
+      "coverage": 0.8,
+      "risk": 0.0,
+      "threshold": 0.8504380832546695
+    },
+    {
+      "coverage": 1.0,
+      "risk": 0.0,
+      "threshold": 0.8504380832546695
+    }
+  ],
+  "rows": [
+    {
+      "query_id": "left",
+      "relation": "left_of",
+      "answerable": true,
+      "answer_object_id": "obj_0001",
+      "predicted_object_id": "obj_0001",
+      "abstain": false,
+      "reason": null,
+      "expected_abstain_reason": null,
+      "decision_confidence": 0.8504380832546695,
+      "correct": true
+    },
+    {
+      "query_id": "right",
+      "relation": "right_of",
+      "answerable": true,
+      "answer_object_id": "obj_0002",
+      "predicted_object_id": "obj_0002",
+      "abstain": false,
+      "reason": null,
+      "expected_abstain_reason": null,
+      "decision_confidence": 0.8504380832546695,
+      "correct": true
+    },
+    {
+      "query_id": "missing-target",
+      "relation": "left_of",
+      "answerable": false,
+      "answer_object_id": null,
+      "predicted_object_id": null,
+      "abstain": true,
+      "reason": "target_not_found",
+      "expected_abstain_reason": "target_not_found",
+      "decision_confidence": 1.0,
+      "correct": true
+    },
+    {
+      "query_id": "missing-reference",
+      "relation": "left_of",
+      "answerable": false,
+      "answer_object_id": null,
+      "predicted_object_id": null,
+      "abstain": true,
+      "reason": "reference_not_found",
+      "expected_abstain_reason": "reference_not_found",
+      "decision_confidence": 1.0,
+      "correct": true
+    },
+    {
+      "query_id": "missing-anchor",
+      "relation": "left_of",
+      "answerable": false,
+      "answer_object_id": null,
+      "predicted_object_id": null,
+      "abstain": true,
+      "reason": "missing_anchor_frame",
+      "expected_abstain_reason": "missing_anchor_frame",
+      "decision_confidence": 1.0,
+      "correct": true
+    }
+  ],
+  "acceptance": {
+    "labels_read_by_evaluator_only": true,
+    "negative_rejection_counted_as_task_success": true,
+    "real_calibration_status": "REAL_DATA_CALIBRATION_PENDING",
+    "performance_scope": "synthetic_protocol_fixture"
+  },
+  "created_at": "2026-08-29T15:20:00+00:00"
+}

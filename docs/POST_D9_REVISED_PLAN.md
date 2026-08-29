@@ -238,6 +238,10 @@ D15.5 是 2026-08-29 插入 D16 前的工程验收里程碑，不新增查询策
 
 **产物与算力**：查询集、关系 evaluator、校准 manifest、拒答报告；CPU。
 
+**当前状态（2026-08-29）**：D17 已按 CPU/source 口径完成。正式 prediction
+拒绝 query 内嵌答案，labels 只由 evaluator 读取；synthetic 正负例、ECE/AURC、
+anchor 旋转和拒答原因均通过重算。真实校准保持 `REAL_DATA_CALIBRATION_PENDING`。
+
 ### D18：冻结协议后的开发集与 held-out 运行
 
 **任务**

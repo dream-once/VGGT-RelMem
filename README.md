@@ -92,6 +92,7 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D15：Q2 gain-based sequential search 已在完整真实 GPU cache 上跑满 5 步并通过 trace 重算；`performance_claim=null`，不声称真实性能提升。
 - D15.5：95 帧长轨迹的场景级 RGB 点云、轨迹、Top-K 相机、40 条 3D 观测、8 个关联对象、PLY/MP4/Viser 与对象中心多视角审计均已完成；独立 validator 为 `PASS`。
 - D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已在 CPU 完成；官方大小和数据许可仍未确认，因此状态为 `DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN / DATA_LICENSE_UNVERIFIED`，没有下载数据。
+- D17：正式关系预测已与标签/evaluator 隔离，冻结 anchor 坐标约定和 0.60 未校准工程阈值；synthetic 正负查询、ECE/AURC 和拒答重算为 `PASS`，真实数据校准仍为 `REAL_DATA_CALIBRATION_PENDING`。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -713,6 +714,7 @@ python -m scripts.evaluate \
 - 已完成 D15：Q2 在完整真实 GPU outcome cache 上跑满 5 步并通过 trace 重算，observed gain=14、`performance_claim=null`；历史 blocked trace 继续作为诚实 partial-cache 证据。
 - 已完成 D15.5：95 帧长轨迹生成可审计的场景级 RGB 点云、轨迹、Top-K 视角、对象记忆、PLY/MP4/Viser；3/8 个预测对象满足严格对象中心多视角门槛。
 - 已完成 D16 CPU/source：Clio `apartment=development`、`cubicle=held-out` 场景角色和下载门槛已冻结；query 清单仍为 `PENDING_DATA_METADATA`。
-- Clio 官方场景大小、校验和和数据许可尚未确认，因此没有下载，下一步为 D17 关系定位、校准与可靠拒答协议。
+- 已完成 D17 CPU/source：synthetic 的 2 个正查询与 3 个负查询验证标签隔离和正确拒答；本地 office-loop 无标签 replay 对 8 个同类对象给出 `ambiguous_candidates`，没有产生人工指标。
+- Clio 仍未下载、真实 calibration/held-out 未运行，下一步为 D18 冻结 Q×A 实验协议。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

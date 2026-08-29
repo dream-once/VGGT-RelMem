@@ -1,6 +1,8 @@
 import unittest
 
 from evaluation.metrics import (
+    area_under_risk_coverage,
+    expected_calibration_error,
     brier_score,
     frame_recall_at_k,
     grounding_metrics,
@@ -21,6 +23,9 @@ class MetricTests(unittest.TestCase):
         curve = risk_coverage_curve([0.9, 0.1], [True, False])
         self.assertEqual(curve[0]["risk"], 0.0)
         self.assertEqual(curve[-1]["coverage"], 1.0)
+        self.assertAlmostEqual(expected_calibration_error([0.8, 0.2], [1, 0]), 0.2)
+        self.assertAlmostEqual(area_under_risk_coverage(curve), 0.25)
+
 
 
 if __name__ == "__main__":

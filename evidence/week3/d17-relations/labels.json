@@ -1,0 +1,37 @@
+{
+  "schema_version": "0.1",
+  "scene_id": "synthetic-relations",
+  "split_role": "synthetic",
+  "labels": [
+    {
+      "query_id": "left",
+      "answerable": true,
+      "answer_object_id": "obj_0001",
+      "expected_abstain_reason": null
+    },
+    {
+      "query_id": "right",
+      "answerable": true,
+      "answer_object_id": "obj_0002",
+      "expected_abstain_reason": null
+    },
+    {
+      "query_id": "missing-target",
+      "answerable": false,
+      "answer_object_id": null,
+      "expected_abstain_reason": "target_not_found"
+    },
+    {
+      "query_id": "missing-reference",
+      "answerable": false,
+      "answer_object_id": null,
+      "expected_abstain_reason": "reference_not_found"
+    },
+    {
+      "query_id": "missing-anchor",
+      "answerable": false,
+      "answer_object_id": null,
+      "expected_abstain_reason": "missing_anchor_frame"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "scene_id": "office-loop",
+  "split_role": "development",
+  "queries": [
+    {
+      "query_id": "office-trash-can-semantic",
+      "target": "trash can",
+      "relation": null,
+      "reference": null,
+      "anchor_frame": null
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": "0.1",
+  "status": "ENGINEERING_DEFAULT_UNCALIBRATED",
+  "feature_names": [
+    "retrieval_score",
+    "sam_score",
+    "valid_point_ratio",
+    "support_count",
+    "association_margin",
+    "relation_margin"
+  ],
+  "answer_threshold": 0.6,
+  "fitted_on_split_role": null,
+  "fit_sample_ids": [],
+  "fit_allowed_roles": ["calibration"],
+  "threshold_selection_allowed_roles": ["development"],
+  "held_out_fit_allowed": false,
+  "notes": "D17 CPU scope freezes the engineering default only; real calibration remains pending."
+}
