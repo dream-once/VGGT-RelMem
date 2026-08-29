@@ -91,6 +91,7 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D14：Q1 Fixed Top-K 已按冻结 hybrid 阈值在完整真实 GPU cache 上通过 prediction replay；K=1 与 Q0 一致，预测仍不读取人工标签。
 - D15：Q2 gain-based sequential search 已在完整真实 GPU cache 上跑满 5 步并通过 trace 重算；`performance_claim=null`，不声称真实性能提升。
 - D15.5：95 帧长轨迹的场景级 RGB 点云、轨迹、Top-K 相机、40 条 3D 观测、8 个关联对象、PLY/MP4/Viser 与对象中心多视角审计均已完成；独立 validator 为 `PASS`。
+- D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已在 CPU 完成；官方大小和数据许可仍未确认，因此状态为 `DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN / DATA_LICENSE_UNVERIFIED`，没有下载数据。
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -607,6 +608,7 @@ CloudCompare 或 MeshLab 打开；普通文本预览无法显示二进制点云�
 40 条 observation cloud/OBB、8 个融合对象 OBB 与标签：
 
 ```bash
+cd /root/autodl-tmp/VGGT-RelMem
 OMP_NUM_THREADS=8 \
 conda run --no-capture-output -p /root/autodl-tmp/envs/vggt_geom \
   python -m scripts.visualize_scene_memory \
@@ -710,6 +712,7 @@ python -m scripts.evaluate \
 - 已完成 D14：Q1 在完整真实 GPU outcome cache 上按 metadata 先选后揭示，K=1 与 Q0 一致；本次只验收 prediction replay，不新增 recall 数字。
 - 已完成 D15：Q2 在完整真实 GPU outcome cache 上跑满 5 步并通过 trace 重算，observed gain=14、`performance_claim=null`；历史 blocked trace 继续作为诚实 partial-cache 证据。
 - 已完成 D15.5：95 帧长轨迹生成可审计的场景级 RGB 点云、轨迹、Top-K 视角、对象记忆、PLY/MP4/Viser；3/8 个预测对象满足严格对象中心多视角门槛。
-- 下一步尚未启动 D16/Clio；下载或扩展 held-out 场景前仍需单独做许可、容量和数据协议审计。
+- 已完成 D16 CPU/source：Clio `apartment=development`、`cubicle=held-out` 场景角色和下载门槛已冻结；query 清单仍为 `PENDING_DATA_METADATA`。
+- Clio 官方场景大小、校验和和数据许可尚未确认，因此没有下载，下一步为 D17 关系定位、校准与可靠拒答协议。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

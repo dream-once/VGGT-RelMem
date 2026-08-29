@@ -7,6 +7,10 @@ class EvidencePolicyTests(unittest.TestCase):
     @property
     def week2(self) -> Path:
         return Path(__file__).resolve().parents[1] / "evidence" / "week2"
+    @property
+    def week3(self) -> Path:
+        return Path(__file__).resolve().parents[1] / "evidence" / "week3"
+
 
     def test_week2_is_lightweight_json_or_markdown_only(self) -> None:
         files = sorted(
@@ -40,6 +44,38 @@ class EvidencePolicyTests(unittest.TestCase):
             ) > 128 * 1024
         }
         self.assertEqual(oversized, {})
+    def test_week3_is_lightweight_json_or_markdown_only(self) -> None:
+        files = sorted(
+            path for path in self.week3.rglob("*") if path.is_file()
+        )
+        self.assertTrue(files)
+        unexpected = [
+            path.relative_to(self.week3).as_posix()
+            for path in files
+            if path.suffix.lower() not in {".json", ".md"}
+        ]
+        self.assertEqual(unexpected, [])
+        self.assertLessEqual(
+            sum(path.stat().st_size for path in files),
+            768 * 1024,
+        )
+        bundles = sorted(
+            path for path in self.week3.iterdir() if path.is_dir()
+        )
+        oversized = {
+            path.name: sum(
+                item.stat().st_size
+                for item in path.rglob("*")
+                if item.is_file()
+            )
+            for path in bundles
+            if sum(
+                item.stat().st_size for item in path.rglob("*")
+                if item.is_file()
+            ) > 128 * 1024
+        }
+        self.assertEqual(oversized, {})
+
 
     def test_d11_candidate_cache_contains_no_policy_or_ground_truth(self) -> None:
         cache = json.loads(
