@@ -260,6 +260,12 @@ anchor 旋转和拒答原因均通过重算。真实校准保持 `REAL_DATA_CALI
 
 **产物与算力**：开发/held-out 原始 JSON、冻结配置和主结果表；有缓存时评测 CPU，端到端补跑需要 GPU。
 
+**当前状态（2026-08-30）**：D18 已按 CPU/source 口径完成。Q0×A1/A2、
+Q1×A1/A2、Q2×A2 正式矩阵与 Q2×A1 诊断项已冻结；所有组合读取同一
+candidate cache。office-loop 是 development engineering replay，Q2 命中
+`unmaterialized` outcome 后明确阻塞；complete synthetic 只验证带标签路径。
+Clio `cubicle` 仍为 `CLIO_HELD_OUT_PENDING`，没有 held-out 性能数字。
+
 ### D19：消融、鲁棒性与失败案例审计
 
 **任务**

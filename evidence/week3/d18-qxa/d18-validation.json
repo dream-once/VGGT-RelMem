@@ -1,0 +1,17 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D18-validation",
+  "checks": {
+    "office-loop-development_deterministic": true,
+    "office-loop-development_same_cache": true,
+    "synthetic-correctness_deterministic": true,
+    "synthetic-correctness_same_cache": true,
+    "synthetic_evaluation_deterministic": true,
+    "synthetic_not_performance": true,
+    "office_development_only": true,
+    "held_out_pending": true
+  },
+  "source_status": "CPU_COMPLETE",
+  "held_out_status": "CLIO_HELD_OUT_PENDING"
+}

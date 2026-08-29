@@ -1,0 +1,230 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS_WITH_BLOCKED_ROWS",
+  "stage": "D18-QxA-prediction",
+  "experiment_id": "D18-frozen-QxA-v1",
+  "source_id": "office-loop-development",
+  "scene_id": "office-loop-multiview-s10-trash-can",
+  "query_id": "office-loop-trash-can",
+  "query_text": "trash can",
+  "split_role": "development",
+  "result_scope": "development_engineering_replay_not_performance",
+  "source": {
+    "experiment_manifest": "configs/d18_experiment_manifest.json",
+    "experiment_manifest_sha256": "a2359dc63b7b8e2efa84e30f7e3f01a8d7d1cadfe0c41ef7b11e20b569a4d167",
+    "candidate_cache": "evidence/week2/d11-candidate-cache/candidate_cache.json",
+    "candidate_cache_sha256": "d4ae6cea223a2fd81857720b54072ecf48e3a5961a141f91b082bb6181eac76d"
+  },
+  "matrix_rows": [
+    {
+      "combination_id": "Q0-vggt-slam-upstream-top1__A1-exact-class-spatial-gate",
+      "matrix_role": "required",
+      "q_policy": "Q0-vggt-slam-upstream-top1",
+      "a_policy": "A1-exact-class-spatial-gate",
+      "status": "PASS",
+      "requested_budget": 1,
+      "selected_count": 1,
+      "selected_frames": [
+        "frame_0001"
+      ],
+      "selected_outcome_statuses": [
+        "available"
+      ],
+      "stop_reason": null,
+      "candidate_count": 8,
+      "sam_calls": 1,
+      "sam_instances": 6,
+      "lifted_instances": 4,
+      "rejected_instances": 2,
+      "observation_count": 4,
+      "association": {
+        "input_observations": 4,
+        "pair_count": 6,
+        "cluster_count": 2,
+        "promoted_clusters": 0,
+        "permanent_objects": 0,
+        "pending_observations": 4,
+        "association_decisions": 0,
+        "pair_prediction_sha256": "7574653ef51288aec3fb764931c1631acaa647c3f93a5b79d61d315107468a59"
+      },
+      "performance_claim": null
+    },
+    {
+      "combination_id": "Q0-vggt-slam-upstream-top1__A2-evidence-aware-complete-link",
+      "matrix_role": "required",
+      "q_policy": "Q0-vggt-slam-upstream-top1",
+      "a_policy": "A2-evidence-aware-complete-link",
+      "status": "PASS",
+      "requested_budget": 1,
+      "selected_count": 1,
+      "selected_frames": [
+        "frame_0001"
+      ],
+      "selected_outcome_statuses": [
+        "available"
+      ],
+      "stop_reason": null,
+      "candidate_count": 8,
+      "sam_calls": 1,
+      "sam_instances": 6,
+      "lifted_instances": 4,
+      "rejected_instances": 2,
+      "observation_count": 4,
+      "association": {
+        "input_observations": 4,
+        "pair_count": 6,
+        "cluster_count": 2,
+        "promoted_clusters": 0,
+        "permanent_objects": 0,
+        "pending_observations": 4,
+        "association_decisions": 0,
+        "pair_prediction_sha256": "1c607de7e5df0fa92020bef243a6bb3741f53615c93a419e619c4f964911d25e"
+      },
+      "performance_claim": null
+    },
+    {
+      "combination_id": "Q1-fixed-topk-hybrid__A1-exact-class-spatial-gate",
+      "matrix_role": "required",
+      "q_policy": "Q1-fixed-topk-hybrid",
+      "a_policy": "A1-exact-class-spatial-gate",
+      "status": "PASS",
+      "requested_budget": 5,
+      "selected_count": 4,
+      "selected_frames": [
+        "frame_0001",
+        "frame_0071",
+        "frame_0041",
+        "frame_0021"
+      ],
+      "selected_outcome_statuses": [
+        "available",
+        "available",
+        "available",
+        "available"
+      ],
+      "stop_reason": "nonredundant_candidates_exhausted",
+      "candidate_count": 8,
+      "sam_calls": 4,
+      "sam_instances": 15,
+      "lifted_instances": 10,
+      "rejected_instances": 5,
+      "observation_count": 10,
+      "association": {
+        "input_observations": 10,
+        "pair_count": 45,
+        "cluster_count": 3,
+        "promoted_clusters": 1,
+        "permanent_objects": 1,
+        "pending_observations": 4,
+        "association_decisions": 6,
+        "pair_prediction_sha256": "a2c5ee8509ab1cef071414fe7d1fd64fe8f9c7f8937f3dc44c4185257036bcb4"
+      },
+      "performance_claim": null
+    },
+    {
+      "combination_id": "Q1-fixed-topk-hybrid__A2-evidence-aware-complete-link",
+      "matrix_role": "required",
+      "q_policy": "Q1-fixed-topk-hybrid",
+      "a_policy": "A2-evidence-aware-complete-link",
+      "status": "PASS",
+      "requested_budget": 5,
+      "selected_count": 4,
+      "selected_frames": [
+        "frame_0001",
+        "frame_0071",
+        "frame_0041",
+        "frame_0021"
+      ],
+      "selected_outcome_statuses": [
+        "available",
+        "available",
+        "available",
+        "available"
+      ],
+      "stop_reason": "nonredundant_candidates_exhausted",
+      "candidate_count": 8,
+      "sam_calls": 4,
+      "sam_instances": 15,
+      "lifted_instances": 10,
+      "rejected_instances": 5,
+      "observation_count": 10,
+      "association": {
+        "input_observations": 10,
+        "pair_count": 45,
+        "cluster_count": 3,
+        "promoted_clusters": 1,
+        "permanent_objects": 1,
+        "pending_observations": 4,
+        "association_decisions": 6,
+        "pair_prediction_sha256": "1a69174dc17ab94e6665e44e3b8e9d98409b7a46bda82b12661089bfb34daaf5"
+      },
+      "performance_claim": null
+    },
+    {
+      "combination_id": "Q2-gain-based-sequential-search__A2-evidence-aware-complete-link",
+      "matrix_role": "required",
+      "q_policy": "Q2-gain-based-sequential-search",
+      "a_policy": "A2-evidence-aware-complete-link",
+      "status": "BLOCKED_MISSING_OUTCOME",
+      "requested_budget": 5,
+      "selected_count": 4,
+      "selected_frames": [
+        "frame_0001",
+        "frame_0071",
+        "frame_0041",
+        "frame_0061"
+      ],
+      "selected_outcome_statuses": [
+        "available",
+        "available",
+        "available",
+        "unmaterialized"
+      ],
+      "stop_reason": "BLOCKED_MISSING_OUTCOME",
+      "candidate_count": 8,
+      "sam_calls": 3,
+      "sam_instances": 12,
+      "lifted_instances": 8,
+      "rejected_instances": 4,
+      "observation_count": 8,
+      "association": null,
+      "performance_claim": null
+    },
+    {
+      "combination_id": "Q2-gain-based-sequential-search__A1-exact-class-spatial-gate",
+      "matrix_role": "diagnostic",
+      "q_policy": "Q2-gain-based-sequential-search",
+      "a_policy": "A1-exact-class-spatial-gate",
+      "status": "BLOCKED_MISSING_OUTCOME",
+      "requested_budget": 5,
+      "selected_count": 4,
+      "selected_frames": [
+        "frame_0001",
+        "frame_0071",
+        "frame_0041",
+        "frame_0061"
+      ],
+      "selected_outcome_statuses": [
+        "available",
+        "available",
+        "available",
+        "unmaterialized"
+      ],
+      "stop_reason": "BLOCKED_MISSING_OUTCOME",
+      "candidate_count": 8,
+      "sam_calls": 3,
+      "sam_instances": 12,
+      "lifted_instances": 8,
+      "rejected_instances": 4,
+      "observation_count": 8,
+      "association": null,
+      "performance_claim": null
+    }
+  ],
+  "held_out": {
+    "scene": "cubicle",
+    "status": "CLIO_HELD_OUT_PENDING",
+    "metric_values": null
+  },
+  "created_at": "2026-08-30T00:00:00+00:00"
+}

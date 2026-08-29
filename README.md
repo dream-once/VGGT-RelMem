@@ -715,6 +715,7 @@ python -m scripts.evaluate \
 - 已完成 D15.5：95 帧长轨迹生成可审计的场景级 RGB 点云、轨迹、Top-K 视角、对象记忆、PLY/MP4/Viser；3/8 个预测对象满足严格对象中心多视角门槛。
 - 已完成 D16 CPU/source：Clio `apartment=development`、`cubicle=held-out` 场景角色和下载门槛已冻结；query 清单仍为 `PENDING_DATA_METADATA`。
 - 已完成 D17 CPU/source：synthetic 的 2 个正查询与 3 个负查询验证标签隔离和正确拒答；本地 office-loop 无标签 replay 对 8 个同类对象给出 `ambiguous_candidates`，没有产生人工指标。
-- Clio 仍未下载、真实 calibration/held-out 未运行，下一步为 D18 冻结 Q×A 实验协议。
+- 已完成 D18 CPU/source：冻结 Q0/Q1/Q2 × A1/A2 正式矩阵与 Q2×A1 诊断项；office-loop partial cache 中 Q2 遇到未物化 outcome 后明确阻塞，complete synthetic 的六项标签分离重放全部通过。
+- Clio 仍未下载、真实 calibration/held-out 未运行，下一步为 D19 单因素消融与失败审计。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。
