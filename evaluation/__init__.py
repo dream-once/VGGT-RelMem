@@ -8,6 +8,7 @@ from .metrics import (
     grounding_metrics,
     pairwise_f1,
     risk_coverage_curve,
+    selective_answer_risk_coverage,
 )
 
 __all__ = [
@@ -18,4 +19,5 @@ __all__ = [
     "grounding_metrics",
     "pairwise_f1",
     "risk_coverage_curve",
+    "selective_answer_risk_coverage",
 ]

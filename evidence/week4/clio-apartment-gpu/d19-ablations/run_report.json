@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "source_id": "clio-apartment-development",
+  "prediction_status": "PASS",
+  "evaluation_status": null,
+  "real_ablation_status": "REAL_ABLATION_PENDING"
+}

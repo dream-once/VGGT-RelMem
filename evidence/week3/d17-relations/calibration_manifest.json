@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "status": "ENGINEERING_DEFAULT_UNCALIBRATED",
   "feature_names": [
     "retrieval_score",

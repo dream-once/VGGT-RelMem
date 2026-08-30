@@ -12,7 +12,7 @@
     "state-of-the-art",
     "性能提升"
   ],
-  "occurrence_count": 39,
+  "occurrence_count": 36,
   "review_required_count": 0,
   "records": [
     {
@@ -67,222 +67,201 @@
     {
       "line": 13,
       "term": "导航",
-      "text": "FOUND-IT 或完整闭环导航的结论。",
+      "text": "FOUND-IT 或完整闭环导航的结论。定稿简历表述、真实数字边界和约 3 分钟演示讲稿见",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 65,
+      "line": 78,
       "term": "官方",
       "text": "在按数字命名的 RGB 图片上运行官方几何管线并导出：",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "upstream_attribution_or_source_fact"
     },
     {
-      "line": 84,
+      "line": 97,
       "term": "官方",
       "text": "- D1：官方 VGGT-SLAM、SALAD、VGGT_SPARK 均已下载并固定 commit；SAM 3 checkpoint 已从 ModelScope 官方发布页下载、校验并成功加载。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "upstream_attribution_or_source_fact"
     },
     {
-      "line": 86,
+      "line": 99,
       "term": "复现",
       "text": "- D3：原 0.1 运行器、产物与两次 GPU 严格复现已完成；0.2 raw confidence/valid mask 源码、单测和真实 RTX 4090 产物验收也已完成。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "reproducibility_or_validated_result_context"
     },
     {
-      "line": 87,
+      "line": 100,
       "term": "复现",
       "text": "- D4：PE top-1、SAM 3 mask、mask-to-point lifting、3D OBB、可视化、validator 和两次真实 GPU 复现均已完成。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "reproducibility_or_validated_result_context"
     },
     {
-      "line": 96,
+      "line": 109,
       "term": "官方",
       "text": "- D13：`Q0-vggt-slam-upstream-top1` 已按固定源码和 retained D4/D5 JSON 冻结为 `upstream-aligned`；不声称 FOUND-IT 官方复现，轻量 D4 的二进制验收缺口已显式记录。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 96,
+      "line": 109,
       "term": "复现",
       "text": "- D13：`Q0-vggt-slam-upstream-top1` 已按固定源码和 retained D4/D5 JSON 冻结为 `upstream-aligned`；不声称 FOUND-IT 官方复现，轻量 D4 的二进制验收缺口已显式记录。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 98,
+      "line": 111,
       "term": "性能提升",
       "text": "- D15：Q2 gain-based sequential search 已在完整真实 GPU cache 上跑满 5 步并通过 trace 重算；`performance_claim=null`，不声称真实性能提升。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 100,
-      "term": "官方",
-      "text": "- D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已在 CPU 完成；官方大小和数据许可仍未确认，因此状态为 `DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN / DATA_LICENSE_UNVERIFIED`，没有下载数据。",
+      "line": 116,
+      "term": "性能提升",
+      "text": "D18 complete-cache development replay 与 Clio apartment GPU development replay 均已进入自动表格；当前 synthetic 数值无变化，三者都不支持性能提升结论。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 104,
+      "line": 117,
+      "term": "性能提升",
+      "text": "- D19：Q2/A2 单因素消融与六类失败审计已完成；Clio apartment 已运行无标签工程消融，Q2 base/retrieval-only 都在 4 帧后低 gain 停止，关闭 patience 才运行到 5 帧，三者都只有 1 条 observation。没有标签的真实指标仍为 `REAL_ABLATION_PENDING`，不声称性能提升。",
+      "disposition": "ACCEPTED_WITH_CONTEXT",
+      "reason": "explicitly_qualified_or_negated"
+    },
+    {
+      "line": 118,
       "term": "复现",
       "text": "- D20：单入口 CPU 复现命令、三张 JSON 派生表、README 数字检查及移动目录逐字节复验均为 `PASS`；可选二进制 Release 仍为 `PENDING`。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 117,
+      "line": 123,
+      "term": "官方",
+      "text": "本次只使用官方公开 `apartment` 的 RGB＋任务元数据开发子集，不需要作者审批。公开目录枚举到 1,056 张 RGB，本机成功取得 786 张；冻结运行从前段轨迹选择 24 张，`cubicle` 未下载。数据许可没有单独明确，因此原始图像、YAML、mask、点云和视频均不进入 Git。",
+      "disposition": "ACCEPTED_WITH_CONTEXT",
+      "reason": "explicitly_qualified_or_negated"
+    },
+    {
+      "line": 131,
+      "term": "性能提升",
+      "text": "- 上述负结果说明当前停止规则和 association 阈值尚未跨场景成立。它是 development engineering replay，不是 Grounding Acc@1、held-out 或性能提升结果。",
+      "disposition": "ACCEPTED_WITH_CONTEXT",
+      "reason": "explicitly_qualified_or_negated"
+    },
+    {
+      "line": 154,
       "term": "复现",
       "text": "### D3 GPU 验收与复现命令（已完成）",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "reproducibility_or_validated_result_context"
     },
     {
-      "line": 119,
+      "line": 156,
       "term": "官方",
       "text": "官方示例图片已包含在 `third_party/VGGT-SLAM/office_loop.zip`。准备数据后，用 8 帧、关闭开放词汇和回环做第一轮：",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "upstream_attribution_or_source_fact"
     },
     {
-      "line": 143,
+      "line": 180,
       "term": "复现",
       "text": "再换一个输出目录重复一次，两个结果都通过 validator、帧数一致且没有 NaN/Inf，即达到文档 D3 的“单场景稳定复现 + run manifest”。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 145,
+      "line": 182,
       "term": "复现",
       "text": "几何 0.2 已在 RTX 4090 上完成真实产物补验，并使用新目录保留历史 0.1 证据。复现命令为：",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "reproducibility_or_validated_result_context"
     },
     {
-      "line": 181,
+      "line": 218,
       "term": "官方",
       "text": "复核发现，早期 `scripts.run_open_vocab_top1` 实际执行的是“原始分辨率 SAM 3 → mask 缩放 → `Robust3DLifter`”，因此它不是严格官方 B0。旧命令和 `b0_result.json` 文件名仅为历史复现保留，其方法现明确记为 `B1-robust-single-view (legacy)`，已有两次一致结果仍是有效的工程复现证据。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 181,
+      "line": 218,
       "term": "复现",
       "text": "复核发现，早期 `scripts.run_open_vocab_top1` 实际执行的是“原始分辨率 SAM 3 → mask 缩放 → `Robust3DLifter`”，因此它不是严格官方 B0。旧命令和 `b0_result.json` 文件名仅为历史复现保留，其方法现明确记为 `B1-robust-single-view (legacy)`，已有两次一致结果仍是有效的工程复现证据。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 234,
+      "line": 271,
       "term": "复现",
       "text": "复现命令：",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "reproducibility_or_validated_result_context"
     },
     {
-      "line": 261,
+      "line": 298,
       "term": "复现",
       "text": "`scripts.run_sam_topk_lifting` 直接读取 D5 的 `topk_5.json`，不会重新运行 PE；SAM 3 只加载一次。修正后，每个入选帧先复现 VGGT 的 resize/crop/batch-pad，保存 `sam_inputs/<frame>.png` 与 `preprocess/<frame>.json`，SAM mask 直接索引同形状点图，不再做推理后 resize。之后才执行置信过滤、MAD 离群点过滤、最小点数检查和世界坐标 OBB 拟合。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "reproducibility_or_validated_result_context"
     },
     {
-      "line": 400,
+      "line": 437,
       "term": "复现",
       "text": "D8 是 D7 与 D9 之间的稳定数据边界：它冻结 `ObjectMemory 1.0` 的字段、evidence 语义和规范 JSON round-trip，把昂贵模型产生的 D7 观测放入 `pending_observations`。它故意不执行跨帧关联、不生成永久对象，使 D9 能在不加载 VGGT/PE/SAM 3 的情况下，对确定且可复现的输入实现和评测关联策略。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "reproducibility_or_validated_result_context"
     },
     {
-      "line": 523,
+      "line": 560,
       "term": "性能提升",
       "text": "历史 D8 CPU 重放保存了 45 个完整 pair 特征和 7 次 complete-link merge，最终仍为 3 个 cluster、1 个永久对象和 4 条 pending。独立开发评测仍是 17/28 个正/负 pair、precision/recall/F1=`1.0`，与 A1 持平；桥接修复的增益只由合成 A–B–C 回归证明，不能用这个无桥接真实样例宣称性能提升。阈值在评测前冻结，评测分数不会反向改变 prediction 状态。2026-08-29 又在完整真实 GPU outcome cache 上通过无标签 prediction 重放，但未运行新 evaluator，因此状态为 `GPU_MATERIALIZATION_COMPLETE / CPU_REPLAY_PASS`，不新增 F1 结论。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 528,
+      "line": 565,
       "term": "官方",
       "text": "正式名称固定为 `Q0-vggt-slam-upstream-top1`，状态固定为 `upstream-aligned`。这里的 `B0-official` 只保留为本仓库已审计的 VGGT-SLAM 单视角 lifting 标签；Q0 不称 FOUND-IT 官方实现，也不称 VGGT-SLAM 交互流程的逐字节官方复现。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 528,
+      "line": 565,
       "term": "复现",
       "text": "正式名称固定为 `Q0-vggt-slam-upstream-top1`，状态固定为 `upstream-aligned`。这里的 `B0-official` 只保留为本仓库已审计的 VGGT-SLAM 单视角 lifting 标签；Q0 不称 FOUND-IT 官方实现，也不称 VGGT-SLAM 交互流程的逐字节官方复现。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 597,
+      "line": 634,
       "term": "性能提升",
       "text": "`performance_claim=null`，不声称相对 Q0/Q1 有性能提升。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 752,
+      "line": 789,
       "term": "官方",
       "text": "- 已完成 D13：Q0 继续保持 `upstream-aligned`；10/10 静态语义检查与真实 `frame_0001` B0/B1 单视角 GPU 补验均通过，仍不称 FOUND-IT 官方复现。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 752,
+      "line": 789,
       "term": "复现",
       "text": "- 已完成 D13：Q0 继续保持 `upstream-aligned`；10/10 静态语义检查与真实 `frame_0001` B0/B1 单视角 GPU 补验均通过，仍不称 FOUND-IT 官方复现。",
       "disposition": "ACCEPTED_WITH_CONTEXT",
       "reason": "explicitly_qualified_or_negated"
     },
     {
-      "line": 761,
-      "term": "官方",
-      "text": "- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。",
-      "disposition": "ACCEPTED_WITH_CONTEXT",
-      "reason": "explicitly_qualified_or_negated"
-    },
-    {
-      "line": 761,
-      "term": "复现",
-      "text": "- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。",
-      "disposition": "ACCEPTED_WITH_CONTEXT",
-      "reason": "explicitly_qualified_or_negated"
-    },
-    {
-      "line": 761,
-      "term": "改进",
-      "text": "- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。",
-      "disposition": "ACCEPTED_WITH_CONTEXT",
-      "reason": "explicitly_qualified_or_negated"
-    },
-    {
-      "line": 761,
-      "term": "导航",
-      "text": "- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。",
-      "disposition": "ACCEPTED_WITH_CONTEXT",
-      "reason": "explicitly_qualified_or_negated"
-    },
-    {
-      "line": 761,
-      "term": "优于",
-      "text": "- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。",
-      "disposition": "ACCEPTED_WITH_CONTEXT",
-      "reason": "explicitly_qualified_or_negated"
-    },
-    {
-      "line": 761,
-      "term": "SOTA",
-      "text": "- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。",
-      "disposition": "ACCEPTED_WITH_CONTEXT",
-      "reason": "explicitly_qualified_or_negated"
-    },
-    {
-      "line": 764,
+      "line": 801,
       "term": "导航",
       "text": "- 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。",
       "disposition": "ACCEPTED_WITH_CONTEXT",

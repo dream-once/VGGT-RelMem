@@ -12,7 +12,7 @@ from evaluation.metrics import (
     brier_score,
     expected_calibration_error,
     grounding_metrics,
-    risk_coverage_curve,
+    selective_answer_risk_coverage,
 )
 from .association import ObjectMemory
 from .calibration import AbstentionPolicy, FEATURE_NAMES
@@ -20,8 +20,8 @@ from .relations import RelationConfig, RelationGrounder
 from .schemas import GroundingQuery
 
 
-RELATION_PROTOCOL_SCHEMA_VERSION = "0.1"
-RELATION_PROTOCOL_ID = "D17-relation-grounding-reliable-abstention"
+RELATION_PROTOCOL_SCHEMA_VERSION = "0.2"
+RELATION_PROTOCOL_ID = "D17-relation-grounding-reliable-abstention-v2"
 QUERY_BUNDLE_FIELDS = ("schema_version", "scene_id", "split_role", "queries")
 QUERY_FIELDS = (
     "query_id", "target", "relation", "reference", "anchor_frame"
@@ -301,31 +301,40 @@ def evaluate_relation_prediction(
     answers: list[str | None] = []
     rankings: list[Sequence[str]] = []
     abstentions: list[bool] = []
-    correct: list[bool] = []
-    decision_confidences: list[float] = []
+    task_correct: list[bool] = []
+    answer_correct: list[bool] = []
+    answer_confidences: list[float] = []
+    answered_flags: list[bool] = []
+    answerability_targets: list[bool] = []
     for query, result, label in zip(
         prediction["queries"], results, labels["labels"]
     ):
         if query["query_id"] != result["query_id"]:
             raise ValueError("prediction query/result order mismatch")
         predicted_id = result["ranked_ids"][0] if result["ranked_ids"] else None
+        answered = not bool(result["abstain"])
+        proposed_answer_correct = bool(
+            label["answerable"]
+            and predicted_id == label["answer_object_id"]
+        )
         if label["answerable"]:
-            is_correct = (
-                not result["abstain"]
-                and predicted_id == label["answer_object_id"]
-            )
+            is_task_correct = answered and proposed_answer_correct
         else:
-            is_correct = bool(result["abstain"]) and (
+            is_task_correct = bool(result["abstain"]) and (
                 label["expected_abstain_reason"] is None
                 or result["reason"] == label["expected_abstain_reason"]
             )
         confidence = float(result["confidence"])
-        decision_confidence = 1.0 - confidence if result["abstain"] else confidence
+        if not np.isfinite(confidence) or not 0.0 <= confidence <= 1.0:
+            raise ValueError("answer confidence must be finite and in [0, 1]")
         answers.append(label["answer_object_id"])
         rankings.append(result["ranked_ids"])
         abstentions.append(bool(result["abstain"]))
-        correct.append(bool(is_correct))
-        decision_confidences.append(float(decision_confidence))
+        task_correct.append(bool(is_task_correct))
+        answer_correct.append(bool(proposed_answer_correct))
+        answer_confidences.append(confidence)
+        answered_flags.append(answered)
+        answerability_targets.append(bool(label["answerable"]))
         rows.append({
             "query_id": query["query_id"],
             "relation": query["relation"],
@@ -335,19 +344,65 @@ def evaluate_relation_prediction(
             "abstain": result["abstain"],
             "reason": result["reason"],
             "expected_abstain_reason": label["expected_abstain_reason"],
-            "decision_confidence": decision_confidence,
-            "correct": bool(is_correct),
+            "answer_confidence": confidence,
+            "covered_by_current_policy": answered,
+            "answer_correct": (
+                bool(proposed_answer_correct) if answered else None
+            ),
+            "task_correct": bool(is_task_correct),
         })
     base = grounding_metrics(answers, rankings, abstentions)
-    curve = risk_coverage_curve(decision_confidences, correct)
+    curve = selective_answer_risk_coverage(
+        answer_confidences,
+        answered_flags,
+        answer_correct,
+    )
+    answered_confidences = [
+        score
+        for score, answered in zip(answer_confidences, answered_flags)
+        if answered
+    ]
+    answered_outcomes = [
+        outcome
+        for outcome, answered in zip(answer_correct, answered_flags)
+        if answered
+    ]
     metrics = {
         **base,
-        "task_accuracy": float(np.mean(correct)),
-        "brier": brier_score(decision_confidences, correct),
-        "ece_10": expected_calibration_error(
-            decision_confidences, correct, bins=10
+        "task_accuracy": float(np.mean(task_correct)),
+        "answerability_proxy_brier": brier_score(
+            [
+                float(result["confidence"])
+                for result in results
+            ],
+            answerability_targets,
         ),
-        "aurc_discrete": area_under_risk_coverage(curve),
+        "answerability_proxy_ece_10": expected_calibration_error(
+            [float(result["confidence"]) for result in results],
+            answerability_targets,
+            bins=10,
+        ),
+        "answered_correctness_brier": (
+            None
+            if not answered_confidences
+            else brier_score(answered_confidences, answered_outcomes)
+        ),
+        "answered_correctness_ece_10": (
+            None
+            if not answered_confidences
+            else expected_calibration_error(
+                answered_confidences,
+                answered_outcomes,
+                bins=10,
+            )
+        ),
+        "answer_aurc_discrete": (
+            None if not curve else area_under_risk_coverage(curve)
+        ),
+        "max_answer_coverage": float(
+            sum(answered_flags) / len(answered_flags)
+        ),
+        "answered_count": int(sum(answered_flags)),
         "query_count": len(rows),
         "positive_count": sum(label["answerable"] for label in labels["labels"]),
         "negative_count": sum(
@@ -363,11 +418,15 @@ def evaluate_relation_prediction(
         "split_role": prediction["split_role"],
         "source": deepcopy(dict(source)),
         "metrics": metrics,
-        "risk_coverage": curve,
+        "selective_answer_risk_coverage": curve,
         "rows": rows,
         "acceptance": {
             "labels_read_by_evaluator_only": True,
             "negative_rejection_counted_as_task_success": True,
+            "correct_rejections_excluded_from_answer_coverage": True,
+            "answer_coverage_denominator": "all_frozen_queries",
+            "calibration_metrics_use_raw_answer_confidence": True,
+            "post_decision_confidence_inversion": False,
             "real_calibration_status": "REAL_DATA_CALIBRATION_PENDING",
             "performance_scope": "synthetic_protocol_fixture",
         },

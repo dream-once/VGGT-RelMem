@@ -2,7 +2,7 @@
 
 **项目定位：VGGT-SLAM 几何之上的可审计语义定位可靠性层。** 本仓库不是完整闭环导航系统；它在固定 VGGT-SLAM 几何之上，提供候选检索、开放词汇分割、3D lifting、对象关联、关系定位、可靠拒答、缓存重放与可审计证据。
 
-项目已完成 D1–D21 工程链路，其中 D16–D21 按 CPU/source 口径验收；固定的 VGGT-SLAM 2.0、Perception Encoder 与 SAM 3 上游源码位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、数据集和大型运行产物不进入 Git。
+项目已完成 D1–D21 工程链路；D16–D21 的源码/CPU 验收已完成，并在 Clio `apartment` 公开 RGB 开发子集上补做了 VGGT、PE、SAM 3 GPU 工程重放。固定的上游源码位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、原始数据和大型运行产物不进入 Git。
 
 VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
 
@@ -10,7 +10,9 @@ VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先�
 
 在没有 Clio held-out 的当前阶段，结论固定为：**完成可复现基准、查询策略与关联策略隔离、可靠拒答协议和失败分析**。office-loop 是开发工程样例，
 synthetic fixture 只验证正确性；二者都不支持跨场景性能提升、SOTA、优于
-FOUND-IT 或完整闭环导航的结论。
+FOUND-IT 或完整闭环导航的结论。定稿简历表述、真实数字边界和约 3 分钟演示讲稿见
+[项目对外表述与演示讲稿](docs/PROJECT_PRESENTATION.md)；当前完整录屏状态仍为
+`DEMO_RECORDING_PENDING`。
 
 ## 目录
 
@@ -32,12 +34,23 @@ runs/                 manifest、日志和指标（大文件不进 Git）
 
 ## 快速验证
 
-最低依赖为 Python 3.10+、NumPy 和 PyYAML。当前环境无需安装项目也可在仓库根目录运行：
+从公开仓库 clean clone 后，可用下面的 CPU 入口安装并验证；D1–D21 的单测不要求下载权重、数据或启用 GPU：
 
 ```bash
-python -m unittest discover -s tests -v
+git clone https://github.com/dream-once/VGGT-RelMem.git
+cd VGGT-RelMem
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e '.[dev]'
+python -m scripts.verify_public_clone
 python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```
+
+`verify_public_clone` 只运行公开 clone 可获得的 tracked-only CPU 测试，并在 JSON
+报告中明确列出被排除的模块。当前仅排除 `test_q0_protocol`：它逐行审计固定的
+`third_party/VGGT-SLAM` 上游源码，而该第三方目录按政策不进入本仓库；按 D1
+说明克隆固定上游后，再运行 `python -m unittest discover -s tests -v` 验收全量。
+如果已经位于仓库根目录并装好依赖，可以直接从验证命令开始。
 
 真实 D4–D8 只保留轻量 JSON、manifest 与查询级 validator 报告，收录在 [evidence/week1](evidence/week1/README.md)。视频、预览、mask、点云、权重、数据集与几何 NPZ 均不进入 Git，可按文档命令在本地重新生成。
 
@@ -97,12 +110,36 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D14：Q1 Fixed Top-K 已按冻结 hybrid 阈值在完整真实 GPU cache 上通过 prediction replay；K=1 与 Q0 一致，预测仍不读取人工标签。
 - D15：Q2 gain-based sequential search 已在完整真实 GPU cache 上跑满 5 步并通过 trace 重算；`performance_claim=null`，不声称真实性能提升。
 - D15.5：95 帧长轨迹的场景级 RGB 点云、轨迹、Top-K 相机、40 条 3D 观测、8 个关联对象、PLY/MP4/Viser 与对象中心多视角审计均已完成；独立 validator 为 `PASS`。
-- D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已在 CPU 完成；官方大小和数据许可仍未确认，因此状态为 `DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN / DATA_LICENSE_UNVERIFIED`，没有下载数据。
-- D17：正式关系预测已与标签/evaluator 隔离，冻结 anchor 坐标约定和 0.60 未校准工程阈值；synthetic 正负查询、ECE/AURC 和拒答重算为 `PASS`，真实数据校准仍为 `REAL_DATA_CALIBRATION_PENDING`。
-- D18：Q0/Q1/Q2 × A1/A2 协议已冻结；office-loop 是 development replay，complete synthetic 只验证标签隔离和完整评测路径，Clio held-out 仍为 `PENDING`。
-- D19：Q2/A2 单因素消融与六类失败审计已完成；当前 synthetic 数值变化为 0，真实消融仍为 `REAL_ABLATION_PENDING`。
+- D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已完成；公开链接无需作者批准，已物化 `apartment` 的 24 帧 RGB＋3 个任务元数据文件开发子集。depth、rosbag、COLMAP 和完整场景仍未物化，数据许可仍为 `DATA_LICENSE_UNVERIFIED`，禁止在本仓库再分发原始数据。
+- D17：正式关系预测已与标签/evaluator 隔离，冻结 anchor 坐标约定和 0.60 未校准工程阈值；selective answer risk–coverage 排除正确拒答、覆盖率以全部冻结查询为分母，synthetic 最大回答覆盖率为 0.4，真实数据校准仍为 `REAL_DATA_CALIBRATION_PENDING`。
+- D18：Q0/Q1/Q2 × A1/A2 协议已冻结；office-loop 8/8 与 Clio apartment 24/24 complete cache 的六个组合均已完成。Clio 的 Q0/Q1/Q2 分别选择 1/5/4 帧并得到 0/1/1 条 observation，所有 A1/A2 组合均为 0 个永久对象；这是无标签开发工程重放，不是 held-out 性能结果。complete synthetic 只验证标签隔离和完整评测路径，Clio `cubicle` 仍为 `PENDING`。
+D18 complete-cache development replay 与 Clio apartment GPU development replay 均已进入自动表格；当前 synthetic 数值无变化，三者都不支持性能提升结论。
+- D19：Q2/A2 单因素消融与六类失败审计已完成；Clio apartment 已运行无标签工程消融，Q2 base/retrieval-only 都在 4 帧后低 gain 停止，关闭 patience 才运行到 5 帧，三者都只有 1 条 observation。没有标签的真实指标仍为 `REAL_ABLATION_PENDING`，不声称性能提升。
 - D20：单入口 CPU 复现命令、三张 JSON 派生表、README 数字检查及移动目录逐字节复验均为 `PASS`；可选二进制 Release 仍为 `PENDING`。
-- D21：最终结果卡与 README 高风险声明审计均为 `PASS`；所有结果均绑定 evidence/config 哈希、样本量、预算、验证状态和适用边界。
+- D21：最终结果卡与 README 高风险声明审计均为 `PASS`；结果卡已纳入 Clio GPU 开发验收，并继续明确 held-out/校准/真实指标缺口。
+
+## Clio apartment GPU 开发验收（2026-08-30）
+
+本次只使用官方公开 `apartment` 的 RGB＋任务元数据开发子集，不需要作者审批。公开目录枚举到 1,056 张 RGB，本机成功取得 786 张；冻结运行从前段轨迹选择 24 张，`cubicle` 未下载。数据许可没有单独明确，因此原始图像、YAML、mask、点云和视频均不进入 Git。
+
+真实 RTX 4090 链路为 VGGT-1B → PE-Core-L14-336 → SAM 3 → Robust3DLifter → Candidate Outcome Cache → Q×A/Ablation 重放。主要验收结果：
+
+- 24 帧 geometry schema 0.2 validator 为 `PASS`；轨迹最大平移 `1.027912` 个重建单位、最大旋转 `179.856°`。VGGT 重建单位不冒充米；
+- 公开任务元数据中的 `pillow` 被选作 development query。24/24 candidate outcome 完整物化，SAM 产生 3 个实例且 3 个均完成 3D lifting；
+- 有效 evidence 来自 `rgb_128` 与 `rgb_90`，同一查询的相机跨度为 `0.195787` 个重建单位和 `80.608°`，因此不再是“连续向前走的近同视角”样例；
+- Q0 Top-1 得到 0 条 observation；Q1 K=5 得到 1 条；Q2 在 4 帧后因连续两次低 gain 停止，也只有 1 条。A1/A2 均未形成永久对象；
+- 上述负结果说明当前停止规则和 association 阈值尚未跨场景成立。它是 development engineering replay，不是 Grounding Acc@1、held-out 或性能提升结果。
+
+公开轻量验收不依赖 Clio 原始数据：
+
+```bash
+python -m scripts.validate_clio_gpu_acceptance \
+  evidence/week4/clio-apartment-gpu/gpu_acceptance_report.json
+python -m scripts.validate_d18
+python -m scripts.validate_d19
+python -m scripts.validate_d20
+python -m scripts.validate_d21
+```
 
 `--check-only` 逐模块使用独立子进程，适合无卡/小内存模式。它不会加载 VGGT、SALAD 权重，也不会执行推理：
 
@@ -753,12 +790,12 @@ python -m scripts.evaluate \
 - 已完成 D14：Q1 在完整真实 GPU outcome cache 上按 metadata 先选后揭示，K=1 与 Q0 一致；本次只验收 prediction replay，不新增 recall 数字。
 - 已完成 D15：Q2 retrieval＋pose-novelty search 在完整真实 cache 上跑满 5 步并通过 trace 重算；`new_observation_count=14`（legacy 字段 `observed_gain`）、`coverage_aware=false`、`performance_claim=null`。
 - 已完成 D15.5：95 帧长轨迹生成可审计的场景级 RGB 点云、轨迹、Top-K 视角、对象记忆、PLY/MP4/Viser；3/8 个预测对象满足严格对象中心多视角门槛。
-- 已完成 D16 CPU/source：Clio `apartment=development`、`cubicle=held-out` 场景角色和下载门槛已冻结；query 清单仍为 `PENDING_DATA_METADATA`。
-- 已完成 D17 CPU/source：synthetic 的 2 个正查询与 3 个负查询验证标签隔离和正确拒答；本地 office-loop 无标签 replay 对 8 个同类对象给出 `ambiguous_candidates`，没有产生人工指标。
-- 已完成 D18 CPU/source：冻结 Q0/Q1/Q2 × A1/A2 正式矩阵与 Q2×A1 诊断项；office-loop partial cache 中 Q2 遇到未物化 outcome 后明确阻塞，complete synthetic 的六项标签分离重放全部通过。
-- 已完成 D19 CPU/source：Q2 的 pose-novelty/gain-patience 与 A2 的 semantic/OBB/quality/complete-link 单因素消融均可确定性重放；synthetic 数值无变化，历史成功特征明确为 `NOT_IMPLEMENTED`。
+- 已完成 D16＋GPU 数据验收：`apartment=development`、`cubicle=held-out` 场景角色已冻结；已从公开链接物化 24 帧 RGB＋3 个任务元数据文件的 apartment 开发子集，完整 depth/rosbag/COLMAP 和 cubicle 仍未触碰。
+- 已完成 D17 CPU/source：synthetic 的 2 个正查询与 3 个负查询验证标签隔离和正确拒答；正确拒答不计入 selective answer coverage，曲线最大覆盖率为 2/5=0.4；本地 office-loop 无标签 replay 没有产生人工指标。
+- 已完成 D18＋Clio 开发重放：冻结 Q0/Q1/Q2 × A1/A2 正式矩阵与 Q2×A1 诊断项；office-loop 8/8、Clio apartment 24/24 complete cache 和 complete synthetic 均能确定性重放。Clio Q0/Q1/Q2 的 observation 数为 0/1/1，未形成永久对象，不构成涨点结论。
+- 已完成 D19＋Clio 工程消融：Q2 的 pose-novelty/gain-patience 与 A2 的 semantic/OBB/quality/complete-link 单因素变体均可确定性重放；Clio 结果保留停止过早和 0 永久对象的失败，真实标签指标仍待后续。
 - 已完成 D20 CPU/source：单个 CPU 命令可重跑 D16–D19 validator、从规范 JSON 重建 Q×A/关系/消融表、核对 README 数字，并在移动目录中逐字节复验 retained outputs。
-- 已完成 D21 CPU/source：最终结果卡逐项绑定 tracked evidence、配置哈希、样本量、预算和验证状态，并完成 README 中“官方、复现、改进、导航、优于、SOTA”等表述的上下文审计。
-- Clio 仍未下载，真实 calibration、held-out、ablation 与新 GPU inference 仍待后续外部验收；这些缺口不影响 D16–D21 源码与 CPU 正确性验收，也不被写成性能结论。
+- 已完成 D21＋GPU 结果集成：最终结果卡现在包含第 7 项 Clio apartment GPU 开发验收，逐项绑定 tracked evidence、配置哈希、样本量、预算和适用边界。
+- 仍未完成的是 Clio `cubicle` held-out、独立真实 calibration、带标签真实消融、完整 apartment 模态与约 3 分钟录屏；这些缺口不被写成性能结论。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

@@ -1,0 +1,309 @@
+{
+  "schema_version": "clio-gpu-acceptance/0.1",
+  "status": "PASS",
+  "stage": "clio-apartment-development-gpu-acceptance",
+  "scope": {
+    "scene_id": "apartment",
+    "role": "development",
+    "query": "pillow",
+    "result_scope": "real_gpu_engineering_replay_not_performance",
+    "held_out_scene": "cubicle",
+    "held_out_downloaded": false,
+    "held_out_evaluated": false
+  },
+  "hardware": {
+    "device": "NVIDIA GeForce RTX 4090",
+    "cuda_inference_executed": true,
+    "pipelines": [
+      "VGGT-1B",
+      "PE-Core-L14-336",
+      "SAM3"
+    ]
+  },
+  "dataset": {
+    "access": "PUBLIC_SHARED_LINK",
+    "author_approval_required": false,
+    "downloaded_rgb_frames": 786,
+    "selected_rgb_frames": 24,
+    "official_task_metadata_files": 3,
+    "official_task_count": 26,
+    "materialization": "RGB_TASK_METADATA_DEVELOPMENT_SUBSET",
+    "full_scene_modalities_materialized": false,
+    "dataset_license_status": "DATA_LICENSE_UNVERIFIED",
+    "redistribution_allowed": false
+  },
+  "geometry": {
+    "validator_status": "PASS",
+    "frame_count": 24,
+    "point_map_shape": [
+      392,
+      518,
+      3
+    ],
+    "raw_confidence_available": true,
+    "max_translation_reconstruction_units": 1.027912227454921,
+    "max_translation_pair": [
+      "rgb_110",
+      "rgb_230"
+    ],
+    "max_rotation_deg": 179.85636838327605,
+    "max_rotation_pair": [
+      "rgb_60",
+      "rgb_230"
+    ]
+  },
+  "perception": {
+    "d5_status": "PASS",
+    "d6_status": "PASS",
+    "candidate_count": 24,
+    "available_candidates": 24,
+    "sam_instances": 3,
+    "lifted_instances": 3,
+    "rejected_instances": 0,
+    "frames_with_lifted_observations": [
+      "rgb_128",
+      "rgb_90"
+    ],
+    "query_specific_translation_reconstruction_units": 0.19578718617680196,
+    "query_specific_rotation_deg": 80.60783514180308
+  },
+  "downstream": {
+    "d7_status": "PASS",
+    "d7_frames": 24,
+    "d7_observations": 3,
+    "d8_status": "PASS",
+    "d8_pending_observations": 3,
+    "d12_status": "PASS",
+    "d12_promoted_clusters": 0,
+    "d12_permanent_objects": 0
+  },
+  "d16_d21_validation": {
+    "D16": "PASS_LOCAL_SUBSET",
+    "D17": "PASS_PROTOCOL_REAL_RELATIONS_PENDING",
+    "D18": "PASS_CLIO_DEVELOPMENT_REPLAY",
+    "D19": "PASS_UNLABELLED_ENGINEERING_ABLATION",
+    "D20": "PASS_REPRODUCTION_REBUILT",
+    "D21": "PENDING_RESULT_CARD_REBUILD_AT_REPORT_CREATION"
+  },
+  "qxa_rows": [
+    {
+      "combination_id": "Q0-vggt-slam-upstream-top1__A1-exact-class-spatial-gate",
+      "status": "PASS",
+      "selected_count": 1,
+      "selected_frames": [
+        "rgb_70"
+      ],
+      "observation_count": 0,
+      "sam_calls": 1,
+      "stop_reason": null,
+      "permanent_objects": 0
+    },
+    {
+      "combination_id": "Q0-vggt-slam-upstream-top1__A2-evidence-aware-complete-link",
+      "status": "PASS",
+      "selected_count": 1,
+      "selected_frames": [
+        "rgb_70"
+      ],
+      "observation_count": 0,
+      "sam_calls": 1,
+      "stop_reason": null,
+      "permanent_objects": 0
+    },
+    {
+      "combination_id": "Q1-fixed-topk-hybrid__A1-exact-class-spatial-gate",
+      "status": "PASS",
+      "selected_count": 5,
+      "selected_frames": [
+        "rgb_70",
+        "rgb_128",
+        "rgb_30",
+        "rgb_110",
+        "rgb_50"
+      ],
+      "observation_count": 1,
+      "sam_calls": 5,
+      "stop_reason": "max_budget_reached",
+      "permanent_objects": 0
+    },
+    {
+      "combination_id": "Q1-fixed-topk-hybrid__A2-evidence-aware-complete-link",
+      "status": "PASS",
+      "selected_count": 5,
+      "selected_frames": [
+        "rgb_70",
+        "rgb_128",
+        "rgb_30",
+        "rgb_110",
+        "rgb_50"
+      ],
+      "observation_count": 1,
+      "sam_calls": 5,
+      "stop_reason": "max_budget_reached",
+      "permanent_objects": 0
+    },
+    {
+      "combination_id": "Q2-gain-based-sequential-search__A2-evidence-aware-complete-link",
+      "status": "PASS",
+      "selected_count": 4,
+      "selected_frames": [
+        "rgb_70",
+        "rgb_128",
+        "rgb_80",
+        "rgb_30"
+      ],
+      "observation_count": 1,
+      "sam_calls": 4,
+      "stop_reason": "two_consecutive_low_gain",
+      "permanent_objects": 0
+    },
+    {
+      "combination_id": "Q2-gain-based-sequential-search__A1-exact-class-spatial-gate",
+      "status": "PASS",
+      "selected_count": 4,
+      "selected_frames": [
+        "rgb_70",
+        "rgb_128",
+        "rgb_80",
+        "rgb_30"
+      ],
+      "observation_count": 1,
+      "sam_calls": 4,
+      "stop_reason": "two_consecutive_low_gain",
+      "permanent_objects": 0
+    }
+  ],
+  "d19_engineering_ablations": {
+    "q2": [
+      {
+        "variant_id": "base",
+        "changed_factor": null,
+        "status": "PASS",
+        "selected_count": 4,
+        "stop_reason": "two_consecutive_low_gain",
+        "sam_calls": 4,
+        "observation_count": 1
+      },
+      {
+        "variant_id": "retrieval_only",
+        "changed_factor": "pose_novelty",
+        "status": "PASS",
+        "selected_count": 4,
+        "stop_reason": "two_consecutive_low_gain",
+        "sam_calls": 4,
+        "observation_count": 1
+      },
+      {
+        "variant_id": "no_gain_patience",
+        "changed_factor": "gain_patience",
+        "status": "PASS",
+        "selected_count": 5,
+        "stop_reason": "max_budget_reached",
+        "sam_calls": 5,
+        "observation_count": 1
+      }
+    ],
+    "a2": [
+      {
+        "variant_id": "base",
+        "changed_factor": null,
+        "input_observations": 1,
+        "pair_count": 0,
+        "cluster_count": 1,
+        "promoted_clusters": 0
+      },
+      {
+        "variant_id": "without_semantic",
+        "changed_factor": "semantic",
+        "input_observations": 1,
+        "pair_count": 0,
+        "cluster_count": 1,
+        "promoted_clusters": 0
+      },
+      {
+        "variant_id": "without_obb_shape",
+        "changed_factor": "obb_shape",
+        "input_observations": 1,
+        "pair_count": 0,
+        "cluster_count": 1,
+        "promoted_clusters": 0
+      },
+      {
+        "variant_id": "without_quality",
+        "changed_factor": "quality",
+        "input_observations": 1,
+        "pair_count": 0,
+        "cluster_count": 1,
+        "promoted_clusters": 0
+      },
+      {
+        "variant_id": "without_complete_link",
+        "changed_factor": "complete_link",
+        "input_observations": 1,
+        "pair_count": 0,
+        "cluster_count": 1,
+        "promoted_clusters": 0
+      }
+    ],
+    "performance_claim": null
+  },
+  "failure_findings": [
+    "Q0_TOP1_RETURNED_ZERO_OBSERVATIONS",
+    "Q2_STOPPED_AFTER_TWO_CONSECUTIVE_LOW_GAIN_WITH_ONE_OBSERVATION",
+    "A2_PROMOTED_ZERO_PERMANENT_OBJECTS",
+    "CLIO_RELATION_LABELS_AND_CALIBRATION_NOT_AVAILABLE",
+    "CUBICLE_HELD_OUT_UNTOUCHED"
+  ],
+  "artifacts": {
+    "public": [
+      {
+        "path": "evidence/week4/clio-apartment-gpu/candidate_cache.json",
+        "bytes": 30194,
+        "sha256": "4a2fb0333c1d4ce47375488d516d1ebda1fdf55afa897a10174933b21b7709d2"
+      },
+      {
+        "path": "evidence/week4/clio-apartment-gpu/d18-qxa/prediction.json",
+        "bytes": 7603,
+        "sha256": "023782cd3e54f00fac91e3d49b0ae81c1a564ac00f5789bb5048b138447d9d75"
+      },
+      {
+        "path": "evidence/week4/clio-apartment-gpu/d19-ablations/prediction.json",
+        "bytes": 12061,
+        "sha256": "471d1e7571a7db0262d5422726b621b372fb0625633bce789c2a9989da2c0fa3"
+      }
+    ],
+    "local_not_in_git": [
+      {
+        "path": "runs/clio-apartment-gpu/geometry.npz",
+        "bytes": 25919558,
+        "sha256": "0637bdabcb6fc21853714b2cef600561e2eb0e0c510c5a674e2fa0cd25fcf556"
+      },
+      {
+        "path": "runs/clio-apartment-gpu/geometry.manifest.json",
+        "bytes": 5952,
+        "sha256": "0f3f3f920f4432915cb823c75b90f864e980824c5304aeebdda9b9f7a66e6a88"
+      },
+      {
+        "path": "runs/clio-apartment-gpu/geometry.anchor_poses.json",
+        "bytes": 10260,
+        "sha256": "45394e442247940a91cdf9ebe3bced688ffc2dad9ae782a40f17e0cb6d47cf09"
+      },
+      {
+        "path": "runs/clio-apartment-gpu/d6-pillow-all/d6_result.json",
+        "bytes": 18146,
+        "sha256": "03681c1d9f383f1f4d9d6b2955f110d478571d4ec9846b0ea9e30406a89593e5"
+      },
+      {
+        "path": "runs/clio-apartment-gpu/d7-pillow-all/scene_cache.json",
+        "bytes": 8751,
+        "sha256": "4ad3f69a53caf7a50a9c364281b7e2c31ef65bd6084308a3bc33ac1ea9bbb3ff"
+      },
+      {
+        "path": "runs/clio-apartment-gpu/d12-pillow-k8/a2_result.json",
+        "bytes": 5713,
+        "sha256": "24d81229034ada42e28bf8dd068879428bffa8e24e6491580a7ea4e38391eea2"
+      }
+    ]
+  },
+  "created_at": "2026-08-30T09:45:00+00:00"
+}

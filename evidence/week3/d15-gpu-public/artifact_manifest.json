@@ -45,13 +45,13 @@
     },
     "key_result_tables": {
       "path": "../d20-reproduction/result_tables.json",
-      "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c",
-      "bytes": 6920
+      "sha256": "de6f0a659ee66a854bc5966a14f99c621f528df3dcdb2cd465282fe9e1d3097f",
+      "bytes": 14959
     },
     "final_result_card": {
       "path": "../d21-final/result_card.json",
-      "sha256": "adc5ce13ebde90855144cb8938b7f371ec9f90f23c1be68d9465e171b205e941",
-      "bytes": 5577
+      "sha256": "7553f5ec86f8a7316b9cfbcc9b3b5c7a2113c3947bb694492a9c84424d4887f7",
+      "bytes": 6962
     },
     "overview_thumbnail": {
       "path": "overview.png",

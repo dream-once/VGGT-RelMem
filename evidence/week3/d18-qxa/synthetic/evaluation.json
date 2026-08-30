@@ -1,12 +1,12 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "status": "PASS",
   "stage": "D18-QxA-synthetic-evaluation",
-  "experiment_id": "D18-frozen-QxA-v1",
+  "experiment_id": "D18-frozen-QxA-v2",
   "scope": "synthetic_correctness_fixture_not_performance",
   "source": {
     "prediction": "prediction.json",
-    "prediction_sha256": "4da52cffecadf4661eac255b7212190168a3103fb66481e52d1eaf577eb1b73e",
+    "prediction_sha256": "a1789ea62bc99e4f8123be2595d54c3f6d8fc93dcca0967b373da041e6c8bd6a",
     "labels": "evidence/week2/d14-fixed-topk/synthetic_labels.json",
     "labels_sha256": "b43b9d3a0ed10ad261bea9684eee9ce05a6d0f82ec4262dc7da8538fe1d8c94c"
   },
@@ -121,5 +121,5 @@
     }
   ],
   "performance_claim": null,
-  "created_at": "2026-08-30T00:00:00+00:00"
+  "created_at": "2026-08-30T08:25:00+00:00"
 }

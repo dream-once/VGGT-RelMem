@@ -27,6 +27,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
     source_dirs = (
         ("office-loop-development", root / args.office_evidence),
         ("synthetic-correctness", root / args.synthetic_evidence),
+        ("clio-apartment-development", root / args.clio_evidence),
     )
     for source_id, directory in source_dirs:
         source = source_by_id(manifest, source_id)
@@ -65,14 +66,48 @@ def run(args: argparse.Namespace) -> dict[str, object]:
                 evaluation["performance_claim"] is None
             )
 
+    office_source = source_by_id(manifest, "office-loop-development")
+    office_cache = load_json(root / office_source["cache_ref"])
     office = load_json(root / args.office_evidence / "prediction.json")
+    checks["office_complete_cache"] = (
+        office_cache["materialization_status"] == "complete"
+        and all(
+            item["outcome_status"] == "available"
+            for item in office_cache["candidates"]
+        )
+    )
     checks["office_development_only"] = (
         office["result_scope"]
-        == "development_engineering_replay_not_performance"
+        == "development_complete_cache_replay_not_performance"
+    )
+    checks["office_q2_completed"] = all(
+        row["status"] == "PASS"
+        for row in office["matrix_rows"]
+        if row["q_policy"] == "Q2-gain-based-sequential-search"
     )
     checks["held_out_pending"] = (
         office["held_out"]["status"] == "CLIO_HELD_OUT_PENDING"
         and office["held_out"]["metric_values"] is None
+    )
+    clio_source = source_by_id(manifest, "clio-apartment-development")
+    clio_cache = load_json(root / clio_source["cache_ref"])
+    clio = load_json(root / args.clio_evidence / "prediction.json")
+    checks["clio_apartment_complete_cache"] = (
+        clio_cache["materialization_status"] == "complete"
+        and len(clio_cache["candidates"]) == 24
+        and all(
+            item["outcome_status"] == "available"
+            for item in clio_cache["candidates"]
+        )
+    )
+    checks["clio_development_only"] = (
+        clio["result_scope"]
+        == "clio_apartment_development_complete_cache_replay_not_performance"
+    )
+    checks["clio_q2_completed"] = all(
+        row["status"] == "PASS"
+        for row in clio["matrix_rows"]
+        if row["q_policy"] == "Q2-gain-based-sequential-search"
     )
     status = "PASS" if all(checks.values()) else "FAIL"
     report = {
@@ -106,6 +141,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--synthetic-evidence",
         default="evidence/week3/d18-qxa/synthetic",
+    )
+    parser.add_argument(
+        "--clio-evidence",
+        default="evidence/week4/clio-apartment-gpu/d18-qxa",
     )
     parser.add_argument("--output")
     return parser

@@ -87,7 +87,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--source-id",
-        choices=("office-loop-development", "synthetic-correctness"),
+        choices=(
+            "office-loop-development",
+            "synthetic-correctness",
+            "clio-apartment-development",
+        ),
         required=True,
     )
     parser.add_argument("--output-dir", required=True)

@@ -7,7 +7,8 @@
     "prediction_label_free": true,
     "evaluation_recomputed": true,
     "negative_rejection_correct": true,
-    "ece_aurc_recomputed": true
+    "selective_answer_risk_recomputed": true,
+    "raw_confidence_calibration_recomputed": true
   },
   "errors": []
 }

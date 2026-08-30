@@ -76,7 +76,7 @@ class D21ResultCardTests(unittest.TestCase):
     def test_every_result_has_tracked_sources_samples_and_budget(self):
         card = build_result_card(ROOT, load_json(MANIFEST))
         self.assertEqual(card["source_status"], "CPU_COMPLETE")
-        self.assertEqual(len(card["results"]), 6)
+        self.assertEqual(len(card["results"]), 7)
         for row in card["results"]:
             self.assertTrue(row["sample_size"])
             self.assertTrue(row["budget"])
@@ -86,10 +86,25 @@ class D21ResultCardTests(unittest.TestCase):
                 self.assertTrue(path.is_file())
                 self.assertEqual(sha256_file(path), source["sha256"])
 
+    def test_clio_gpu_result_is_development_scoped(self):
+        card = build_result_card(ROOT, load_json(MANIFEST))
+        row = next(
+            item for item in card["results"]
+            if item["result_id"] == "Clio-apartment-GPU-acceptance"
+        )
+        self.assertEqual(row["validation_status"], "PASS")
+        self.assertEqual(
+            row["scope"], "real_gpu_development_replay_not_performance"
+        )
+        self.assertEqual(row["sample_size"]["candidate_outcomes"], 24)
+
     def test_readme_has_final_positioning_and_no_pending_numbers(self):
         text = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn(PROJECT_POSITIONING, text)
         self.assertIn(FINAL_CONCLUSION, text)
+        self.assertIn("python -m pip install -e '.[dev]'", text)
+        self.assertIn("python -m scripts.verify_public_clone", text)
+        self.assertNotIn("[预算/指标/增益]", text)
         audit = audit_readme_claims(text)
         self.assertEqual(audit["status"], "PASS")
         card = build_result_card(ROOT, load_json(MANIFEST))

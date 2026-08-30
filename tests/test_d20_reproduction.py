@@ -91,6 +91,36 @@ class D20ReproductionTests(unittest.TestCase):
         finally:
             os.chdir(original)
 
+    def test_office_development_table_uses_complete_cache(self):
+        results = load_json(
+            ROOT / "evidence/week3/d20-reproduction/result_tables.json"
+        )
+        rows = results["qxa_development"]["rows"]
+        self.assertEqual(len(rows), 6)
+        self.assertTrue(all(row["status"] == "PASS" for row in rows))
+        q2 = [row for row in rows if row["combination_id"].startswith("Q2")]
+        self.assertEqual([row["selected_count"] for row in q2], [5, 5])
+        self.assertTrue(
+            all(row["stop_reason"] == "max_budget_reached" for row in q2)
+        )
+
+    def test_clio_development_table_is_unlabelled_and_complete(self):
+        results = build_result_tables(
+            ROOT, load_json(MANIFEST)
+        )
+        rows = results["qxa_clio_development"]["rows"]
+        self.assertEqual(len(rows), 6)
+        self.assertTrue(all(row["status"] == "PASS" for row in rows))
+        self.assertIsNone(results["clio_ablations"]["performance_claim"])
+
+    def test_readme_clean_clone_entry_has_test_dependencies(self):
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        pyproject = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+        self.assertIn("git clone https://github.com/dream-once/VGGT-RelMem.git", readme)
+        self.assertIn("python -m pip install -e '.[dev]'", readme)
+        self.assertIn("python -m scripts.verify_public_clone", readme)
+        self.assertIn('"Pillow>=10.0"', pyproject)
+
     def test_optional_binaries_are_not_claimed_as_tracked(self):
         results = load_json(
             ROOT

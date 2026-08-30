@@ -12,6 +12,10 @@ class EvidencePolicyTests(unittest.TestCase):
     def week3(self) -> Path:
         return Path(__file__).resolve().parents[1] / "evidence" / "week3"
 
+    @property
+    def week4(self) -> Path:
+        return Path(__file__).resolve().parents[1] / "evidence" / "week4"
+
 
     def test_week2_is_lightweight_json_or_markdown_only(self) -> None:
         files = sorted(
@@ -102,6 +106,36 @@ class EvidencePolicyTests(unittest.TestCase):
             ) > policy["structured_bundle_limit_bytes"]
         }
         self.assertEqual(oversized, {})
+
+    def test_week4_clio_bundle_is_lightweight_and_label_free(self) -> None:
+        files = sorted(
+            path for path in self.week4.rglob("*") if path.is_file()
+        )
+        self.assertTrue(files)
+        self.assertTrue(
+            all(path.suffix.lower() in {".json", ".md"} for path in files)
+        )
+        self.assertLessEqual(
+            sum(path.stat().st_size for path in files),
+            128 * 1024,
+        )
+        cache = json.loads(
+            (
+                self.week4
+                / "clio-apartment-gpu"
+                / "candidate_cache.json"
+            ).read_text(encoding="utf-8")
+        )
+        serialized = json.dumps(cache, sort_keys=True).lower()
+        for forbidden in (
+            "ground_truth",
+            "pair_labels",
+            "expected_same",
+            '"metrics"',
+            "policy_trace",
+            "task_labels",
+        ):
+            self.assertNotIn(forbidden, serialized)
 
     def test_d11_candidate_cache_contains_no_policy_or_ground_truth(self) -> None:
         cache = json.loads(

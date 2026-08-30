@@ -28,8 +28,8 @@ from .q2_sequential import SequentialSearchConfig, run_sequential_search
 from .schemas import ObjectObservation
 
 
-D18_SCHEMA_VERSION = "0.1"
-D18_EXPERIMENT_ID = "D18-frozen-QxA-v1"
+D18_SCHEMA_VERSION = "0.2"
+D18_EXPERIMENT_ID = "D18-frozen-QxA-v2"
 D18_STATUS = "CPU_COMPLETE"
 D18_HELD_OUT_STATUS = "CLIO_HELD_OUT_PENDING"
 Q0_ID = "Q0-vggt-slam-upstream-top1"
@@ -194,14 +194,19 @@ def validate_experiment_manifest(
     }:
         raise ValueError("D18 label policy changed")
     if payload["claims"] != {
-        "office_loop": "development_engineering_replay_not_performance",
+        "office_loop": "development_complete_cache_replay_not_performance",
         "synthetic": "correctness_fixture_not_performance",
-        "clio": "readiness_only_no_held_out_numbers",
+        "clio": (
+            "apartment_development_replay_not_performance_"
+            "cubicle_held_out_pending"
+        ),
     }:
         raise ValueError("D18 claim boundary changed")
     sources = payload["sources"]
-    if not isinstance(sources, list) or len(sources) != 2:
-        raise ValueError("D18 requires office-loop and synthetic sources")
+    if not isinstance(sources, list) or len(sources) != 3:
+        raise ValueError(
+            "D18 requires office-loop, synthetic, and Clio apartment sources"
+        )
     source_ids: list[str] = []
     for source in sources:
         if not isinstance(source, Mapping):
@@ -229,7 +234,11 @@ def validate_experiment_manifest(
                 and sha256_file(root / labels_ref) != labels_hash
             ):
                 raise ValueError(f"labels hash mismatch: {labels_ref}")
-    if source_ids != ["office-loop-development", "synthetic-correctness"]:
+    if source_ids != [
+        "office-loop-development",
+        "synthetic-correctness",
+        "clio-apartment-development",
+    ]:
         raise ValueError("D18 source order or identity changed")
     if project_root is not None:
         root = Path(project_root).resolve()
@@ -353,6 +362,17 @@ def _associate(
     scene_id: str,
     query_text: str,
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
+    if not observations:
+        return ({
+            "input_observations": 0,
+            "pair_count": 0,
+            "cluster_count": 0,
+            "promoted_clusters": 0,
+            "permanent_objects": 0,
+            "pending_observations": 0,
+            "association_decisions": 0,
+            "pair_prediction_sha256": canonical_sha256([]),
+        }, [])
     memory = ObjectMemory(
         metadata={"scene_id": scene_id, "query": query_text}
     )

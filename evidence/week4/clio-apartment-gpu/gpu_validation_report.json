@@ -1,0 +1,20 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "Clio-GPU-validation",
+  "checks": {
+    "contract": true,
+    "split_guard": true,
+    "data_boundary": true,
+    "genuine_multiview": true,
+    "query_specific_multiview": true,
+    "downstream_honest_failure": true,
+    "public_artifact_hashes": true,
+    "complete_cache": true,
+    "qxa_replay": true,
+    "failure_boundaries": true,
+    "local_artifact_hashes": true
+  },
+  "scope": "development_engineering_replay_not_performance",
+  "held_out_status": "CLIO_CUBICLE_UNTOUCHED"
+}

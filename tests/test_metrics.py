@@ -8,6 +8,7 @@ from evaluation.metrics import (
     grounding_metrics,
     pairwise_f1,
     risk_coverage_curve,
+    selective_answer_risk_coverage,
 )
 
 
@@ -25,6 +26,23 @@ class MetricTests(unittest.TestCase):
         self.assertEqual(curve[-1]["coverage"], 1.0)
         self.assertAlmostEqual(expected_calibration_error([0.8, 0.2], [1, 0]), 0.2)
         self.assertAlmostEqual(area_under_risk_coverage(curve), 0.25)
+        selective = selective_answer_risk_coverage(
+            [0.9, 0.1, 1.0],
+            [True, True, False],
+            [True, False, True],
+        )
+        self.assertEqual(len(selective), 2)
+        self.assertAlmostEqual(selective[-1]["coverage"], 2.0 / 3.0)
+        self.assertEqual(selective[0]["answered_count"], 1)
+        self.assertAlmostEqual(
+            area_under_risk_coverage(selective), 0.25
+        )
+
+    def test_selective_answer_curve_rejects_bad_inputs(self) -> None:
+        with self.assertRaisesRegex(ValueError, "finite probabilities"):
+            selective_answer_risk_coverage(
+                [float("nan")], [True], [True]
+            )
 
 
 

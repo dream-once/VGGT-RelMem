@@ -5,7 +5,7 @@
   "scope": "synthetic_correctness_ablation_not_performance",
   "source": {
     "prediction": "prediction.json",
-    "prediction_sha256": "02263752d1a171776df9e075bd305f4745677b87bae028613cb33037ea0140c0",
+    "prediction_sha256": "758360472a66c9816d240105a531729bc083b3668e053b76e068c9f5a5bf4325",
     "labels": "evidence/week2/d14-fixed-topk/synthetic_labels.json",
     "labels_sha256": "b43b9d3a0ed10ad261bea9684eee9ce05a6d0f82ec4262dc7da8538fe1d8c94c"
   },
@@ -155,5 +155,5 @@
   },
   "real_ablation_status": "REAL_ABLATION_PENDING",
   "performance_claim": null,
-  "created_at": "2026-08-30T00:00:00+00:00"
+  "created_at": "2026-08-30T08:32:00+00:00"
 }

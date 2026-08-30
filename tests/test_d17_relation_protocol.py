@@ -43,7 +43,7 @@ def fixture():
         observation("desk", "desk", [0, 0, 0]),
     ])
     queries = {
-        "schema_version": "0.1",
+        "schema_version": "0.2",
         "scene_id": "synthetic-relations",
         "split_role": "synthetic",
         "queries": [
@@ -85,7 +85,7 @@ def fixture():
         ],
     }
     labels = {
-        "schema_version": "0.1",
+        "schema_version": "0.2",
         "scene_id": "synthetic-relations",
         "split_role": "synthetic",
         "labels": [
@@ -171,6 +171,92 @@ class RelationProtocolTests(unittest.TestCase):
         )
         self.assertEqual(evaluation["metrics"]["positive_count"], 2)
         self.assertEqual(evaluation["metrics"]["negative_count"], 3)
+        self.assertEqual(evaluation["metrics"]["answered_count"], 2)
+        self.assertAlmostEqual(
+            evaluation["metrics"]["max_answer_coverage"], 0.4
+        )
+        curve = evaluation["selective_answer_risk_coverage"]
+        self.assertEqual(len(curve), 2)
+        self.assertAlmostEqual(curve[-1]["coverage"], 0.4)
+        self.assertTrue(
+            evaluation["acceptance"][
+                "correct_rejections_excluded_from_answer_coverage"
+            ]
+        )
+        self.assertFalse(
+            evaluation["acceptance"][
+                "post_decision_confidence_inversion"
+            ]
+        )
+        self.assertTrue(
+            all("decision_confidence" not in row for row in evaluation["rows"])
+        )
+
+    def test_rejected_confidence_does_not_change_answer_curve(self):
+        memory, queries, labels, calibration, source = fixture()
+        prediction = run_relation_prediction(
+            memory,
+            {"anchor": np.eye(4)},
+            queries,
+            calibration,
+            source=source,
+            created_at="test",
+        )
+        evaluation_source = {
+            "prediction": "prediction.json",
+            "prediction_sha256": "e" * 64,
+            "labels": "labels.json",
+            "labels_sha256": "f" * 64,
+        }
+        baseline = evaluate_relation_prediction(
+            prediction,
+            labels,
+            source=evaluation_source,
+            created_at="test",
+        )
+        prediction["results"][2]["confidence"] = 0.99
+        changed = evaluate_relation_prediction(
+            prediction,
+            labels,
+            source=evaluation_source,
+            created_at="test",
+        )
+        self.assertEqual(
+            baseline["selective_answer_risk_coverage"],
+            changed["selective_answer_risk_coverage"],
+        )
+        self.assertNotEqual(
+            baseline["metrics"]["answerability_proxy_brier"],
+            changed["metrics"]["answerability_proxy_brier"],
+        )
+
+    def test_high_confidence_wrong_answer_raises_early_risk(self):
+        memory, queries, labels, calibration, source = fixture()
+        prediction = run_relation_prediction(
+            memory,
+            {"anchor": np.eye(4)},
+            queries,
+            calibration,
+            source=source,
+            created_at="test",
+        )
+        prediction["results"][0]["ranked_ids"].reverse()
+        prediction["results"][0]["confidence"] = 0.99
+        evaluation = evaluate_relation_prediction(
+            prediction,
+            labels,
+            source={
+                "prediction": "prediction.json",
+                "prediction_sha256": "e" * 64,
+                "labels": "labels.json",
+                "labels_sha256": "f" * 64,
+            },
+            created_at="test",
+        )
+        self.assertEqual(
+            evaluation["selective_answer_risk_coverage"][0]["risk"],
+            1.0,
+        )
 
     def test_formal_query_rejects_embedded_answer(self):
         _, queries, _, _, _ = fixture()

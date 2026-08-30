@@ -1,9 +1,9 @@
 {
-  "schema_version": "0.1",
-  "experiment_id": "D18-frozen-QxA-v1",
+  "schema_version": "0.2",
+  "experiment_id": "D18-frozen-QxA-v2",
   "status": "CPU_COMPLETE",
   "held_out_status": "CLIO_HELD_OUT_PENDING",
-  "repository_base_commit": "5ea7b8694dd0fad5432d082911a781853467e60e",
+  "repository_base_commit": "23f8b612228982f7cb805c0de745fe723b90b009",
   "split_manifest": "configs/clio_splits.json",
   "split_manifest_sha256": "fb367e21eb67da54d9cb4c69edb78c9e11d019ea281b81cc24ff9751455dd523",
   "budgets": {
@@ -57,11 +57,11 @@
       "source_id": "office-loop-development",
       "scene_id": "office-loop-multiview-s10-trash-can",
       "split_role": "development",
-      "cache_ref": "evidence/week2/d11-candidate-cache/candidate_cache.json",
-      "cache_sha256": "d4ae6cea223a2fd81857720b54072ecf48e3a5961a141f91b082bb6181eac76d",
+      "cache_ref": "evidence/week3/d15-gpu-public/candidate_cache.json",
+      "cache_sha256": "694507b003e87833e093b1bb7cad1db0c85327d7378d18d8c9f09a8002d7e7cf",
       "labels_ref": null,
       "labels_sha256": null,
-      "result_scope": "development_engineering_replay_not_performance"
+      "result_scope": "development_complete_cache_replay_not_performance"
     },
     {
       "source_id": "synthetic-correctness",
@@ -72,6 +72,16 @@
       "labels_ref": "evidence/week2/d14-fixed-topk/synthetic_labels.json",
       "labels_sha256": "b43b9d3a0ed10ad261bea9684eee9ce05a6d0f82ec4262dc7da8538fe1d8c94c",
       "result_scope": "synthetic_correctness_fixture_not_performance"
+    },
+    {
+      "source_id": "clio-apartment-development",
+      "scene_id": "clio-apartment-development",
+      "split_role": "development",
+      "cache_ref": "evidence/week4/clio-apartment-gpu/candidate_cache.json",
+      "cache_sha256": "4a2fb0333c1d4ce47375488d516d1ebda1fdf55afa897a10174933b21b7709d2",
+      "labels_ref": null,
+      "labels_sha256": null,
+      "result_scope": "clio_apartment_development_complete_cache_replay_not_performance"
     }
   ],
   "label_policy": {
@@ -79,9 +89,9 @@
     "evaluation": "SEPARATE_LABEL_FILE_ONLY"
   },
   "claims": {
-    "office_loop": "development_engineering_replay_not_performance",
+    "office_loop": "development_complete_cache_replay_not_performance",
     "synthetic": "correctness_fixture_not_performance",
-    "clio": "readiness_only_no_held_out_numbers"
+    "clio": "apartment_development_replay_not_performance_cubicle_held_out_pending"
   },
-  "frozen_at": "2026-08-30T00:00:00+00:00"
+  "frozen_at": "2026-08-30T09:30:00+00:00"
 }

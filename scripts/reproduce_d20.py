@@ -43,6 +43,9 @@ def validation_suite(root: Path) -> dict[str, str]:
                     synthetic_evidence=(
                         "evidence/week3/d18-qxa/synthetic"
                     ),
+                    clio_evidence=(
+                        "evidence/week4/clio-apartment-gpu/d18-qxa"
+                    ),
                     output=None,
                 )
             ),
@@ -55,6 +58,9 @@ def validation_suite(root: Path) -> dict[str, str]:
                     ),
                     synthetic_evidence=(
                         "evidence/week3/d19-ablations/synthetic"
+                    ),
+                    clio_evidence=(
+                        "evidence/week4/clio-apartment-gpu/d19-ablations"
                     ),
                     output=None,
                 )

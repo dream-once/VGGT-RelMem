@@ -1,7 +1,7 @@
 {
   "status": "PASS",
   "source_id": "office-loop-development",
-  "prediction_status": "PASS_WITH_BLOCKED_ROWS",
+  "prediction_status": "PASS",
   "evaluation_status": null,
   "held_out_status": "CLIO_HELD_OUT_PENDING"
 }

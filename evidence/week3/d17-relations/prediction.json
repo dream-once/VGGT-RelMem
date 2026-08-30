@@ -1,8 +1,8 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "status": "PASS",
   "stage": "D17-prediction",
-  "protocol_id": "D17-relation-grounding-reliable-abstention",
+  "protocol_id": "D17-relation-grounding-reliable-abstention-v2",
   "scene_id": "synthetic-relations",
   "split_role": "synthetic",
   "source": {
@@ -11,9 +11,9 @@
     "anchor_poses": "anchor_poses.json",
     "anchor_poses_sha256": "9ffac8ecbb0a77128cc495f4eeb11ad15a816e30cbbfaca5ff336a5962dda064",
     "queries": "queries.json",
-    "queries_sha256": "03d1b363556a5070d48229162fc27e8ef04445c75b90feb6db61175a79ecfdc6",
+    "queries_sha256": "101552f223d762b08f020edb16f8aa0128f24b33da1814ee288a073e69e22650",
     "calibration": "calibration_manifest.json",
-    "calibration_sha256": "26067fa8b39dccb31434f53d69af5d9b9576851c3846e26786ba9899041c8eef"
+    "calibration_sha256": "918f6d92e23bffd4cbf9ea2f5b0de877a358619de758daee669fd74430d7638f"
   },
   "config": {
     "axis_convention": "+x right, +y up, +z front",
@@ -171,5 +171,5 @@
     "calibration_fitted": false,
     "gpu_used": false
   },
-  "created_at": "2026-08-29T15:20:00+00:00"
+  "created_at": "2026-08-30T08:20:00+00:00"
 }

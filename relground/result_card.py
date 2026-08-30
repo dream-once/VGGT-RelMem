@@ -43,18 +43,22 @@ INPUT_FIELDS = ("input_id", "path", "sha256")
 RESULT_IDS = (
     "D15.5-scene-visualization",
     "D16-clio-readiness",
+    "Clio-apartment-GPU-acceptance",
     "D17-relation-reliability",
     "D18-QxA-protocol",
     "D19-ablation-audit",
     "D20-reproduction-package",
 )
 REQUIRED_GAPS = {
-    "clio_download": "DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN",
+    "clio_download": (
+        "APARTMENT_RGB_TASK_METADATA_SUBSET_READY_"
+        "FULL_MODALITIES_PENDING"
+    ),
     "data_license": "DATA_LICENSE_UNVERIFIED",
     "clio_held_out": "CLIO_HELD_OUT_PENDING",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
     "real_ablation": "REAL_ABLATION_PENDING",
-    "new_gpu_inference": "PENDING",
+    "new_gpu_inference": "CLIO_APARTMENT_DEVELOPMENT_COMPLETE",
     "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING",
 }
 
@@ -120,8 +124,12 @@ def validate_result_card_manifest(
                 raise ValueError(f"D21 input hash mismatch: {reference}")
     if identifiers != [
         "readme",
+        "presentation_material",
         "d16_config",
         "d16_report",
+        "d16_acquisition",
+        "clio_gpu_report",
+        "clio_gpu_validation",
         "d17_config",
         "d18_config",
         "d19_config",
@@ -166,6 +174,9 @@ def build_result_card(
     root = Path(project_root).resolve()
     inputs = _inputs(root, manifest)
     d16 = load_json(inputs["d16_report"][0])
+    d16_acquisition = load_json(inputs["d16_acquisition"][0])
+    clio_gpu = load_json(inputs["clio_gpu_report"][0])
+    clio_gpu_validation = load_json(inputs["clio_gpu_validation"][0])
     d20 = load_json(inputs["d20_results"][0])
     d20_report = load_json(inputs["d20_report"][0])
     d18_config = load_json(inputs["d18_config"][0])
@@ -203,10 +214,13 @@ def build_result_card(
         },
         {
             "result_id": "D16-clio-readiness",
-            "description": "fail-closed Clio data and disk feasibility audit",
+            "description": (
+                "Clio feasibility plus local apartment RGB/task-metadata "
+                "development subset acceptance"
+            ),
             "evidence": _source(
-                inputs["d16_report"][0],
-                inputs["d16_report"][1],
+                inputs["d16_acquisition"][0],
+                inputs["d16_acquisition"][1],
                 root,
             ),
             "config": _source(
@@ -214,18 +228,63 @@ def build_result_card(
                 inputs["d16_config"][1],
                 root,
             ),
-            "sample_size": {"scene_roles": len(d16["scenes"])},
+            "sample_size": {
+                "scene_roles": len(d16["scenes"]),
+                "selected_rgb_frames": d16_acquisition[
+                    "materialization_scope"
+                ]["rgb_frame_count"],
+                "task_metadata_files": d16_acquisition[
+                    "materialization_scope"
+                ]["task_metadata_file_count"],
+            },
             "budget": {
                 "available_bytes": d16["available_bytes"],
                 "safety_reserve_bytes": d16["reserve_bytes"],
                 "maximum_peak_bytes": d16["maximum_peak_bytes"],
             },
             "validation_status": "PASS",
-            "scope": "metadata_readiness_no_download",
+            "scope": (
+                "apartment_development_subset_only_"
+                "full_modalities_and_cubicle_pending"
+            ),
+        },
+        {
+            "result_id": "Clio-apartment-GPU-acceptance",
+            "description": (
+                "real VGGT plus PE plus SAM3 development replay with "
+                "query-specific multiview audit"
+            ),
+            "evidence": _source(
+                inputs["clio_gpu_report"][0],
+                inputs["clio_gpu_report"][1],
+                root,
+            ),
+            "config": _source(
+                inputs["d16_acquisition"][0],
+                inputs["d16_acquisition"][1],
+                root,
+            ),
+            "sample_size": {
+                "geometry_frames": clio_gpu["geometry"]["frame_count"],
+                "candidate_outcomes": clio_gpu["perception"][
+                    "available_candidates"
+                ],
+                "lifted_observations": clio_gpu["perception"][
+                    "lifted_instances"
+                ],
+                "evidence_frames": len(
+                    clio_gpu["perception"][
+                        "frames_with_lifted_observations"
+                    ]
+                ),
+            },
+            "budget": {"query": "pillow", "sam_calls": 24},
+            "validation_status": clio_gpu_validation["status"],
+            "scope": "real_gpu_development_replay_not_performance",
         },
         {
             "result_id": "D17-relation-reliability",
-            "description": "label-separated relation and abstention protocol",
+            "description": "label-separated selective-answer and abstention protocol",
             "evidence": _source(
                 inputs["d20_results"][0],
                 inputs["d20_results"][1],
@@ -243,7 +302,7 @@ def build_result_card(
             },
             "budget": {"engineering_threshold": 0.60},
             "validation_status": "PASS",
-            "scope": "synthetic_correctness_real_calibration_pending",
+            "scope": "synthetic_selective_answer_correctness_real_calibration_pending",
         },
         {
             "result_id": "D18-QxA-protocol",
@@ -260,11 +319,20 @@ def build_result_card(
             ),
             "sample_size": {
                 "frozen_queries": 1,
-                "matrix_rows": len(d20["qxa"]["rows"]),
+                "office_complete_cache_matrix_rows": len(
+                    d20["qxa_development"]["rows"]
+                ),
+                "clio_development_matrix_rows": len(
+                    d20["qxa_clio_development"]["rows"]
+                ),
+                "synthetic_matrix_rows": len(d20["qxa"]["rows"]),
             },
             "budget": d18_config["budgets"],
             "validation_status": "PASS",
-            "scope": "synthetic_correctness_office_development_replay",
+            "scope": (
+                "office_and_clio_apartment_complete_cache_development_"
+                "replay_plus_synthetic_correctness_not_performance"
+            ),
         },
         {
             "result_id": "D19-ablation-audit",
@@ -285,10 +353,19 @@ def build_result_card(
                 ],
                 "q2_variants": len(d19_config["q2_variants"]),
                 "a2_variants": len(d19_config["a2_variants"]),
+                "clio_q2_variants": len(
+                    d20["clio_ablations"]["q2_rows"]
+                ),
+                "clio_a2_variants": len(
+                    d20["clio_ablations"]["a2_rows"]
+                ),
             },
             "budget": {"association_input_q1_k": 5},
             "validation_status": "PASS",
-            "scope": "synthetic_correctness_real_ablation_pending",
+            "scope": (
+                "synthetic_correctness_plus_clio_unlabelled_engineering_"
+                "ablation_real_metrics_pending"
+            ),
         },
         {
             "result_id": "D20-reproduction-package",

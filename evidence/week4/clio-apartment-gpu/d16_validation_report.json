@@ -1,0 +1,10 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D16.1-clio-apartment-validation",
+  "checks": {
+    "contract": true,
+    "local_files": null
+  },
+  "held_out_status": "CLIO_CUBICLE_UNTOUCHED"
+}

@@ -80,10 +80,29 @@ def validate(bundle: str | Path) -> dict[str, Any]:
         ):
             if forbidden in serialized_prediction:
                 errors.append(f"prediction leakage: {forbidden}")
-        if evaluation.get("acceptance", {}).get(
+        acceptance = evaluation.get("acceptance", {})
+        if acceptance.get(
             "negative_rejection_counted_as_task_success"
         ) is not True:
             errors.append("negative rejection accounting is not explicit")
+        if acceptance.get(
+            "correct_rejections_excluded_from_answer_coverage"
+        ) is not True:
+            errors.append("correct rejections leaked into answer coverage")
+        if acceptance.get("post_decision_confidence_inversion") is not False:
+            errors.append("post-decision confidence inversion is forbidden")
+        curve = evaluation.get("selective_answer_risk_coverage", [])
+        answered = int(evaluation.get("metrics", {}).get("answered_count", -1))
+        if len(curve) != answered:
+            errors.append("answer coverage row count does not match answers")
+        if curve and curve[-1]["coverage"] != (
+            answered / evaluation["metrics"]["query_count"]
+        ):
+            errors.append("answer coverage denominator is not the frozen query set")
+        if any(row.get("covered_by_current_policy") for row in evaluation["rows"] if row["abstain"]):
+            errors.append("abstained query was marked covered")
+        if any("decision_confidence" in row for row in evaluation["rows"]):
+            errors.append("legacy decision confidence remains in evaluation")
     except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:
         errors.append(str(exc))
     return {
@@ -95,7 +114,8 @@ def validate(bundle: str | Path) -> dict[str, Any]:
             "prediction_label_free": not errors,
             "evaluation_recomputed": not errors,
             "negative_rejection_correct": not errors,
-            "ece_aurc_recomputed": not errors,
+            "selective_answer_risk_recomputed": not errors,
+            "raw_confidence_calibration_recomputed": not errors,
         },
         "errors": errors,
     }

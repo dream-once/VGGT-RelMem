@@ -13,7 +13,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "Pillow>=10.0"]
 
 [tool.setuptools.packages.find]
 include = ["relground*", "adapters*", "evaluation*", "scripts*"]

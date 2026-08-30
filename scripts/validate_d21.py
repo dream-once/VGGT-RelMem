@@ -79,7 +79,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
                 and audit["required_conclusion_present"]
             ),
             "result_inventory_complete": (
-                len(card["results"]) == 6
+                len(card["results"]) == 7
                 and all(
                     row["sample_size"]
                     and row["budget"]

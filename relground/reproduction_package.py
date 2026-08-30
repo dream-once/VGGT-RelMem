@@ -95,8 +95,11 @@ def validate_reproduction_manifest(
         "d15_5_manifest",
         "d15_5_viewpoint_audit",
         "d17_evaluation",
+        "d18_office_prediction",
+        "d18_clio_prediction",
         "d18_prediction",
         "d18_evaluation",
+        "d19_clio_prediction",
         "d19_prediction",
         "d19_evaluation",
     ]
@@ -109,6 +112,8 @@ def validate_reproduction_manifest(
     if payload["readme_checks"] != [
         "d15_5_counts",
         "d17_query_counts",
+        "d18_complete_cache",
+        "clio_development_replay",
         "d19_zero_delta_boundary",
         "project_scope",
     ]:
@@ -150,10 +155,54 @@ def build_result_tables(
     visual = load_json(paths["d15_5_manifest"])
     viewpoint = load_json(paths["d15_5_viewpoint_audit"])
     relation = load_json(paths["d17_evaluation"])
+    d18_office_prediction = load_json(paths["d18_office_prediction"])
+    d18_clio_prediction = load_json(paths["d18_clio_prediction"])
     d18_prediction = load_json(paths["d18_prediction"])
     d18_evaluation = load_json(paths["d18_evaluation"])
+    d19_clio_prediction = load_json(paths["d19_clio_prediction"])
     d19_prediction = load_json(paths["d19_prediction"])
     d19_evaluation = load_json(paths["d19_evaluation"])
+
+    qxa_development_rows = [
+        {
+            "combination_id": row["combination_id"],
+            "matrix_role": row["matrix_role"],
+            "status": row["status"],
+            "selected_count": row["selected_count"],
+            "observation_count": row["observation_count"],
+            "sam_calls": row["sam_calls"],
+            "permanent_objects": (
+                None
+                if row["association"] is None
+                else row["association"]["permanent_objects"]
+            ),
+            "stop_reason": row["stop_reason"],
+            "scope": "development_complete_cache_replay_not_performance",
+        }
+        for row in d18_office_prediction["matrix_rows"]
+    ]
+
+    qxa_clio_rows = [
+        {
+            "combination_id": row["combination_id"],
+            "matrix_role": row["matrix_role"],
+            "status": row["status"],
+            "selected_count": row["selected_count"],
+            "observation_count": row["observation_count"],
+            "sam_calls": row["sam_calls"],
+            "permanent_objects": (
+                None
+                if row["association"] is None
+                else row["association"]["permanent_objects"]
+            ),
+            "stop_reason": row["stop_reason"],
+            "scope": (
+                "clio_apartment_development_complete_cache_replay_"
+                "not_performance"
+            ),
+        }
+        for row in d18_clio_prediction["matrix_rows"]
+    ]
 
     eval_by_combo = {
         item["combination_id"]: item
@@ -185,9 +234,13 @@ def build_result_tables(
             "negative_count",
             "task_accuracy",
             "negative_rejection_accuracy",
-            "brier",
-            "ece_10",
-            "aurc_discrete",
+            "answerability_proxy_brier",
+            "answerability_proxy_ece_10",
+            "answered_correctness_brier",
+            "answered_correctness_ece_10",
+            "answer_aurc_discrete",
+            "max_answer_coverage",
+            "answered_count",
         )
     ]
 
@@ -255,6 +308,17 @@ def build_result_tables(
             "binary_artifacts_retained_in_git": False,
             "binary_release_status": D20_BINARY_STATUS,
         },
+        "qxa_development": {
+            "scope": "development_complete_cache_replay_not_performance",
+            "rows": qxa_development_rows,
+        },
+        "qxa_clio_development": {
+            "scope": (
+                "clio_apartment_development_complete_cache_replay_"
+                "not_performance"
+            ),
+            "rows": qxa_clio_rows,
+        },
         "qxa": {
             "scope": "synthetic_correctness_not_performance",
             "rows": qxa_rows,
@@ -262,6 +326,32 @@ def build_result_tables(
         "relations": {
             "scope": "synthetic_correctness_not_real_calibration",
             "rows": relation_rows,
+        },
+        "clio_ablations": {
+            "scope": "unlabelled_engineering_only_not_performance",
+            "q2_rows": [
+                {
+                    key: row[key]
+                    for key in (
+                        "variant_id", "changed_factor", "status",
+                        "selected_count", "stop_reason", "sam_calls",
+                        "observation_count",
+                    )
+                }
+                for row in d19_clio_prediction["q2_ablations"]
+            ],
+            "a2_rows": [
+                {
+                    key: row[key]
+                    for key in (
+                        "variant_id", "changed_factor",
+                        "input_observations", "pair_count",
+                        "cluster_count", "promoted_clusters",
+                    )
+                }
+                for row in d19_clio_prediction["a2_ablations"]
+            ],
+            "performance_claim": d19_clio_prediction["performance_claim"],
         },
         "ablations": {
             "scope": "synthetic_correctness_not_real_ablation",
@@ -284,13 +374,49 @@ def build_result_tables(
 
 def render_qxa_table(results: Mapping[str, Any]) -> str:
     lines = [
-        "# Q×A synthetic correctness table",
+        "# Q×A development and synthetic tables",
+        "",
+        "## Office-loop complete-cache development replay",
+        "",
+        "> Engineering replay only; no labels or performance claim.",
+        "",
+        "| combination | role | status | frames | observations | SAM calls | objects | stop |",
+        "|---|---|---:|---:|---:|---:|---:|---|",
+    ]
+    for row in results["qxa_development"]["rows"]:
+        lines.append(
+            "| {combination_id} | {matrix_role} | {status} | "
+            "{selected_count} | {observation_count} | {sam_calls} | "
+            "{permanent_objects} | {stop_reason} |".format(
+                **{key: _format(value) for key, value in row.items()}
+            )
+        )
+    lines.extend([
+        "",
+        "## Clio apartment complete-cache development replay",
+        "",
+        "> Real GPU engineering replay; unlabelled and not a performance claim.",
+        "",
+        "| combination | role | status | frames | observations | SAM calls | objects | stop |",
+        "|---|---|---:|---:|---:|---:|---:|---|",
+    ])
+    for row in results["qxa_clio_development"]["rows"]:
+        lines.append(
+            "| {combination_id} | {matrix_role} | {status} | "
+            "{selected_count} | {observation_count} | {sam_calls} | "
+            "{permanent_objects} | {stop_reason} |".format(
+                **{key: _format(value) for key, value in row.items()}
+            )
+        )
+    lines.extend([
+        "",
+        "## Synthetic correctness",
         "",
         "> Correctness fixture only; not held-out performance.",
         "",
         "| combination | role | status | frames | observations | pairs | F1 |",
         "|---|---|---:|---:|---:|---:|---:|",
-    ]
+    ])
     for row in results["qxa"]["rows"]:
         lines.append(
             "| {combination_id} | {matrix_role} | {status} | "
@@ -380,6 +506,20 @@ def readme_numeric_checks(
             f"{relation['positive_count']} 个正查询与 "
             f"{relation['negative_count']} 个负查询"
         ) in readme_text,
+        "d18_complete_cache": (
+            all(
+                row["status"] == "PASS"
+                for row in results["qxa_development"]["rows"]
+            )
+            and "D18 complete-cache development replay" in readme_text
+        ),
+        "clio_development_replay": (
+            all(
+                row["status"] == "PASS"
+                for row in results["qxa_clio_development"]["rows"]
+            )
+            and "Clio apartment GPU development replay" in readme_text
+        ),
         "d19_zero_delta_boundary": (
             results["ablations"]["all_reported_deltas_zero"]
             and "synthetic 数值无变化" in readme_text

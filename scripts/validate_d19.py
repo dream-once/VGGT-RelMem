@@ -32,6 +32,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
     for source_id, evidence in (
         ("office-loop-development", root / args.office_evidence),
         ("synthetic-correctness", root / args.synthetic_evidence),
+        ("clio-apartment-development", root / args.clio_evidence),
     ):
         source = source_by_id(d18, source_id)
         cache = load_json(root / source["cache_ref"])
@@ -82,6 +83,14 @@ def run(args: argparse.Namespace) -> dict[str, object]:
     checks["no_performance_claim"] = (
         synthetic["performance_claim"] is None
     )
+    clio = load_json(root / args.clio_evidence / "prediction.json")
+    checks["clio_development_structure_only"] = (
+        clio["source_id"] == "clio-apartment-development"
+        and clio["performance_claim"] is None
+        and clio["failure_audit_readiness"]["status"]
+        == "UNLABELLED_ENGINEERING_ONLY"
+        and clio["failure_audit_readiness"]["category_counts"] is None
+    )
     status = "PASS" if all(checks.values()) else "FAIL"
     report = {
         "schema_version": "0.1",
@@ -114,6 +123,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--synthetic-evidence",
         default="evidence/week3/d19-ablations/synthetic",
+    )
+    parser.add_argument(
+        "--clio-evidence",
+        default="evidence/week4/clio-apartment-gpu/d19-ablations",
     )
     parser.add_argument("--output")
     return parser

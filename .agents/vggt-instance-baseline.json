@@ -199,7 +199,27 @@
     "evidence/week3/d21-final/validation.json",
     "evidence/week3/d15-gpu-public/artifact_manifest.json",
     "evidence/week3/d15-gpu-public/validation.json",
-    "evidence/week3/d15-gpu-public/overview.png"
+    "evidence/week3/d15-gpu-public/overview.png",
+    "docs/PROJECT_PRESENTATION.md",
+    "relground/clio_acquisition.py",
+    "scripts/audit_clio_apartment.py",
+    "scripts/validate_clio_acquisition.py",
+    "scripts/validate_clio_gpu_acceptance.py",
+    "scripts/verify_public_clone.py",
+    "tests/test_clio_acquisition.py",
+    "tests/test_clio_gpu_acceptance.py",
+    "evidence/week4/clio-apartment-gpu/README.md",
+    "evidence/week4/clio-apartment-gpu/candidate_cache.json",
+    "evidence/week4/clio-apartment-gpu/d16_acquisition_receipt.json",
+    "evidence/week4/clio-apartment-gpu/d16_validation_report.json",
+    "evidence/week4/clio-apartment-gpu/d18-qxa/prediction.json",
+    "evidence/week4/clio-apartment-gpu/d18-qxa/run_report.json",
+    "evidence/week4/clio-apartment-gpu/d18-validation.json",
+    "evidence/week4/clio-apartment-gpu/d19-ablations/prediction.json",
+    "evidence/week4/clio-apartment-gpu/d19-ablations/run_report.json",
+    "evidence/week4/clio-apartment-gpu/d19-validation.json",
+    "evidence/week4/clio-apartment-gpu/gpu_acceptance_report.json",
+    "evidence/week4/clio-apartment-gpu/gpu_validation_report.json"
   ],
   "upstream_repositories": [
     {
@@ -265,6 +285,19 @@
       "kind": "directory",
       "min_files": 473,
       "purpose": "official office_loop sample"
+    },
+    {
+      "path": "data/clio/downloads/clio-apartment-rgb-task-subset.zip",
+      "kind": "file",
+      "min_size": 2355938,
+      "sha256": "6290980fba2cb89a7fe76030ec4511afeab886da065efb2d662fa8f3e6142d98",
+      "purpose": "Clio apartment 24-frame RGB plus task-metadata development subset archive; local use only"
+    },
+    {
+      "path": "data/clio/apartment_gpu_bundle/apartment",
+      "kind": "directory",
+      "min_files": 28,
+      "purpose": "Extracted Clio apartment development subset; cubicle intentionally absent"
     }
   ],
   "disk": {

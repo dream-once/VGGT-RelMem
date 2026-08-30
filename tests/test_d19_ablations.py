@@ -48,6 +48,7 @@ class D19AblationTests(unittest.TestCase):
                 manifest="configs/d19_ablation_manifest.json",
                 office_evidence="evidence/week3/d19-ablations/office-loop",
                 synthetic_evidence="evidence/week3/d19-ablations/synthetic",
+                clio_evidence="evidence/week4/clio-apartment-gpu/d19-ablations",
                 output=None,
             )
         )

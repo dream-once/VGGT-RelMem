@@ -10,7 +10,7 @@
       "description": "long-trajectory scene-memory visualization audit",
       "evidence": {
         "path": "evidence/week3/d20-reproduction/result_tables.json",
-        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+        "sha256": "de6f0a659ee66a854bc5966a14f99c621f528df3dcdb2cd465282fe9e1d3097f"
       },
       "config": {
         "path": "evidence/week3/d20-reproduction/sources/visualization_manifest.json",
@@ -30,17 +30,19 @@
     },
     {
       "result_id": "D16-clio-readiness",
-      "description": "fail-closed Clio data and disk feasibility audit",
+      "description": "Clio feasibility plus local apartment RGB/task-metadata development subset acceptance",
       "evidence": {
-        "path": "evidence/week3/d16-clio-feasibility/feasibility_report.json",
-        "sha256": "a48daa53aab5d952261c045ed2aee0708c87819f560b7e5a8187361bf40e59c4"
+        "path": "evidence/week4/clio-apartment-gpu/d16_acquisition_receipt.json",
+        "sha256": "28e36f23e285fd21e5ca95f586b7c0c52e31f878109596bdc63bc3e05652be5c"
       },
       "config": {
         "path": "configs/clio_dataset_manifest.json",
         "sha256": "fcf5802f4ed2682ec3fd15f797b88ff18864b611c901d72fa58118fc12e4560c"
       },
       "sample_size": {
-        "scene_roles": 2
+        "scene_roles": 2,
+        "selected_rgb_frames": 24,
+        "task_metadata_files": 3
       },
       "budget": {
         "available_bytes": 26189692928,
@@ -48,18 +50,42 @@
         "maximum_peak_bytes": 15452274688
       },
       "validation_status": "PASS",
-      "scope": "metadata_readiness_no_download"
+      "scope": "apartment_development_subset_only_full_modalities_and_cubicle_pending"
+    },
+    {
+      "result_id": "Clio-apartment-GPU-acceptance",
+      "description": "real VGGT plus PE plus SAM3 development replay with query-specific multiview audit",
+      "evidence": {
+        "path": "evidence/week4/clio-apartment-gpu/gpu_acceptance_report.json",
+        "sha256": "73a2d7f09b6d5bacf745595c5afbce25eaace303b3747d88f05df5848a3fff91"
+      },
+      "config": {
+        "path": "evidence/week4/clio-apartment-gpu/d16_acquisition_receipt.json",
+        "sha256": "28e36f23e285fd21e5ca95f586b7c0c52e31f878109596bdc63bc3e05652be5c"
+      },
+      "sample_size": {
+        "geometry_frames": 24,
+        "candidate_outcomes": 24,
+        "lifted_observations": 3,
+        "evidence_frames": 2
+      },
+      "budget": {
+        "query": "pillow",
+        "sam_calls": 24
+      },
+      "validation_status": "PASS",
+      "scope": "real_gpu_development_replay_not_performance"
     },
     {
       "result_id": "D17-relation-reliability",
-      "description": "label-separated relation and abstention protocol",
+      "description": "label-separated selective-answer and abstention protocol",
       "evidence": {
         "path": "evidence/week3/d20-reproduction/result_tables.json",
-        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+        "sha256": "de6f0a659ee66a854bc5966a14f99c621f528df3dcdb2cd465282fe9e1d3097f"
       },
       "config": {
         "path": "configs/relation_calibration_manifest.json",
-        "sha256": "26067fa8b39dccb31434f53d69af5d9b9576851c3846e26786ba9899041c8eef"
+        "sha256": "918f6d92e23bffd4cbf9ea2f5b0de877a358619de758daee669fd74430d7638f"
       },
       "sample_size": {
         "queries": 5,
@@ -70,22 +96,24 @@
         "engineering_threshold": 0.6
       },
       "validation_status": "PASS",
-      "scope": "synthetic_correctness_real_calibration_pending"
+      "scope": "synthetic_selective_answer_correctness_real_calibration_pending"
     },
     {
       "result_id": "D18-QxA-protocol",
       "description": "frozen query-policy by association-policy matrix",
       "evidence": {
         "path": "evidence/week3/d20-reproduction/result_tables.json",
-        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+        "sha256": "de6f0a659ee66a854bc5966a14f99c621f528df3dcdb2cd465282fe9e1d3097f"
       },
       "config": {
         "path": "configs/d18_experiment_manifest.json",
-        "sha256": "a2359dc63b7b8e2efa84e30f7e3f01a8d7d1cadfe0c41ef7b11e20b569a4d167"
+        "sha256": "1d1c6ac4633258834e2e79f9704d94d0bca2280fa3ed5afec5fd94870839378e"
       },
       "sample_size": {
         "frozen_queries": 1,
-        "matrix_rows": 6
+        "office_complete_cache_matrix_rows": 6,
+        "clio_development_matrix_rows": 6,
+        "synthetic_matrix_rows": 6
       },
       "budget": {
         "Q0": 1,
@@ -97,43 +125,45 @@
         "Q2": 5
       },
       "validation_status": "PASS",
-      "scope": "synthetic_correctness_office_development_replay"
+      "scope": "office_and_clio_apartment_complete_cache_development_replay_plus_synthetic_correctness_not_performance"
     },
     {
       "result_id": "D19-ablation-audit",
       "description": "one-factor ablations and six-class failure audit",
       "evidence": {
         "path": "evidence/week3/d20-reproduction/result_tables.json",
-        "sha256": "9312fc2757d9c293caa3bd357bf6f7db09c562e3ce882630fdbc66fa8052ba4c"
+        "sha256": "de6f0a659ee66a854bc5966a14f99c621f528df3dcdb2cd465282fe9e1d3097f"
       },
       "config": {
         "path": "configs/d19_ablation_manifest.json",
-        "sha256": "8251dc96eb9e77eecb844a303fe3d3be94916d2f02f52f222eee6b67b61c328d"
+        "sha256": "336731d5b6857da0a275af4c0a53beb4a1c2687ef384209e9accf35a9d716af9"
       },
       "sample_size": {
         "frozen_queries": 1,
         "q2_variants": 3,
-        "a2_variants": 5
+        "a2_variants": 5,
+        "clio_q2_variants": 3,
+        "clio_a2_variants": 5
       },
       "budget": {
         "association_input_q1_k": 5
       },
       "validation_status": "PASS",
-      "scope": "synthetic_correctness_real_ablation_pending"
+      "scope": "synthetic_correctness_plus_clio_unlabelled_engineering_ablation_real_metrics_pending"
     },
     {
       "result_id": "D20-reproduction-package",
       "description": "JSON-derived tables and moved-directory replay",
       "evidence": {
         "path": "evidence/week3/d20-reproduction/reproduction_report.json",
-        "sha256": "844e22e41a769440fe3acf6d47514d3851aab209f3bff1975c27399a4afbfdc4"
+        "sha256": "de0b4f8a121e8aaf4944bde0fe98cf4cfd037b74d6026578738dbb08188139e9"
       },
       "config": {
         "path": "configs/d20_reproduction_manifest.json",
-        "sha256": "80d8d893d08b60f03b418b8fcb8c876818b17ead6bfc6d9c407c837034af1126"
+        "sha256": "ac0696e73eec3803601ed7f1fd6618e837c6bad76c19b938a9b6886ccedf501f"
       },
       "sample_size": {
-        "canonical_inputs": 7,
+        "canonical_inputs": 10,
         "derived_tables": 3,
         "stage_validators": 4
       },
@@ -145,12 +175,12 @@
     }
   ],
   "gaps": {
-    "clio_download": "DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN",
+    "clio_download": "APARTMENT_RGB_TASK_METADATA_SUBSET_READY_FULL_MODALITIES_PENDING",
     "data_license": "DATA_LICENSE_UNVERIFIED",
     "clio_held_out": "CLIO_HELD_OUT_PENDING",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
     "real_ablation": "REAL_ABLATION_PENDING",
-    "new_gpu_inference": "PENDING",
+    "new_gpu_inference": "CLIO_APARTMENT_DEVELOPMENT_COMPLETE",
     "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING"
   },
   "claim_boundary": {

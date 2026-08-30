@@ -3,9 +3,9 @@
   "stage": "D19-ablation-audit",
   "status": "CPU_COMPLETE",
   "real_ablation_status": "REAL_ABLATION_PENDING",
-  "repository_base_commit": "79d7d12d985e9906bd2887f00282a706df831876",
+  "repository_base_commit": "23f8b612228982f7cb805c0de745fe723b90b009",
   "d18_manifest": "configs/d18_experiment_manifest.json",
-  "d18_manifest_sha256": "a2359dc63b7b8e2efa84e30f7e3f01a8d7d1cadfe0c41ef7b11e20b569a4d167",
+  "d18_manifest_sha256": "1d1c6ac4633258834e2e79f9704d94d0bca2280fa3ed5afec5fd94870839378e",
   "q2_variants": [
     {
       "variant_id": "base",
@@ -68,5 +68,5 @@
     "office_loop": "engineering_structure_only",
     "real_data": "REAL_ABLATION_PENDING"
   },
-  "frozen_at": "2026-08-30T00:00:00+00:00"
+  "frozen_at": "2026-08-30T09:35:00+00:00"
 }

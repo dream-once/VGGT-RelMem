@@ -8,7 +8,7 @@
   "query_text": "trash can",
   "source": {
     "manifest": "configs/d19_ablation_manifest.json",
-    "manifest_sha256": "8251dc96eb9e77eecb844a303fe3d3be94916d2f02f52f222eee6b67b61c328d",
+    "manifest_sha256": "58cccfb1c716ce088ae5f128b6f4e8b457d98ae55a52d9c8345dc74472aef5ce",
     "candidate_cache": "evidence/week2/d14-fixed-topk/synthetic_cache.json",
     "candidate_cache_sha256": "9733281e8d3117e390c318b75d1fedd9681b1e4c0beff9cae0b533c41f4e604c"
   },
@@ -310,5 +310,5 @@
     "category_counts": null
   },
   "performance_claim": null,
-  "created_at": "2026-08-30T00:00:00+00:00"
+  "created_at": "2026-08-30T08:32:00+00:00"
 }

@@ -123,6 +123,52 @@ def risk_coverage_curve(
     ]
 
 
+def selective_answer_risk_coverage(
+    confidences: Sequence[float],
+    answered: Sequence[bool],
+    correct: Sequence[bool],
+) -> list[dict[str, float | int]]:
+    """Risk among answered queries as answer coverage increases.
+
+    Correct rejections remain part of task-level accuracy, but they never
+    increase answer coverage. Coverage is measured against the full frozen
+    query set, so structurally unanswerable queries are not hidden by
+    renormalizing over answered queries only.
+    """
+    scores = np.asarray(confidences, dtype=np.float64)
+    answered_mask = np.asarray(answered, dtype=bool)
+    outcomes = np.asarray(correct, dtype=bool)
+    if (
+        scores.shape != answered_mask.shape
+        or scores.shape != outcomes.shape
+        or scores.size == 0
+    ):
+        raise ValueError("selective-answer inputs must be non-empty and aligned")
+    if (
+        not np.all(np.isfinite(scores))
+        or np.any(scores < 0.0)
+        or np.any(scores > 1.0)
+    ):
+        raise ValueError("answer confidences must be finite probabilities")
+    selected = np.flatnonzero(answered_mask)
+    if selected.size == 0:
+        return []
+    order = selected[np.argsort(-scores[selected], kind="stable")]
+    sorted_outcomes = outcomes[order]
+    cumulative_accuracy = np.cumsum(sorted_outcomes) / np.arange(
+        1, len(order) + 1
+    )
+    return [
+        {
+            "coverage": float((index + 1) / len(scores)),
+            "risk": float(1.0 - cumulative_accuracy[index]),
+            "threshold": float(scores[order[index]]),
+            "answered_count": int(index + 1),
+        }
+        for index in range(len(order))
+    ]
+
+
 def expected_calibration_error(
     probabilities: Sequence[float],
     labels: Sequence[int | bool],
@@ -169,7 +215,9 @@ def area_under_risk_coverage(
     risks = np.asarray([row["risk"] for row in curve], dtype=np.float64)
     if (
         not np.all(np.isfinite(coverages)) or not np.all(np.isfinite(risks))
-        or np.any(np.diff(coverages) <= 0.0) or coverages[-1] != 1.0
+        or np.any(np.diff(coverages) <= 0.0)
+        or coverages[0] <= 0.0
+        or coverages[-1] > 1.0
     ):
         raise ValueError("risk-coverage rows are not ordered or finite")
     return float(np.mean(risks))

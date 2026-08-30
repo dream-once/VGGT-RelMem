@@ -227,6 +227,11 @@ D15.5 是 2026-08-29 插入 D16 前的工程验收里程碑，不新增查询策
 
 **产物与算力**：`CLIO_FEASIBILITY.md`、dataset manifest、split manifest、磁盘预算；元数据阶段 CPU/网络，几何预处理和 candidate outcomes 可能需要 GPU。
 
+**当前状态（2026-08-30，GPU 补验）**：公开链接无需作者批准；已物化
+`apartment` 的 24 帧 RGB＋3 个任务元数据文件开发子集，完整 scene 模态与
+`cubicle` 均未物化。24 帧 VGGT geometry、PE、SAM3 与 24/24 outcome cache 通过
+验收；数据许可仍为 `DATA_LICENSE_UNVERIFIED`，原始数据不进入 Git。
+
 ### D17：关系定位、校准与可靠拒答协议
 
 **任务**
@@ -245,9 +250,11 @@ D15.5 是 2026-08-29 插入 D16 前的工程验收里程碑，不新增查询策
 
 **产物与算力**：查询集、关系 evaluator、校准 manifest、拒答报告；CPU。
 
-**当前状态（2026-08-29）**：D17 已按 CPU/source 口径完成。正式 prediction
-拒绝 query 内嵌答案，labels 只由 evaluator 读取；synthetic 正负例、ECE/AURC、
-anchor 旋转和拒答原因均通过重算。真实校准保持 `REAL_DATA_CALIBRATION_PENDING`。
+**当前状态（2026-08-30，已修正）**：D17 已按 CPU/source 口径完成。正式
+prediction 拒绝 query 内嵌答案，labels 只由 evaluator 读取；selective answer
+risk–coverage 只覆盖实际回答，正确拒答不进入回答覆盖率，覆盖分母固定为全部冻结
+查询。synthetic 正负例、Brier/ECE/AURC、anchor 旋转和拒答原因均通过重算；
+真实 calibration split 仍为 `REAL_DATA_CALIBRATION_PENDING`。
 
 ### D18：冻结协议后的开发集与 held-out 运行
 
@@ -267,11 +274,14 @@ anchor 旋转和拒答原因均通过重算。真实校准保持 `REAL_DATA_CALI
 
 **产物与算力**：开发/held-out 原始 JSON、冻结配置和主结果表；有缓存时评测 CPU，端到端补跑需要 GPU。
 
-**当前状态（2026-08-30）**：D18 已按 CPU/source 口径完成。Q0×A1/A2、
-Q1×A1/A2、Q2×A2 正式矩阵与 Q2×A1 诊断项已冻结；所有组合读取同一
-candidate cache。office-loop 是 development engineering replay，Q2 命中
-`unmaterialized` outcome 后明确阻塞；complete synthetic 只验证带标签路径。
-Clio `cubicle` 仍为 `CLIO_HELD_OUT_PENDING`，没有 held-out 性能数字。
+**当前状态（2026-08-30，已修正）**：D18 已按 CPU/source 口径完成。
+Q0×A1/A2、Q1×A1/A2、Q2×A2 正式矩阵与 Q2×A1 诊断项已冻结；所有组合读取
+同一 candidate cache。office-loop 已切换到公开的 8/8 complete cache，六项
+`development engineering replay` 全部完成但不读取标签、不产生性能数字；
+complete synthetic 只验证带标签路径。旧 partial cache 的缺 outcome fail-closed
+行为保留为回归测试。Clio apartment 24/24 complete cache 的六项无标签开发重放也
+已完成：Q0/Q1/Q2 observation 为 0/1/1，均为 0 个永久对象；`cubicle` 仍为
+`CLIO_HELD_OUT_PENDING`。
 
 ### D19：消融、鲁棒性与失败案例审计
 
@@ -294,9 +304,11 @@ Clio `cubicle` 仍为 `CLIO_HELD_OUT_PENDING`，没有 held-out 性能数字。
 **当前状态（2026-08-30）**：D19 已按 CPU/source 口径完成。Q2 的
 retrieval-only 与关闭 gain patience、A2 移除 semantic/OBB shape/quality/
 complete-link 均为单因素变体并保存 base/variant config hash。synthetic
-fixture 的全部指标变化为 0，只证明消融路径；office-loop 只报告工程结构。
-当前 Q2 不含历史成功候选特征，因此相应项为 `NOT_IMPLEMENTED`。六类失败分母
-覆盖完整冻结 synthetic 查询，真实数据仍为 `REAL_ABLATION_PENDING`。
+fixture 的全部指标变化为 0，只证明消融路径；office-loop 使用完整 cache 只报告
+工程结构。Clio apartment 无标签工程消融已运行，base/retrieval-only 都在 4 帧后
+停止，关闭 patience 运行到 5 帧，均只有 1 条 observation；没有真实标签，因此指标
+仍为 `REAL_ABLATION_PENDING`。当前 Q2 不含历史成功候选特征，相应项保持
+`NOT_IMPLEMENTED`。
 
 ### D20：结果固化、可复现包与轻量发布
 
@@ -321,7 +333,8 @@ fixture 的全部指标变化为 0，只证明消融路径；office-loop 只报�
 README 数字，并在移动临时目录与 retained outputs 逐字节比较。D15.5 的两个
 轻量 JSON 快照进入 evidence；PLY/PNG/MP4 只保留 hash/reference，状态为
 `OPTIONAL_BINARY_RELEASE_PENDING`。clean-tree、路径逃逸、hash 篡改和 evidence
-扩展名/体积门槛均有测试。
+扩展名/体积门槛均有测试。D20 表格现同时包含 office-loop 与 Clio apartment
+complete-cache development replay，后者只报告成本、停止与对象结构。
 
 ### D21：最终审阅与对外表述
 
@@ -344,8 +357,9 @@ README 数字，并在移动临时目录与 retained outputs 逐字节比较。D
 **当前状态（2026-08-30）**：D21 已按 CPU/source 口径完成。最终结果卡逐项
 绑定 tracked evidence、配置 hash、样本量、预算、验证状态和适用边界；README
 高风险表述由行级 claim audit 自动审查。项目定位冻结为“VGGT-SLAM 几何之上
-的可审计语义定位可靠性层”。Clio 数据、held-out、真实校准/消融与新 GPU
-实验仍是显式缺口，不生成性能提升占位数字。
+的可审计语义定位可靠性层”。结果卡已纳入 Clio apartment GPU 开发验收；完整
+Clio 模态、cubicle held-out、真实校准和带标签消融仍是显式缺口，不生成性能提升
+占位数字。
 
 ## 5. Candidate Outcome Cache 最小契约
 
@@ -423,11 +437,11 @@ Visual Memory 建议把可追踪 manifest 与大 embedding 分开：Git 保存 f
 
 > 在冻结的 `[development split]` 与 held-out `[test split]` 上，我们以 Q0 official Top-1、Q1 fixed Top-K 和 Q2 retrieval＋pose-novelty sequential 为查询轴，以 A1 legacy 与 A2 evidence-aware 为关联轴进行同预算比较。只有 held-out 标签与覆盖定义冻结后，才填写 recall、duplicate rate、关系/拒答、预算和差异数字；否则保持为空。
 
-简历式写法可压缩为：
+当前无 held-out 结果时，简历定稿为：
 
-> 在 VGGT-SLAM 2.0 几何前端之上实现可审计的开放词汇 3D 目标记忆与预算自适应查询；通过候选 outcome 缓存隔离策略变量，支持关系定位、证据追踪和可靠拒答，并在冻结 held-out 协议上以 `[预算/指标/增益]` 完成同预算验证。
+> 在 VGGT-SLAM 2.0 几何前端之上实现可审计的开放词汇 3D 目标记忆与预算查询框架，通过 Candidate Outcome Cache 隔离查询与关联策略变量，并建立标签隔离、可靠拒答、确定性重放和失败审计链路；当前结论限定为可复现工程基准，不宣称 held-out 性能提升。
 
-若最终没有 held-out 数据或没有稳定增益，应改写为“完成可复现基准与失败分析”，不要保留上述 test/增益占位句。
+获得冻结 held-out 结果后，才能用自动结果表中的真实预算和指标替换这版边界表述；文档不保留数字占位符。
 
 ## 9. 停止条件与决策原则
 
