@@ -1,0 +1,32 @@
+{
+  "schema_version": "0.1",
+  "scene_id": "cubicle",
+  "role": "held-out",
+  "input": {
+    "image_folder": "data/clio/cubicle/images",
+    "rgb_frame_count": 686,
+    "colmap_model": "data/clio/cubicle/sparse/1",
+    "colmap_registered_frame_count": 640,
+    "images_bin_sha256": "0380aee316ff54cc68f8bac5f2c1b04f59fb8ef24c3902e7befcb69e48c78d20",
+    "cameras_bin_sha256": "6085a9b08871cb0a8364ce24503d03775a3ab4ecb2981bfa9a47e5859947b1f2"
+  },
+  "sampling": {
+    "method": "numeric order with fixed stride across the full sequence",
+    "frame_start": 0,
+    "frame_stride": 4,
+    "max_frames": 192,
+    "expected_selected_frames": 172
+  },
+  "geometry": {
+    "submap_size": 16,
+    "overlap": 1,
+    "max_loops": 1,
+    "disable_flow_filter": true,
+    "confidence_percentile": 25.0
+  },
+  "freeze_guard": {
+    "parameters_selected_from_apartment_protocol_and_cubicle_frame_count_only": true,
+    "cubicle_images_or_gt_values_used_for_parameter_choice": false,
+    "post_result_parameter_tuning_forbidden": true
+  }
+}

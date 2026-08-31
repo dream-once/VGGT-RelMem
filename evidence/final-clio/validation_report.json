@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "clio-final-benchmark-summary-validation",
+  "checks": {
+    "scene_roles_explicit": true,
+    "grounding_deltas_recomputed": true,
+    "association_deltas_recomputed": true,
+    "headline_matches_cubicle": true,
+    "negative_result_not_hidden": true,
+    "source_paths_safe": true
+  },
+  "failures": []
+}

@@ -162,6 +162,36 @@ class D6ValidationTests(unittest.TestCase):
             self.assertEqual(result["status"], "FAIL")
             self.assertIn("SAM count mismatch for f0", result["errors"])
 
+    def test_distinct_retrieval_and_segmentation_queries_pass(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            write_valid_fixture(root)
+            selection_path = root / "selection.json"
+            selection = json.loads(selection_path.read_text(encoding="utf-8"))
+            selection["query"] = "bring me a pillow"
+            selection_path.write_text(json.dumps(selection), encoding="utf-8")
+
+            result_path = root / "d6_result.json"
+            result = json.loads(result_path.read_text(encoding="utf-8"))
+            result["query"] = "pillow"
+            result["retrieval_query"] = "bring me a pillow"
+            result_path.write_text(json.dumps(result), encoding="utf-8")
+
+            masks_path = root / "masks.json"
+            masks = json.loads(masks_path.read_text(encoding="utf-8"))
+            for row in masks["records"]:
+                row["class_text"] = "pillow"
+            masks_path.write_text(json.dumps(masks), encoding="utf-8")
+
+            observations_path = root / "observations.json"
+            observations = json.loads(observations_path.read_text(encoding="utf-8"))
+            for row in observations["observations"]:
+                row["class_text"] = "pillow"
+            observations_path.write_text(json.dumps(observations), encoding="utf-8")
+
+            validation = validate_output(root)
+            self.assertEqual(validation["status"], "PASS")
+
     def test_selection_resolves_images_from_current_manifest(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

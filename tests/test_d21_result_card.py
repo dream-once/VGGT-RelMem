@@ -6,7 +6,9 @@ import tempfile
 import unittest
 
 from relground.result_card import (
+    D21_STATUS,
     FINAL_CONCLUSION,
+    LIMITED_PERFORMANCE_CLAIM,
     PROJECT_POSITIONING,
     audit_readme_claims,
     build_result_card,
@@ -75,8 +77,8 @@ class D21ResultCardTests(unittest.TestCase):
 
     def test_every_result_has_tracked_sources_samples_and_budget(self):
         card = build_result_card(ROOT, load_json(MANIFEST))
-        self.assertEqual(card["source_status"], "CPU_COMPLETE")
-        self.assertEqual(len(card["results"]), 7)
+        self.assertEqual(card["source_status"], D21_STATUS)
+        self.assertEqual(len(card["results"]), 9)
         for row in card["results"]:
             self.assertTrue(row["sample_size"])
             self.assertTrue(row["budget"])
@@ -114,8 +116,9 @@ class D21ResultCardTests(unittest.TestCase):
         self.assertFalse(
             card["claim_boundary"]["sota_or_superiority_claim"]
         )
-        self.assertIsNone(
-            card["claim_boundary"]["performance_improvement"]
+        self.assertEqual(
+            card["claim_boundary"]["performance_improvement"],
+            LIMITED_PERFORMANCE_CLAIM,
         )
 
 

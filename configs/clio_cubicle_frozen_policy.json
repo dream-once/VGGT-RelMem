@@ -1,0 +1,54 @@
+{
+  "schema_version": "0.1",
+  "policy_id": "clio-cubicle-heldout-q1f-v1",
+  "frozen_at": "2026-08-30T16:15:55Z",
+  "frozen_from_commit": "ea09242b8dd71bbbe01f1de4473a436362767912",
+  "development_scene": "apartment",
+  "heldout_scene": "cubicle",
+  "query_policy": {
+    "retrieval": "PE non-negative cosine",
+    "budget": 5,
+    "redundancy": "hybrid",
+    "min_frame_gap": 2,
+    "min_camera_distance_m": 0.15,
+    "min_view_angle_deg": 3.0
+  },
+  "perception_policy": {
+    "sam_threshold": 0.5,
+    "geometry_confidence_threshold": 0.5,
+    "min_points": 30,
+    "outlier_mad_scale": 3.5,
+    "adaptive_threshold_retry": false
+  },
+  "association_policy": "A2 evidence-aware complete-link",
+  "decision_policy": {
+    "name": "Q1F",
+    "rule": "Use the highest-confidence A2 permanent object when available; otherwise use the highest-quality robust observation in the Top-1 frame.",
+    "selection_uses_ground_truth": false
+  },
+  "development_sources": {
+    "segmentation_policy": "configs/clio_segmentation_policy.json",
+    "segmentation_policy_sha256": "92d16599ce3feac5a8cecbf1837fbab67ba2231b0e36ff6243ca1d84d7657f48",
+    "query_manifest": "configs/clio_apartment_queries.json",
+    "query_manifest_sha256": "0e300590a2b13b6d5bb831c5112660f936ead1197a1c0033363414017d36084a",
+    "grounding_benchmark": "runs/clio-apartment-dev-v2-lc/grounding_benchmark.json",
+    "grounding_benchmark_sha256": "78266d0ec618213fd0285c52b95327d0c3247f3db88f22954db6f2080abb7b14"
+  },
+  "development_result_at_freeze": {
+    "task_count": 18,
+    "q0_strict_grounding_acc_at_1": 0.111111111111,
+    "q1f_strict_grounding_acc_at_1": 0.111111111111,
+    "q0_alignment_margin_grounding_acc_at_1": 0.611111111111,
+    "q1f_alignment_margin_grounding_acc_at_1": 0.666666666667,
+    "alignment_margin_gain": 0.055555555556
+  },
+  "heldout_guards": {
+    "cubicle_archive_bytes_downloaded_before_freeze": 86391562,
+    "cubicle_archive_contents_inspected_before_freeze": false,
+    "cubicle_metadata_or_ground_truth_inspected_before_freeze": false,
+    "cubicle_images_inspected_before_freeze": false,
+    "cubicle_results_seen_before_freeze": false,
+    "parameter_tuning_on_cubicle_forbidden": true
+  },
+  "claim_boundary": "Cubicle is held-out only if this policy is applied unchanged. Any later parameter change must be reported as a separate post-hoc analysis, not held-out performance."
+}

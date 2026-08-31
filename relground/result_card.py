@@ -10,12 +10,20 @@ import re
 
 
 D21_SCHEMA_VERSION = "0.1"
-D21_STATUS = "CPU_COMPLETE"
+D21_STATUS = "GPU_AND_CPU_COMPLETE"
 PROJECT_POSITIONING = "VGGT-SLAM 几何之上的可审计语义定位可靠性层"
 FINAL_CONCLUSION = (
     "完成可复现基准、查询策略与关联策略隔离、"
-    "可靠拒答协议和失败分析"
+    "可靠拒答协议、跨场景固定确认和失败分析"
 )
+LIMITED_PERFORMANCE_CLAIM = {
+    "scope": "Cubicle 18-task frozen object-grounding benchmark",
+    "metric": "strict predicted-center-in-oriented-GT-OBB Acc@1",
+    "q0": 0.277777777778,
+    "q1": 0.388888888889,
+    "delta_percentage_points": 11.1111111111,
+    "a2_pairwise_attribution": False,
+}
 CLAIM_TERMS = (
     "官方",
     "复现",
@@ -48,17 +56,17 @@ RESULT_IDS = (
     "D18-QxA-protocol",
     "D19-ablation-audit",
     "D20-reproduction-package",
+    "Clio-final-object-grounding-association",
+    "Clio-final-relation-abstention",
 )
 REQUIRED_GAPS = {
-    "clio_download": (
-        "APARTMENT_RGB_TASK_METADATA_SUBSET_READY_"
-        "FULL_MODALITIES_PENDING"
-    ),
+    "clio_download": "APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED",
     "data_license": "DATA_LICENSE_UNVERIFIED",
-    "clio_held_out": "CLIO_HELD_OUT_PENDING",
+    "clio_held_out": "CUBICLE_OBJECT_GROUNDING_FROZEN_RELATION_FIXED_CONFIRMATORY",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
-    "real_ablation": "REAL_ABLATION_PENDING",
-    "new_gpu_inference": "CLIO_APARTMENT_DEVELOPMENT_COMPLETE",
+    "real_ablation": "ASSOCIATION_LABELLED_COMPLETE_QUERY_POLICY_ABLATION_PENDING",
+    "new_gpu_inference": "CLIO_APARTMENT_AND_CUBICLE_COMPLETE",
+    "found_it_comparison": "OUT_OF_SCOPE_BY_PROJECT_DEFINITION",
     "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING",
 }
 
@@ -136,6 +144,9 @@ def validate_result_card_manifest(
         "d20_config",
         "d20_results",
         "d20_report",
+        "clio_final_summary",
+        "clio_final_validation",
+        "clio_relation_protocol",
     ]:
         raise ValueError("D21 input identity or order changed")
     if tuple(payload["claim_terms"]) != CLAIM_TERMS:
@@ -181,6 +192,10 @@ def build_result_card(
     d20_report = load_json(inputs["d20_report"][0])
     d18_config = load_json(inputs["d18_config"][0])
     d19_config = load_json(inputs["d19_config"][0])
+    clio_final = load_json(inputs["clio_final_summary"][0])
+    clio_final_validation = load_json(
+        inputs["clio_final_validation"][0]
+    )
     relation_rows = {
         row["metric"]: row["value"]
         for row in d20["relations"]["rows"]
@@ -389,6 +404,57 @@ def build_result_card(
             "validation_status": d20_report["status"],
             "scope": "tracked_json_markdown_reproduction",
         },
+        {
+            "result_id": "Clio-final-object-grounding-association",
+            "description": (
+                "Apartment development and Cubicle fixed-confirmatory "
+                "object grounding plus A1/A2 association"
+            ),
+            "evidence": _source(
+                inputs["clio_final_summary"][0],
+                inputs["clio_final_summary"][1],
+                root,
+            ),
+            "config": _source(
+                inputs["clio_relation_protocol"][0],
+                inputs["clio_relation_protocol"][1],
+                root,
+            ),
+            "sample_size": {
+                "apartment_tasks": clio_final["scenes"]["apartment"]["task_count"],
+                "cubicle_tasks": clio_final["scenes"]["cubicle"]["task_count"],
+                "apartment_geometry_frames": clio_final["scenes"]["apartment"]["geometry_frames"],
+                "cubicle_geometry_frames": clio_final["scenes"]["cubicle"]["geometry_frames"],
+            },
+            "budget": {"Q0_sam_calls": 1, "Q1_sam_calls": 5},
+            "validation_status": clio_final_validation["status"],
+            "scope": "metric_specific_frozen_cubicle_object_grounding_not_general_superiority",
+        },
+        {
+            "result_id": "Clio-final-relation-abstention",
+            "description": (
+                "real directional grounding and negative-query abstention"
+            ),
+            "evidence": _source(
+                inputs["clio_final_summary"][0],
+                inputs["clio_final_summary"][1],
+                root,
+            ),
+            "config": _source(
+                inputs["clio_relation_protocol"][0],
+                inputs["clio_relation_protocol"][1],
+                root,
+            ),
+            "sample_size": {
+                "apartment_queries": clio_final["scenes"]["apartment"]["relation_and_abstention"]["query_count"],
+                "cubicle_queries": clio_final["scenes"]["cubicle"]["relation_and_abstention"]["query_count"],
+                "cubicle_positive": clio_final["scenes"]["cubicle"]["relation_and_abstention"]["positive_count"],
+                "cubicle_negative": clio_final["scenes"]["cubicle"]["relation_and_abstention"]["negative_count"],
+            },
+            "budget": {"uncalibrated_answer_threshold": 0.60},
+            "validation_status": clio_final_validation["status"],
+            "scope": "fixed_confirmatory_real_relations_calibration_pending",
+        },
     ]
     if tuple(item["result_id"] for item in results) != RESULT_IDS:
         raise AssertionError("D21 result inventory changed")
@@ -405,7 +471,7 @@ def build_result_card(
             "closed_loop_navigation": False,
             "held_out_performance": False,
             "sota_or_superiority_claim": False,
-            "performance_improvement": None,
+            "performance_improvement": LIMITED_PERFORMANCE_CLAIM,
         },
         "source_status": D21_STATUS,
     }

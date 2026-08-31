@@ -2,17 +2,38 @@
 
 **项目定位：VGGT-SLAM 几何之上的可审计语义定位可靠性层。** 本仓库不是完整闭环导航系统；它在固定 VGGT-SLAM 几何之上，提供候选检索、开放词汇分割、3D lifting、对象关联、关系定位、可靠拒答、缓存重放与可审计证据。
 
-项目已完成 D1–D21 工程链路；D16–D21 的源码/CPU 验收已完成，并在 Clio `apartment` 公开 RGB 开发子集上补做了 VGGT、PE、SAM 3 GPU 工程重放。固定的上游源码位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、原始数据和大型运行产物不进入 Git。
+项目已完成 D1–D21 工程链路，并在 Clio `apartment` 开发场景与 `cubicle` 固定确认场景上完成端到端 GPU 推理、对象定位、关联、方向关系和拒答评测。两套几何分别使用 192/172 个采样帧。固定的上游源码位于本机忽略目录 `third_party/VGGT-SLAM`，个人代码通过 adapters 和可验证文件契约接入，不修改上游实现。几何推理使用 `vggt_geom`，PE/SAM 3 使用隔离的 `open_vocab` 环境；权重、原始数据和大型运行产物不进入 Git。
 
-VGGT-SLAM 2.0 README 中提到的 FOUND-IT 现作为设计参照和后续优先评估的强上游候选；本仓库尚未接入或复现 FOUND-IT 官方代码，也不在缺少同条件实验时宣称优劣。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
+FOUND-IT 明确不属于本项目范围：本仓库不接入、不复现，也不把它列为后续任务。它仅作为 VGGT-SLAM 2.0 README 中提到的外部背景保留，不做同条件优劣宣称。项目验收只针对在固定 VGGT-SLAM 2.0 几何之上新增的查询、3D lifting、对象记忆、关联、关系定位、拒答和可审计评测模块。修订后的基线矩阵、验收门槛与 D11–D21 路线见 [D9 后修订计划](docs/POST_D9_REVISED_PLAN.md)。
 
 ## 最终结果边界
 
-在没有 Clio held-out 的当前阶段，结论固定为：**完成可复现基准、查询策略与关联策略隔离、可靠拒答协议和失败分析**。office-loop 是开发工程样例，
-synthetic fixture 只验证正确性；二者都不支持跨场景性能提升、SOTA、优于
-FOUND-IT 或完整闭环导航的结论。定稿简历表述、真实数字边界和约 3 分钟演示讲稿见
+当前结论为：**完成可复现基准、查询策略与关联策略隔离、可靠拒答协议、跨场景固定确认和失败分析**。Cubicle 的 18-task 对象定位策略在读取其数据内容前冻结，可报告限定到该协议的指标差异；新加入的关联/关系 evaluator 则是固定确认结果，不包装成完全未接触的 held-out。结果不支持 SOTA、优于 FOUND-IT 或完整闭环导航的结论，A2 在 Cubicle 的 pairwise F1 还低于 A1。定稿简历表述、真实数字边界和约 3 分钟演示讲稿见
 [项目对外表述与演示讲稿](docs/PROJECT_PRESENTATION.md)；当前完整录屏状态仍为
-`DEMO_RECORDING_PENDING`。
+`DEMO_RECORDING_PENDING`.
+
+## Clio Apartment → Cubicle 最终实验（2026-08-31）
+
+所有任务分母均来自 Clio 的官方 task OBB；GT 与 VGGT→Clio Sim(3) 只进入 evaluator。对象定位使用“预测中心是否落在 oriented GT OBB 内”的自定义透明指标，不是 Clio 官方 IoU matching 指标。`±RMSE` 列表示给 GT OBB 加入实测配准 RMSE 后的敏感性结果。
+
+| 指标 | Apartment development | Cubicle fixed-confirmatory |
+|---|---:|---:|
+| Q0 Top-1 严格 Acc@1 | 11.11% | 27.78% |
+| Q1 Top-5+A2 严格 Acc@1 | 5.56% | 38.89% |
+| Q1−Q0 严格差值 | −5.56pp | **+11.11pp** |
+| Q1−Q0 `±RMSE` 差值 | −11.11pp | **+16.67pp** |
+| A1 pairwise F1 | 87.88% | **93.85%** |
+| A2 pairwise F1 | **88.14%** | 91.56% |
+| 方向关系正例严格 / `±RMSE` Acc@1 | 6.62% / 25.74% | 22.82% / 59.06% |
+| 负例拒答 / 方向冲突拒答 | 100.00% / 31.62% | 98.66% / 67.79% |
+
+Cubicle 上 Q1 相比 Q0 的 +11.11pp 是 Top-K 多帧检索/lifting、可用 A2 对象记忆及整条策略共同产生的系统级结果，不能归因成“A2 关联本身更好”：A2 的 Cubicle F1 实际下降 2.28pp，主要因为 recall 从 95.62% 降到 90.72%。关系评测继续使用未校准的 0.60 工程阈值，因此 Brier/ECE 是诊断值，真实 calibration 仍未完成。
+
+公开仓库仅保留 10 KiB 聚合摘要、报告/配置 SHA-256 和边界说明，见 [Clio 最终轻量证据](evidence/final-clio/README.md)。原始 Clio 数据、YAML、mask、点云、视频和约 0.9 MiB pair-level 本地报告不进入 Git。clean clone 可运行：
+
+```bash
+python -m scripts.validate_clio_final_summary
+```
 
 ## 目录
 
@@ -110,17 +131,18 @@ conda run -p /root/autodl-tmp/envs/vggt_geom \
 - D14：Q1 Fixed Top-K 已按冻结 hybrid 阈值在完整真实 GPU cache 上通过 prediction replay；K=1 与 Q0 一致，预测仍不读取人工标签。
 - D15：Q2 gain-based sequential search 已在完整真实 GPU cache 上跑满 5 步并通过 trace 重算；`performance_claim=null`，不声称真实性能提升。
 - D15.5：95 帧长轨迹的场景级 RGB 点云、轨迹、Top-K 相机、40 条 3D 观测、8 个关联对象、PLY/MP4/Viser 与对象中心多视角审计均已完成；独立 validator 为 `PASS`。
-- D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已完成；公开链接无需作者批准，已物化 `apartment` 的 24 帧 RGB＋3 个任务元数据文件开发子集。depth、rosbag、COLMAP 和完整场景仍未物化，数据许可仍为 `DATA_LICENSE_UNVERIFIED`，禁止在本仓库再分发原始数据。
-- D17：正式关系预测已与标签/evaluator 隔离，冻结 anchor 坐标约定和 0.60 未校准工程阈值；selective answer risk–coverage 排除正确拒答、覆盖率以全部冻结查询为分母，synthetic 最大回答覆盖率为 0.4，真实数据校准仍为 `REAL_DATA_CALIBRATION_PENDING`。
-- D18：Q0/Q1/Q2 × A1/A2 协议已冻结；office-loop 8/8 与 Clio apartment 24/24 complete cache 的六个组合均已完成。Clio 的 Q0/Q1/Q2 分别选择 1/5/4 帧并得到 0/1/1 条 observation，所有 A1/A2 组合均为 0 个永久对象；这是无标签开发工程重放，不是 held-out 性能结果。complete synthetic 只验证标签隔离和完整评测路径，Clio `cubicle` 仍为 `PENDING`。
-D18 complete-cache development replay 与 Clio apartment GPU development replay 均已进入自动表格；当前 synthetic 数值无变化，三者都不支持性能提升结论。
+- D16：Clio 数据协议、场景角色和 fail-closed 磁盘审计已完成；本地已取得 `apartment` 与 `cubicle` 公开场景并完成 192/172 帧几何采样、COLMAP pose 对齐和 evaluator-only Clio world Sim(3)。数据许可仍为 `DATA_LICENSE_UNVERIFIED`，原始数据禁止随仓库再分发。
+- D17：正式关系预测继续与标签/evaluator 隔离，冻结 anchor 坐标约定和 0.60 未校准工程阈值；Apartment/Cubicle 分别完成 272/298 个正负方向查询，selective answer risk–coverage 排除正确拒答。真实数据已评测，但独立 calibration split 仍为 `REAL_DATA_CALIBRATION_PENDING`。
+- D18：原 Q0/Q1/Q2 × A1/A2 cache 矩阵保持为历史工程重放；新增的完整场景 benchmark 在 18 个 Apartment development 与 18 个 Cubicle fixed-confirmatory task 上直接评测 Q0/Q1 对象定位及 A1/A2 关联，不再标记 Cubicle `PENDING`。
 - D19：Q2/A2 单因素消融与六类失败审计已完成；Clio apartment 已运行无标签工程消融，Q2 base/retrieval-only 都在 4 帧后低 gain 停止，关闭 patience 才运行到 5 帧，三者都只有 1 条 observation。没有标签的真实指标仍为 `REAL_ABLATION_PENDING`，不声称性能提升。
-- D20：单入口 CPU 复现命令、三张 JSON 派生表、README 数字检查及移动目录逐字节复验均为 `PASS`；可选二进制 Release 仍为 `PENDING`。
-- D21：最终结果卡与 README 高风险声明审计均为 `PASS`；结果卡已纳入 Clio GPU 开发验收，并继续明确 held-out/校准/真实指标缺口。
+- D20：单入口 CPU 复现命令、三张 JSON 派生表、README 数字检查及移动目录逐字节复验均为 `PASS`；新增 Clio 聚合摘要也可在 clean clone 无原始数据条件下校验算术与声明边界。
+- D21：历史结果卡与 README 高风险声明审计为 `PASS`；2026-08-31 的 post-D21 Clio supplement 进一步加入对象定位、真实关联、关系与拒答结果，仍保留 calibration 和完整演示缺口；FOUND-IT 对照明确为项目范围外。
 
-## Clio apartment GPU 开发验收（2026-08-30）
+## 历史：Clio apartment 24 帧 GPU 开发验收（2026-08-30）
 
-本次只使用官方公开 `apartment` 的 RGB＋任务元数据开发子集，不需要作者审批。公开目录枚举到 1,056 张 RGB，本机成功取得 786 张；冻结运行从前段轨迹选择 24 张，`cubicle` 未下载。数据许可没有单独明确，因此原始图像、YAML、mask、点云和视频均不进入 Git。
+本节保留 2026-08-30 的 24 帧历史验收，后续完整场景结果以上方“Clio Apartment → Cubicle 最终实验”为准。当时只使用官方公开 `apartment` 的 RGB＋任务元数据开发子集，不需要作者审批；`cubicle` 尚未下载。数据许可没有单独明确，因此原始图像、YAML、mask、点云和视频均不进入 Git。
+
+兼容 D20 历史复现卡：D17 当时用 `2 个正查询与 3 个负查询` 验证协议；`D18 complete-cache development replay` 与 `Clio apartment GPU development replay` 均通过，但 synthetic 数值无变化。这些是旧 24 帧工程验收，不覆盖上方 192/172 帧最终实验。
 
 真实 RTX 4090 链路为 VGGT-1B → PE-Core-L14-336 → SAM 3 → Robust3DLifter → Candidate Outcome Cache → Q×A/Ablation 重放。主要验收结果：
 
@@ -128,7 +150,26 @@ D18 complete-cache development replay 与 Clio apartment GPU development replay 
 - 公开任务元数据中的 `pillow` 被选作 development query。24/24 candidate outcome 完整物化，SAM 产生 3 个实例且 3 个均完成 3D lifting；
 - 有效 evidence 来自 `rgb_128` 与 `rgb_90`，同一查询的相机跨度为 `0.195787` 个重建单位和 `80.608°`，因此不再是“连续向前走的近同视角”样例；
 - Q0 Top-1 得到 0 条 observation；Q1 K=5 得到 1 条；Q2 在 4 帧后因连续两次低 gain 停止，也只有 1 条。A1/A2 均未形成永久对象；
-- 上述负结果说明当前停止规则和 association 阈值尚未跨场景成立。它是 development engineering replay，不是 Grounding Acc@1、held-out 或性能提升结果。
+- 上述冻结 `pillow` 结果是 development engineering replay，不是 Grounding Acc@1、held-out 或性能提升结果。后续 D21.1 受控诊断表明，当前主要观察故障来自 SAM prompt 敏感性，而不是已经证明 association 阈值必须更换。
+
+### D21.1 枕头失败诊断
+
+在完全相同的 24 帧、VGGT geometry 和 PE 排名上，真实 RTX 4090 sweep 只改变 SAM prompt 或阈值：
+
+- 冻结 `pillow@0.5` 的新旧运行均为 3 个 mask/2 个 evidence frame，规范 JSON 相等且三个 mask 的 SHA-256 一致；`a pillow@0.5` 结果相同，`bring me a pillow@0.5` 为 0 个 mask；
+- `dinosaur pillow@0.5` 在另外 5 帧得到 5 个 mask，经逐帧 overlay 人工核查均为同一个绿色恐龙枕头；这是利用实例外观描述定位故障的 development diagnostic，不是正式 query policy；
+- `pillow@0.4/0.3` 分别产生 6/8 个 mask，但新增局部或可疑小框，未被当作人工真值；六组实验的检测帧并集为 8/24，另外 16 帧没有 mask。由于尚未完成 24 帧可见性标注，这些数字不是 segmentation recall；
+- 5 个干净的 `dinosaur pillow` 跨帧观测进入冻结 A2 后，10/10 正 pair 形成 1 个永久对象、0 pending。A2.1 得到相同结果且没有负 pair/held-out 证据，因此不升级为正式方法；
+- COLMAP 数据库列出 1,845 帧，但本地缺 1,059 张 RGB，且没有 sparse pose/rosbag；完整轨迹 evaluator-only Sim(3) 仍为 `BLOCKED_MISSING_SPARSE_OR_ROSBAG_POSES`。
+
+轻量证据见 `evidence/week4/d21_1-pillow-diagnostic`，不含 RGB、mask、点云、联系表或视频。公开验收命令：
+
+```bash
+python -m scripts.validate_d21_1_pillow_diagnostic \
+  evidence/week4/d21_1-pillow-diagnostic/public_report.json
+```
+
+本地紧凑对照图位于 `runs/clio-apartment-gpu/d21_1-pillow-prompt-sweep-gpu/comparison/detected_union_contact_sheet.jpg`。
 
 公开轻量验收不依赖 Clio 原始数据：
 
@@ -790,12 +831,12 @@ python -m scripts.evaluate \
 - 已完成 D14：Q1 在完整真实 GPU outcome cache 上按 metadata 先选后揭示，K=1 与 Q0 一致；本次只验收 prediction replay，不新增 recall 数字。
 - 已完成 D15：Q2 retrieval＋pose-novelty search 在完整真实 cache 上跑满 5 步并通过 trace 重算；`new_observation_count=14`（legacy 字段 `observed_gain`）、`coverage_aware=false`、`performance_claim=null`。
 - 已完成 D15.5：95 帧长轨迹生成可审计的场景级 RGB 点云、轨迹、Top-K 视角、对象记忆、PLY/MP4/Viser；3/8 个预测对象满足严格对象中心多视角门槛。
-- 已完成 D16＋GPU 数据验收：`apartment=development`、`cubicle=held-out` 场景角色已冻结；已从公开链接物化 24 帧 RGB＋3 个任务元数据文件的 apartment 开发子集，完整 depth/rosbag/COLMAP 和 cubicle 仍未触碰。
-- 已完成 D17 CPU/source：synthetic 的 2 个正查询与 3 个负查询验证标签隔离和正确拒答；正确拒答不计入 selective answer coverage，曲线最大覆盖率为 2/5=0.4；本地 office-loop 无标签 replay 没有产生人工指标。
-- 已完成 D18＋Clio 开发重放：冻结 Q0/Q1/Q2 × A1/A2 正式矩阵与 Q2×A1 诊断项；office-loop 8/8、Clio apartment 24/24 complete cache 和 complete synthetic 均能确定性重放。Clio Q0/Q1/Q2 的 observation 数为 0/1/1，未形成永久对象，不构成涨点结论。
+- 已完成 D16＋GPU 数据验收：`apartment=development` 与 `cubicle=fixed-confirmatory` 均已本地物化和对齐；192/172 帧几何、18+18 官方 task 分母及 evaluator-only Sim(3) 通过重放。
+- 已完成 D17 真实数据补验：Apartment/Cubicle 分别完成 136+136 与 149+149 个方向正负查询；正确拒答不计入 selective answer coverage，0.60 阈值仍明确未校准。
+- 已完成 D18＋Clio 完整场景补验：Cubicle 的 Q0→Q1 严格 Acc@1 为 27.78%→38.89%，但 A2 pairwise F1 低于 A1，因此只报告系统级对象定位差值，不宣传 A2 单项改进。
 - 已完成 D19＋Clio 工程消融：Q2 的 pose-novelty/gain-patience 与 A2 的 semantic/OBB/quality/complete-link 单因素变体均可确定性重放；Clio 结果保留停止过早和 0 永久对象的失败，真实标签指标仍待后续。
 - 已完成 D20 CPU/source：单个 CPU 命令可重跑 D16–D19 validator、从规范 JSON 重建 Q×A/关系/消融表、核对 README 数字，并在移动目录中逐字节复验 retained outputs。
-- 已完成 D21＋GPU 结果集成：最终结果卡现在包含第 7 项 Clio apartment GPU 开发验收，逐项绑定 tracked evidence、配置哈希、样本量、预算和适用边界。
-- 仍未完成的是 Clio `cubicle` held-out、独立真实 calibration、带标签真实消融、完整 apartment 模态与约 3 分钟录屏；这些缺口不被写成性能结论。
+- 已完成 D21＋post-D21 Clio 结果集成：轻量最终摘要绑定本地完整报告 hash、冻结关系配置、样本量、分母和适用边界；Cubicle 不再是未运行状态。
+- 仍未完成的是独立真实 calibration、统计显著性分析、带标签查询策略消融与约 3 分钟录屏；FOUND-IT 同条件对照明确不在本项目范围，这些实际缺口也不被写成 SOTA 或普遍优越性结论。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

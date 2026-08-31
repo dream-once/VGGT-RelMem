@@ -190,6 +190,10 @@ def check_only(args: argparse.Namespace) -> int:
     source_commit = require_pinned_sam3_source(sam3_root)
     checkpoint = require_local_checkpoint(args.sam3_checkpoint)
     geometry, _sources, selection, selected = _load_inputs(args)
+    retrieval_query = str(selection["query"]).strip()
+    segmentation_query = (
+        args.sam_query.strip() if args.sam_query is not None else retrieval_query
+    )
     preprocess = []
     for row in selected:
         frame = geometry.get(row["frame_id"])
@@ -208,7 +212,8 @@ def check_only(args: argparse.Namespace) -> int:
         "status": "SOURCE_READY",
         "stage": "D6",
         "inference_executed": False,
-        "query": selection["query"],
+        "query": segmentation_query,
+        "retrieval_query": retrieval_query,
         "selected_frames": [row["frame_id"] for row in selected],
         "point_map_shape": list(geometry.point_maps.shape[1:]),
         "preprocess": preprocess,
@@ -229,7 +234,8 @@ def run(args: argparse.Namespace) -> int:
     source_commit = require_pinned_sam3_source(sam3_root)
     checkpoint = require_local_checkpoint(args.sam3_checkpoint)
     geometry, _sources, selection, selected = _load_inputs(args)
-    query = str(selection["query"]).strip()
+    retrieval_query = str(selection["query"]).strip()
+    query = args.sam_query.strip() if args.sam_query is not None else retrieval_query
 
     output_dir = Path(args.output_dir).resolve()
     if output_dir.exists() and any(output_dir.iterdir()):
@@ -429,6 +435,7 @@ def run(args: argparse.Namespace) -> int:
         ),
         "mask_resizing_after_sam": False,
         "query": query,
+        "retrieval_query": retrieval_query,
         "selection_source": str(Path(args.selection)),
         "requested_k": int(selection["requested_k"]),
         "selected_frames": selected,
@@ -468,6 +475,7 @@ def run(args: argparse.Namespace) -> int:
         config={
             "pipeline": result["backend"],
             "query": query,
+            "retrieval_query": retrieval_query,
             "selection": str(Path(args.selection)),
             "geometry": str(Path(args.geometry)),
             "geometry_manifest": str(Path(args.geometry_manifest)),
@@ -506,6 +514,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--project-root", default=str(root))
     parser.add_argument("--sam3-root", default=str(sam3_root))
     parser.add_argument("--sam3-checkpoint")
+    parser.add_argument("--sam-query")
     parser.add_argument("--sam-threshold", type=float, default=0.5)
     parser.add_argument("--geometry-confidence-threshold", type=float, default=0.5)
     parser.add_argument("--min-points", type=int, default=30)
@@ -519,6 +528,8 @@ def main() -> int:
     args = build_parser().parse_args()
     if not 0.0 <= args.sam_threshold <= 1.0:
         raise ValueError("sam-threshold must be in [0, 1]")
+    if args.sam_query is not None and not args.sam_query.strip():
+        raise ValueError("sam-query must not be empty")
     LifterConfig(
         confidence_threshold=args.geometry_confidence_threshold,
         min_points=args.min_points,

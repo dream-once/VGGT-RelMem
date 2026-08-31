@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-08-30 Clio apartment GPU development acceptance and D16–D21 correction publication
+- Updated: 2026-09-01 post-D21 Apartment/Cubicle fixed-confirmatory benchmark publication
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `23f8b612228982f7cb805c0de745fe723b90b009`
-- Current milestone: D16–D21 pass source/CPU validation and a real RTX 4090 development replay on a 24-frame Clio apartment RGB/task-metadata subset. D17 selective answer risk is corrected; D18 uses complete 8/8 office-loop and 24/24 Clio caches; D19/D20/D21 include the honest Clio failure result.
-- Next milestone: freeze real apartment relation queries and an independent calibration split, improve query recall/association using development data only, then download/evaluate `cubicle` only after the development configuration is frozen. Dataset redistribution remains disallowed until its licence is verified.
-- Publication state: D16–D21 corrections and Clio apartment GPU development evidence are ready for one authorized publication. Raw Clio files, task YAML, large run trees, geometry, masks, point clouds and videos remain local-only; Week 4 public evidence is JSON/Markdown-only.
+- Publication target and pre-publication HEAD: `main` at `ea09242b8dd71bbbe01f1de4473a436362767912`
+- Current milestone: the full Apartment development and Cubicle fixed-confirmatory GPU pipeline is complete on 192/172 geometry frames. The frozen Cubicle 18-task object-grounding result is Q0 `27.78%` versus Q1 Top-5+A2 `38.89%` strict Acc@1 (`+11.11pp`); A2 pairwise F1 is lower than A1, so the gain is explicitly system-level rather than attributed to A2 alone.
+- Next milestone: user review of the public result package, then an independent calibration split, labelled query-policy ablation/statistical analysis and a complete demonstration. FOUND-IT is outside project scope and is not a future task. Dataset redistribution remains disallowed until its licence is verified.
+- Publication state: source, 254 CPU tests, Apartment/Cubicle association and relation validators, D20/D21, and the lightweight final Clio summary pass. Raw Clio files, task YAML, full reports, geometry, masks, point clouds and videos remain local-only.
 
 ## Document-day progress
 
@@ -31,12 +31,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D14 | Complete at engineering scope | Q1 prediction replay over the complete real GPU outcome cache passes and K=1 matches Q0. No new labelled recall result was produced. |
 | D15 | Complete at engineering scope | Q2 completes five real-cache steps and records 14 new frame-scoped observations under the legacy `observed_gain` field; this is neither object nor spatial coverage. Float replay now tolerates harmless cross-environment ULP drift. |
 | D15.5 | Complete | A 95-anchor long-trajectory run yields 40 3D observations, eight predicted objects, a 132,204-point PLY and a validated 10-second MP4; three objects pass strict object-centric multiview and five remain diagnostic. |
-| D16 | Apartment development subset ready | Public access needs no author approval. A checked 24-frame RGB/task-metadata subset was materialized locally; depth, rosbag, COLMAP and `cubicle` remain untouched. Data licence/redistribution status remains unverified. |
-| D17 | CPU complete; real calibration pending | Formal relation prediction is label-free. Standard selective-answer risk now excludes rejected samples from answered coverage while separately evaluating answerability; synthetic and office-loop replay pass. Default threshold `0.60` is not claimed as calibrated. |
-| D18 | Apartment GPU development replay complete | Office-loop now uses its complete 8/8 cache; Clio apartment uses a complete 24/24 cache. All six Q×A rows pass, but Clio yields Q0/Q1/Q2 observation counts `0/1/1`, no permanent objects and no held-out score. |
-| D19 | Apartment engineering ablation complete | One-factor Q2/A2 ablations pass synthetic, office-loop and unlabelled Clio development replay. Clio base/retrieval-only each find one observation; disabling gain patience spends one extra SAM call without adding an observation. No performance claim is made. |
-| D20 | Complete at reproducibility scope | Canonical JSON rebuilds office-loop, synthetic and Clio Q×A/ablation tables automatically; clean-clone, relocation, hash, path and evidence-policy checks pass. Optional binary release remains pending. |
-| D21 | Complete with explicit external gaps | The final result card includes the real Clio apartment GPU failure result and passes the README claim audit. `cubicle`, real relation labels/calibration, labelled ablations and a three-minute demo remain external gaps. |
+| D16 | Apartment and Cubicle local data complete | Public access needed no author approval. Both scenes, COLMAP poses and evaluator-only world alignments are locally materialized; raw redistribution remains blocked by unverified data licence. |
+| D17 | Real fixed-confirmatory evaluation complete; calibration pending | Apartment/Cubicle contain 272/298 positive/negative direction queries. Selective answer risk excludes rejected samples; threshold `0.60` remains an uncalibrated engineering default. |
+| D18 | Full-scene object grounding complete | The 18-task Cubicle frozen policy gives Q0 `27.78%` and Q1 Top-5+A2 `38.89%` strict Acc@1. The result is fixed-confirmatory, not an untouched held-out or SOTA claim. |
+| D19 | Labelled association complete; query-policy ablation pending | Apartment A2 F1 is `88.14%` versus A1 `87.88%`; Cubicle A2 is `91.56%` versus A1 `93.85%`. This preserves the negative A2 result rather than misattributing the system gain. |
+| D20 | Complete at reproducibility scope | Canonical JSON, clean-clone validation and a lightweight final summary preserve metrics, denominators, hashes and boundaries without publishing Clio binaries. |
+| D21 | GPU and CPU complete with explicit boundaries | Nine result-card entries and the final Apartment→Cubicle supplement pass. Calibration, statistical analysis, labelled query-policy ablation and a three-minute demo remain; FOUND-IT is explicitly out of scope. |
 
 ## D3 acceptance evidence
 
@@ -208,19 +208,39 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - The MP4 is an offline virtual orbit around the final static scene, not a robot-trajectory video or real 360° object coverage. Camera frusta are schematic, coordinates are reconstruction units, and no loop-closure/geometric-accuracy improvement is claimed.
 - The fixed upstream provides Viser incremental mapping, trajectory walkthrough, Top-1 single-frame OBB and PCD export but no built-in MP4 exporter at the pinned commit. D15.5's own contribution is the object-memory evidence package, audit, portable artifacts and independent validation, not the underlying SLAM geometry or video encoding primitive.
 
-## Clio apartment GPU development acceptance
+## Historical Clio apartment 24-frame GPU development acceptance
 
-- Public Dropbox access required no author approval. The source directory enumerated 1,056 RGB images; 786 were materialized locally and a deterministic 24-frame subset plus three official task/room/region YAML files was repacked for development. `cubicle` was neither downloaded nor evaluated.
+- Public Dropbox access required no author approval. A recovered COLMAP database that passes SQLite `quick_check` lists 1,845 RGB images; 786 were materialized locally, leaving 1,059 absent, and a deterministic 24-frame subset plus three official task/room/region YAML files was repacked for development. Sparse poses/rosbag remain unavailable, so evaluator-only Sim(3) alignment is pending; `cubicle` was neither downloaded nor evaluated.
 - VGGT-1B processed 24 frames on RTX 4090 and passed geometry schema 0.2 validation at `392×518`. The trajectory spans `1.027912` reconstruction units and `179.856°`; those translation units are not claimed as metres.
 - PE query `pillow` ranked all 24 candidates and SAM3/Robust3DLifter materialized 24/24 outcomes. Three masks lifted successfully in two evidence frames (`rgb_128`, `rgb_90`) with query-specific span `0.195787` reconstruction units and `80.608°`.
 - D7 and D8 pass with three pending observations. A2 passes its contract but promotes zero permanent objects because the cross-view spatial evidence does not satisfy the frozen association gates.
 - D18 completes all six Q×A rows on one complete cache. Q0/Q1/Q2 use 1/5/4 SAM calls and yield `0/1/1` observations; all produce zero permanent objects. Q2 stops after two consecutive low-gain frames.
 - D19 shows retrieval-only matches the base one-observation result, while disabling gain patience spends five rather than four SAM calls and still finds one observation. This is a failure-oriented development replay, not Grounding Acc@1, held-out performance or superiority evidence.
 - The public Week 4 bundle contains only JSON/Markdown contracts, reports and hash-pinned references. Raw RGB/YAML, geometry, masks, points and the 30-second video remain local and are not redistributed.
-- `scripts.validate_clio_gpu_acceptance` passes public replay and local artifact-hash checks. D16 through D21 validators and all 206 tests pass.
+- `scripts.validate_clio_gpu_acceptance` passes public replay and local artifact-hash checks. D16 through D21 validators pass.
+
+## Historical D21.1 pillow failure diagnostic
+
+- A frozen six-run RTX 4090 sweep kept the same 24 geometry/candidate frames. `pillow@0.5` bitwise replayed 3 masks in `rgb_128/rgb_90`; `a pillow@0.5` matched it; `bring me a pillow@0.5` returned zero masks; `dinosaur pillow@0.5` produced five clean masks in `rgb_70/rgb_80/rgb_114/rgb_50/rgb_40`; `pillow@0.4/0.3` produced 6/8 masks with local or questionable extras.
+- The union of all detected frames is 8/24. Frame-level visibility annotation remains pending, so no segmentation-recall value is claimed. The instance-specific prompt is diagnostic only and is not promoted to the formal query policy.
+- The five visually reviewed dinosaur-pillow masks all depict one physical object. Formal frozen A2 and candidate A2.1 both classify all ten positive pairs and create one permanent object with zero pending observations. Because there are no negative pairs or held-out evidence and A2.1 adds no result, A2 remains formal.
+- The lightweight JSON/Markdown package at `evidence/week4/d21_1-pillow-diagnostic` passes clean-clone validation and local hashes. Raw Clio data, masks, points, contact sheets and the 40-second D7 video remain local.
+- At that diagnostic checkpoint, alignment readiness was blocked: the valid COLMAP database listed 1,845 images, local RGB covered 786, and sparse poses/rosbag were not yet materialized. Cubicle had not yet been used; the later final benchmark below supersedes that state.
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests` passes all 227 tests after the D21.1 GPU diagnostic, association comparison, alignment readiness audit and lightweight evidence additions.
+
+## Post-D21 Apartment → Cubicle final benchmark
+
+- Apartment development uses 192 geometry frames; Cubicle fixed-confirmatory uses 172. Both contain 18 official task OBB denominators, while GT and VGGT→Clio Sim(3) are evaluator-only.
+- Cubicle Q0 Top-1 strict center Acc@1 is `27.78%`; Q1 Top-5+A2 is `38.89%`, a frozen-protocol system delta of `+11.11pp`. With the measured alignment-RMSE padding, the delta is `+16.67pp`.
+- Association is evaluated independently: Apartment A1/A2 F1 is `87.88%/88.14%`; Cubicle is `93.85%/91.56%`. Therefore the object-grounding gain is attributed to the complete Top-K multiframe/lifting/object-memory pipeline, not to A2 alone.
+- Fixed-confirmatory Cubicle directional positives have strict/RMSE-padded Acc@1 `22.82%/59.06%`; negative rejection is `98.66%`, and explicit relation-conflict rejection is `67.79%`. The `0.60` threshold is still uncalibrated.
+- `evidence/final-clio` contains only a roughly 10 KiB aggregate summary, validation report and source hashes. Six full deterministic reports total about 0.9 MiB locally and are ignored together with raw data, masks, point clouds and videos.
+- FOUND-IT is not part of this project definition. It is neither an implementation target nor an outstanding comparison; no SOTA or superiority claim is made.
 
 ## Publication verification
 
+- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -q`: all 254 tests pass for the final publication candidate.
+- Apartment/Cubicle association validators, relation validators, the Clio final-summary validator, D20 and D21 all report `PASS`.
 - `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 206 tests passed after the Clio GPU development replay and D16–D21 corrections.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
@@ -262,7 +282,7 @@ These checkouts are intentionally ignored under `third_party/VGGT-SLAM`; a clean
 
 ## Current local-only instance assets
 
-The lightweight policy does not treat generated `runs/` as required instance assets. Two regenerated bundles are currently retained locally for inspection, but a fresh clone may omit them and reproduce them from source, weights, data, and retained JSON evidence.
+Generated `runs/` remain outside Git. The two full final scene runs are important local review assets recorded in the baseline, but a clean clone still receives the lightweight aggregate evidence and can validate it without raw Clio data.
 
 Assets currently present:
 
@@ -274,6 +294,10 @@ Assets currently present:
 - Official `data/office_loop`: 473 files
 - Local Clio apartment development subset archive: `data/clio/downloads/clio-apartment-rgb-task-subset.zip`, 2,355,938 bytes, SHA-256 `6290980fba2cb89a7fe76030ec4511afeab886da065efb2d662fa8f3e6142d98`
 - Local Clio apartment development extraction: `data/clio/apartment_gpu_bundle/apartment`, 28 files (24 RGB, three official YAML metadata files, one selection manifest)
+- Full local Clio Apartment scene: `data/clio/apartment`, 1,180 files, about 2.3 GiB
+- Full local Clio Cubicle scene: `data/clio/cubicle`, 1,386 files, about 1.4 GiB
+- Cubicle archive: `data/clio/cubicle.zip`, 1,417,678,076 bytes, SHA-256 `4fea3b731d730d77f6ae13e0d7859b264ee9cc52ba9b81925fc7e5e0f0813517`
+- Final Apartment/Cubicle run trees: `runs/clio-apartment-dev-v2-lc` (1,412 files, about 498 MiB) and `runs/clio-cubicle-heldout-v1` (1,433 files, about 395 MiB)
 - Local Clio apartment GPU run: `runs/clio-apartment-gpu`, ignored and optional
 - Local GPU completion bundle: `runs/gpu-acceptance-20260829`, about 27 MiB, ignored and optional
 - Local D15.5 long-trajectory tree: `runs/office-loop-d15_5-s5`, about 142 MiB, ignored and optional
@@ -282,13 +306,12 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Use `apartment` development data to freeze real relation queries, answer labels and a genuinely independent calibration split; do not tune from `cubicle`.
-2. Improve the low-recall `pillow` result and diagnose the A2 spatial-gate failure without claiming a gain until labelled evaluation exists.
-3. After development configuration freeze, acquire/evaluate `cubicle` as held-out and resolve the dataset licence before redistributing any raw data. Preserve the legacy D15 trace and do not relabel observation count as coverage gain.
+1. Let the user review the public source, lightweight final evidence and honest attribution boundary.
+2. If continuing, create an independent real calibration split and run labelled Q0/Q1 query-policy ablations plus confidence intervals/significance analysis without retuning on Cubicle.
+3. Produce the final approximately three-minute demonstration and resolve the Clio data licence before redistributing any raw assets. FOUND-IT remains outside scope.
 
 ## Publication history
 
-- 2026-08-27: Published D15 Q2 gain-based sequential search, real blocked readiness trace, complete synthetic Q0/Q1/Q2 engineering comparison, 136 CPU tests, and an approximately 46 KiB JSON/Markdown bundle (pre-publication HEAD `94bcb81`).
 - 2026-08-29: Published the D11–D15 GPU completion validator, D15.5 long-trajectory scene-memory visualization/audit/validator, 147-test regression, updated documentation, memory and baseline without publishing binary run artifacts (pre-publication HEAD `3073b46`).
 - 2026-08-30: Published D16 fail-closed Clio data protocol without downloading data (`db44e9f`).
 - 2026-08-30: Published D17 label-free relation prediction, abstention evaluation and calibration boundaries (`5ea7b86`).
@@ -298,6 +321,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-30: Published D21 final result card, claim audit and explicit held-out boundaries (`5dc3a59`).
 - 2026-08-30: Published tolerant D15 replay, corrected Q2 semantics and portable GPU/D15/D15.5 evidence; 190 tests and final validators pass (commit containing this entry, pre-publication parent `5dc3a59`).
 - 2026-08-30: Published corrected D17 selective risk, complete-cache D18, Clio apartment RTX 4090 development replay through D21, 206 tests and lightweight Week 4 evidence (commit containing this entry, pre-publication parent `23f8b61`).
+- 2026-09-01: Published full Apartment development and Cubicle fixed-confirmatory GPU benchmarks, labelled association and relation/rejection evaluation, lightweight final evidence, honest system-level `+11.11pp` Cubicle grounding delta, 254 CPU tests, and an explicit FOUND-IT out-of-scope boundary (commit containing this entry, pre-publication parent `ea09242`).
 
 ## Scope reminder
 

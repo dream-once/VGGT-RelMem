@@ -50,8 +50,8 @@
     },
     "final_result_card": {
       "path": "../d21-final/result_card.json",
-      "sha256": "7553f5ec86f8a7316b9cfbcc9b3b5c7a2113c3947bb694492a9c84424d4887f7",
-      "bytes": 6962
+      "sha256": "2b6b4ea7b41efd45fd6838dd0c0a9107325eccb6dda355e7a57362bbef187161",
+      "bytes": 9180
     },
     "overview_thumbnail": {
       "path": "overview.png",

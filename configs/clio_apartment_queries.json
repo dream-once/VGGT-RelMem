@@ -1,0 +1,148 @@
+{
+  "schema_version": "0.1",
+  "scene_id": "apartment",
+  "role": "development",
+  "source": {
+    "task_yaml": "data/clio/apartment/metadata/tasks_apartment.yaml",
+    "task_yaml_sha256": "f10e084c85b3361e47dd0b55396200d0e1c92ff7df7013ac33a3576811a087e3",
+    "query_source": "official Clio task YAML keys",
+    "segmentation_prompt_source": "deterministic target noun phrase normalized before metric review"
+  },
+  "split": {
+    "method": "lowest eight SHA-256 values of clio-apartment-v1|task form calibration; remaining tasks form development",
+    "calibration_count": 8,
+    "development_count": 18
+  },
+  "queries": [
+    {
+      "task": "get notebook binders",
+      "sam_query": "binder",
+      "split": "calibration"
+    },
+    {
+      "task": "get can of WD-40",
+      "sam_query": "spray can",
+      "split": "calibration"
+    },
+    {
+      "task": "find spice bottles",
+      "sam_query": "spice bottles",
+      "split": "calibration"
+    },
+    {
+      "task": "get first aid kit",
+      "sam_query": "first aid kit",
+      "split": "calibration"
+    },
+    {
+      "task": "get a kitchen knife",
+      "sam_query": "kitchen knife",
+      "split": "calibration"
+    },
+    {
+      "task": "get pocket knife",
+      "sam_query": "folding knife",
+      "split": "calibration"
+    },
+    {
+      "task": "get hairbrush",
+      "sam_query": "hairbrush",
+      "split": "calibration"
+    },
+    {
+      "task": "move popcorn bags",
+      "sam_query": "popcorn bag",
+      "split": "calibration"
+    },
+    {
+      "task": "bring me a pillow",
+      "sam_query": "pillow",
+      "split": "development"
+    },
+    {
+      "task": "clean toaster",
+      "sam_query": "toaster",
+      "split": "development"
+    },
+    {
+      "task": "find deck of cards",
+      "sam_query": "deck of cards",
+      "split": "development"
+    },
+    {
+      "task": "find pile of hats",
+      "sam_query": "pile of hats",
+      "split": "development"
+    },
+    {
+      "task": "get alarm clock",
+      "sam_query": "alarm clock",
+      "split": "development"
+    },
+    {
+      "task": "get all chocolate snacks",
+      "sam_query": "chocolate snacks",
+      "split": "development"
+    },
+    {
+      "task": "get bike helmet",
+      "sam_query": "bike helmet",
+      "split": "development"
+    },
+    {
+      "task": "get bottle of tide",
+      "sam_query": "bottle of Tide",
+      "split": "development"
+    },
+    {
+      "task": "get cast iron skillet",
+      "sam_query": "cast iron skillet",
+      "split": "development"
+    },
+    {
+      "task": "get chapstick",
+      "sam_query": "chapstick",
+      "split": "development"
+    },
+    {
+      "task": "get hair dryer",
+      "sam_query": "hair dryer",
+      "split": "development"
+    },
+    {
+      "task": "get picture of boat",
+      "sam_query": "picture of boat",
+      "split": "development"
+    },
+    {
+      "task": "get pizza cutting wheel",
+      "sam_query": "pizza cutter",
+      "split": "development"
+    },
+    {
+      "task": "get soy sauce",
+      "sam_query": "soy sauce bottle",
+      "split": "development"
+    },
+    {
+      "task": "get toolbox",
+      "sam_query": "toolbox",
+      "split": "development"
+    },
+    {
+      "task": "get violin case",
+      "sam_query": "violin case",
+      "split": "development"
+    },
+    {
+      "task": "move pile of clothes",
+      "sam_query": "pile of clothes",
+      "split": "development"
+    },
+    {
+      "task": "move racks of dishes",
+      "sam_query": "dish racks",
+      "split": "development"
+    }
+  ]
+}

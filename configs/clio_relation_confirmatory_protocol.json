@@ -1,0 +1,39 @@
+{
+  "schema_version": "0.1",
+  "protocol_id": "CLIO-relation-confirmatory-v1",
+  "frozen_at": "2026-08-31T23:15:00+00:00",
+  "design_scene": "apartment",
+  "confirmation_scene": "cubicle",
+  "confirmation_claim": "fixed-confirmatory-not-untouched-held-out",
+  "query_generation": {
+    "eligible_task_rule": "official task has exactly one GT OBB",
+    "pair_rule": "all eligible tasks in manifest order with target index less than reference index",
+    "anchor_rule": "first frame in geometry.anchor_poses.json",
+    "axis_candidates": [
+      "left_of",
+      "right_of",
+      "front_of",
+      "behind"
+    ],
+    "axis_selection": "larger absolute displacement of anchor x and z; x wins exact ties",
+    "minimum_absolute_axis_m": 0.25,
+    "negative_rule": "same target/reference with the exact opposite directional relation"
+  },
+  "inference": {
+    "scene_memory": "all permanent A2 objects; no GT filtering",
+    "relation_margin_m_in_vggt_units": 0.1,
+    "ambiguity_margin": 0.05,
+    "grounder_confidence_threshold": 0.5,
+    "answer_threshold": 0.6,
+    "calibration_status": "ENGINEERING_DEFAULT_UNCALIBRATED"
+  },
+  "evaluation": {
+    "positive_correct_strict": "answered top-1 object center lies inside official target OBB",
+    "positive_correct_uncertainty": "answered top-1 object center lies inside target OBB padded by measured alignment RMSE",
+    "negative_correct": "query abstained; correct rejections never increase answer coverage",
+    "relation_aware_negative_correct": "abstain reason is relation_conflict_or_boundary",
+    "risk_coverage": "risk among emitted answers as coverage grows over the full frozen query set",
+    "failed_detection_or_association_remains_in_denominator": true,
+    "official_clio_metric_claim": false
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": "0.1",
+  "source": {
+    "repository": "https://github.com/MIT-SPARK/Clio",
+    "commit": "f912b7c08fb0e029d80fd6b05eccee5009199ce4",
+    "path": "clio_eval/scene_transforms.yaml",
+    "sha256": "49e14a7a99e630305e85339a8b313a63360cf89628c69a28c7c7365f2b306fc7",
+    "application": "scale COLMAP coordinates about the origin, then apply T"
+  },
+  "scenes": {
+    "apartment": {
+      "split_role": "development",
+      "scale": 0.638,
+      "T_world_from_scaled_colmap": [
+        [
+          0.99736433,
+          0.06378271,
+          -0.03458547,
+          -1.65754365
+        ],
+        [
+          0.03576231,
+          -0.01740201,
+          0.9992088,
+          2.19638849
+        ],
+        [
+          0.06313038,
+          -0.99781207,
+          -0.01963716,
+          0.50415508
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  }
+}

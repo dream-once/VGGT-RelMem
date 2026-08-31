@@ -1,15 +1,15 @@
 {
   "schema_version": "0.1",
   "stage": "D21-final-result-card",
-  "status": "CPU_COMPLETE",
+  "status": "GPU_AND_CPU_COMPLETE",
   "repository_base_commit": "23f8b612228982f7cb805c0de745fe723b90b009",
   "project_positioning": "VGGT-SLAM 几何之上的可审计语义定位可靠性层",
-  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、可靠拒答协议和失败分析",
+  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、可靠拒答协议、跨场景固定确认和失败分析",
   "inputs": [
     {
       "input_id": "readme",
       "path": "README.md",
-      "sha256": "c68c2ea3232884d155f100b39a123c006ee55ea70002bc2294d400959d708e20"
+      "sha256": "c23458f7d615363ab0758591032581dd158b68a5270691b9c70313774b10af8f"
     },
     {
       "input_id": "presentation_material",
@@ -70,6 +70,21 @@
       "input_id": "d20_report",
       "path": "evidence/week3/d20-reproduction/reproduction_report.json",
       "sha256": "de0b4f8a121e8aaf4944bde0fe98cf4cfd037b74d6026578738dbb08188139e9"
+    },
+    {
+      "input_id": "clio_final_summary",
+      "path": "evidence/final-clio/benchmark_summary.json",
+      "sha256": "c3a0961ea67ff73d85a0366b76820ef2b53f3a0280aab1fc415a0803acb6dfa1"
+    },
+    {
+      "input_id": "clio_final_validation",
+      "path": "evidence/final-clio/validation_report.json",
+      "sha256": "c1383d1a5b592d8dc77d228da83516e6546e5d6611c55d0baca21b10ea6c9e81"
+    },
+    {
+      "input_id": "clio_relation_protocol",
+      "path": "configs/clio_relation_confirmatory_protocol.json",
+      "sha256": "2be733b382d346cc064082ed62c4014654fab554844a34c7ab3e4511539b2175"
     }
   ],
   "claim_terms": [
@@ -83,12 +98,13 @@
     "性能提升"
   ],
   "required_gaps": {
-    "clio_download": "APARTMENT_RGB_TASK_METADATA_SUBSET_READY_FULL_MODALITIES_PENDING",
+    "clio_download": "APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED",
     "data_license": "DATA_LICENSE_UNVERIFIED",
-    "clio_held_out": "CLIO_HELD_OUT_PENDING",
+    "clio_held_out": "CUBICLE_OBJECT_GROUNDING_FROZEN_RELATION_FIXED_CONFIRMATORY",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
-    "real_ablation": "REAL_ABLATION_PENDING",
-    "new_gpu_inference": "CLIO_APARTMENT_DEVELOPMENT_COMPLETE",
+    "real_ablation": "ASSOCIATION_LABELLED_COMPLETE_QUERY_POLICY_ABLATION_PENDING",
+    "new_gpu_inference": "CLIO_APARTMENT_AND_CUBICLE_COMPLETE",
+    "found_it_comparison": "OUT_OF_SCOPE_BY_PROJECT_DEFINITION",
     "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING"
   },
   "result_ids": [
@@ -98,7 +114,9 @@
     "D17-relation-reliability",
     "D18-QxA-protocol",
     "D19-ablation-audit",
-    "D20-reproduction-package"
+    "D20-reproduction-package",
+    "Clio-final-object-grounding-association",
+    "Clio-final-relation-abstention"
   ],
-  "frozen_at": "2026-08-30T09:50:00+00:00"
+  "frozen_at": "2026-08-31T23:45:00+00:00"
 }

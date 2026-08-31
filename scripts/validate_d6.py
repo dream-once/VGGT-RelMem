@@ -110,12 +110,15 @@ def validate_output(path: str | Path) -> dict[str, Any]:
     if result.get("source_commits", {}).get("sam3") != SAM3_SOURCE_COMMIT:
         errors.append("SAM 3 source commit is not the pinned D6 commit")
     query = str(result.get("query", "")).strip()
+    retrieval_query = str(result.get("retrieval_query", query)).strip()
     if not query:
         errors.append("result query is empty")
+    if not retrieval_query:
+        errors.append("result retrieval_query is empty")
     if selection.get("stage") != "D5":
         errors.append("selection snapshot stage is not D5")
-    if str(selection.get("query", "")).strip() != query:
-        errors.append("selection and D6 query disagree")
+    if str(selection.get("query", "")).strip() != retrieval_query:
+        errors.append("selection and D6 retrieval_query disagree")
     baseline_id = result.get("baseline_id")
     controlled = baseline_id == "B2-topk-multiframe"
     if baseline_id is not None and not controlled:
@@ -127,6 +130,7 @@ def validate_output(path: str | Path) -> dict[str, Any]:
         if (
             not isinstance(config, dict)
             or config.get("query") != query
+            or config.get("retrieval_query", query) != retrieval_query
             or config.get("pipeline") != result.get("backend")
         ):
             errors.append("controlled D6 run manifest differs from result")

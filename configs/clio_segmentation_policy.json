@@ -1,0 +1,28 @@
+{
+  "schema_version": "0.1",
+  "policy_id": "clio-sam3-target-phrase-t05",
+  "calibration_scene": "apartment",
+  "calibration_split": "configs/clio_apartment_queries.json#calibration",
+  "sam_threshold": 0.5,
+  "geometry_confidence_threshold": 0.5,
+  "min_points": 30,
+  "outlier_mad_scale": 3.5,
+  "adaptive_threshold_retry": false,
+  "selection_budget": 5,
+  "decision": {
+    "calibration_tasks": 8,
+    "multiframe_pass_tasks": 6,
+    "failed_tasks": [
+      "get notebook binders",
+      "get pocket knife"
+    ],
+    "reason": "Keep the global upstream-aligned SAM threshold at 0.5; threshold 0.3 created 42 binder masks and was rejected as an uncontrolled precision tradeoff. Only target noun phrases were normalized using calibration data.",
+    "leakage_note": "The pillow development query had already been run before this policy file was created; its prompt and threshold were not changed. Report Apartment as development, never held-out."
+  },
+  "guards": {
+    "development_metrics_seen_before_freeze": true,
+    "cubicle_accessed_before_freeze": false,
+    "gt_read_by_prediction": false,
+    "development_result_used_to_change_policy": false
+  }
+}

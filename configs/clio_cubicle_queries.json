@@ -1,0 +1,35 @@
+{
+  "schema_version": "0.1",
+  "scene_id": "cubicle",
+  "role": "held-out",
+  "source": {
+    "task_yaml": "data/clio/cubicle/tasks_cubicle.yaml",
+    "task_yaml_sha256": "951f83c512c60ab21ef30d55756cf4763ba2b1a989d00fba6a7894627035ff11",
+    "query_source": "official Clio task YAML keys",
+    "segmentation_prompt_source": "target noun phrase derived from task text before inference; no GT values, images, masks, or metrics inspected"
+  },
+  "split": {
+    "method": "all official cubicle tasks form one held-out set",
+    "held_out_count": 18
+  },
+  "queries": [
+    {"task": "get condiment packets", "sam_query": "condiment packets", "split": "held-out"},
+    {"task": "get drink cans", "sam_query": "drink cans", "split": "held-out"},
+    {"task": "get eyeglasses", "sam_query": "eyeglasses", "split": "held-out"},
+    {"task": "get glasses case", "sam_query": "glasses case", "split": "held-out"},
+    {"task": "get grey jacket", "sam_query": "grey jacket", "split": "held-out"},
+    {"task": "get my silver water bottle", "sam_query": "silver water bottle", "split": "held-out"},
+    {"task": "get notebooks", "sam_query": "notebooks", "split": "held-out"},
+    {"task": "get mudstone rock", "sam_query": "mudstone rock", "split": "held-out"},
+    {"task": "tool to cut paper", "sam_query": "scissors", "split": "held-out"},
+    {"task": "get sticky notes", "sam_query": "sticky notes", "split": "held-out"},
+    {"task": "get textbooks", "sam_query": "textbooks", "split": "held-out"},
+    {"task": "get waste bins", "sam_query": "waste bins", "split": "held-out"},
+    {"task": "move hats", "sam_query": "hats", "split": "held-out"},
+    {"task": "clean backpacks", "sam_query": "backpacks", "split": "held-out"},
+    {"task": "get red crockery", "sam_query": "red crockery", "split": "held-out"},
+    {"task": "get hardware drill", "sam_query": "hardware drill", "split": "held-out"},
+    {"task": "get quartz rock", "sam_query": "quartz rock", "split": "held-out"},
+    {"task": "get tape measure", "sam_query": "tape measure", "split": "held-out"}
+  ]
+}

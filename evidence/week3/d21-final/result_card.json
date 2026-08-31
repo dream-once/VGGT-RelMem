@@ -3,7 +3,7 @@
   "status": "PASS",
   "stage": "D21-final-result-card",
   "project_positioning": "VGGT-SLAM 几何之上的可审计语义定位可靠性层",
-  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、可靠拒答协议和失败分析",
+  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、可靠拒答协议、跨场景固定确认和失败分析",
   "results": [
     {
       "result_id": "D15.5-scene-visualization",
@@ -172,15 +172,63 @@
       },
       "validation_status": "PASS",
       "scope": "tracked_json_markdown_reproduction"
+    },
+    {
+      "result_id": "Clio-final-object-grounding-association",
+      "description": "Apartment development and Cubicle fixed-confirmatory object grounding plus A1/A2 association",
+      "evidence": {
+        "path": "evidence/final-clio/benchmark_summary.json",
+        "sha256": "c3a0961ea67ff73d85a0366b76820ef2b53f3a0280aab1fc415a0803acb6dfa1"
+      },
+      "config": {
+        "path": "configs/clio_relation_confirmatory_protocol.json",
+        "sha256": "2be733b382d346cc064082ed62c4014654fab554844a34c7ab3e4511539b2175"
+      },
+      "sample_size": {
+        "apartment_tasks": 18,
+        "cubicle_tasks": 18,
+        "apartment_geometry_frames": 192,
+        "cubicle_geometry_frames": 172
+      },
+      "budget": {
+        "Q0_sam_calls": 1,
+        "Q1_sam_calls": 5
+      },
+      "validation_status": "PASS",
+      "scope": "metric_specific_frozen_cubicle_object_grounding_not_general_superiority"
+    },
+    {
+      "result_id": "Clio-final-relation-abstention",
+      "description": "real directional grounding and negative-query abstention",
+      "evidence": {
+        "path": "evidence/final-clio/benchmark_summary.json",
+        "sha256": "c3a0961ea67ff73d85a0366b76820ef2b53f3a0280aab1fc415a0803acb6dfa1"
+      },
+      "config": {
+        "path": "configs/clio_relation_confirmatory_protocol.json",
+        "sha256": "2be733b382d346cc064082ed62c4014654fab554844a34c7ab3e4511539b2175"
+      },
+      "sample_size": {
+        "apartment_queries": 272,
+        "cubicle_queries": 298,
+        "cubicle_positive": 149,
+        "cubicle_negative": 149
+      },
+      "budget": {
+        "uncalibrated_answer_threshold": 0.6
+      },
+      "validation_status": "PASS",
+      "scope": "fixed_confirmatory_real_relations_calibration_pending"
     }
   ],
   "gaps": {
-    "clio_download": "APARTMENT_RGB_TASK_METADATA_SUBSET_READY_FULL_MODALITIES_PENDING",
+    "clio_download": "APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED",
     "data_license": "DATA_LICENSE_UNVERIFIED",
-    "clio_held_out": "CLIO_HELD_OUT_PENDING",
+    "clio_held_out": "CUBICLE_OBJECT_GROUNDING_FROZEN_RELATION_FIXED_CONFIRMATORY",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
-    "real_ablation": "REAL_ABLATION_PENDING",
-    "new_gpu_inference": "CLIO_APARTMENT_DEVELOPMENT_COMPLETE",
+    "real_ablation": "ASSOCIATION_LABELLED_COMPLETE_QUERY_POLICY_ABLATION_PENDING",
+    "new_gpu_inference": "CLIO_APARTMENT_AND_CUBICLE_COMPLETE",
+    "found_it_comparison": "OUT_OF_SCOPE_BY_PROJECT_DEFINITION",
     "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING"
   },
   "claim_boundary": {
@@ -188,7 +236,14 @@
     "closed_loop_navigation": false,
     "held_out_performance": false,
     "sota_or_superiority_claim": false,
-    "performance_improvement": null
+    "performance_improvement": {
+      "scope": "Cubicle 18-task frozen object-grounding benchmark",
+      "metric": "strict predicted-center-in-oriented-GT-OBB Acc@1",
+      "q0": 0.277777777778,
+      "q1": 0.388888888889,
+      "delta_percentage_points": 11.1111111111,
+      "a2_pairwise_attribution": false
+    }
   },
-  "source_status": "CPU_COMPLETE"
+  "source_status": "GPU_AND_CPU_COMPLETE"
 }

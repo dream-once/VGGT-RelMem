@@ -10,8 +10,10 @@ import tempfile
 from relground.result_card import (
     D21_STATUS,
     FINAL_CONCLUSION,
+    LIMITED_PERFORMANCE_CLAIM,
     PROJECT_POSITIONING,
     REQUIRED_GAPS,
+    RESULT_IDS,
     load_json,
     render_result_card,
     sha256_file,
@@ -79,7 +81,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
                 and audit["required_conclusion_present"]
             ),
             "result_inventory_complete": (
-                len(card["results"]) == 7
+                len(card["results"]) == len(RESULT_IDS)
                 and all(
                     row["sample_size"]
                     and row["budget"]
@@ -90,13 +92,12 @@ def run(args: argparse.Namespace) -> dict[str, object]:
             "source_references_match": _references_match(root, card),
             "external_gaps_explicit": card["gaps"] == REQUIRED_GAPS,
             "claim_boundary_honest": (
-                not any(
-                    value
-                    for key, value in card["claim_boundary"].items()
-                    if key != "performance_improvement"
-                )
+                not card["claim_boundary"]["official_found_it_reproduction"]
+                and not card["claim_boundary"]["closed_loop_navigation"]
+                and not card["claim_boundary"]["held_out_performance"]
+                and not card["claim_boundary"]["sota_or_superiority_claim"]
                 and card["claim_boundary"]["performance_improvement"]
-                is None
+                == LIMITED_PERFORMANCE_CLAIM
             ),
             "d20_reproduction_still_passes": d20["status"] == "PASS",
         }

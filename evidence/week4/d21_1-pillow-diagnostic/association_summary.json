@@ -1,0 +1,44 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "D21.1-pillow-association-diagnostic",
+  "scene_id": "clio-apartment-dinosaur-pillow-050",
+  "query": "dinosaur pillow",
+  "input_observations": 5,
+  "manual_label_scope": {
+    "positive_pairs": 10,
+    "negative_pairs": 0,
+    "association_only": true
+  },
+  "frozen_a2": {
+    "validator_status": "PASS",
+    "gate_pass_pairs": 10,
+    "predicted_match_pairs": 10,
+    "permanent_objects": 1,
+    "pending_observations": 0,
+    "true_positive": 10,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "a21_development_candidate": {
+    "validator_status": "PASS",
+    "gate_pass_pairs": 10,
+    "predicted_match_pairs": 10,
+    "permanent_objects": 1,
+    "pending_observations": 0,
+    "true_positive": 10,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "decision": {
+    "formal_association_remains": "A2-evidence-aware-complete-link",
+    "a21_upgraded_to_formal": false,
+    "reason": "A2 and A2.1 produce the same correct one-object result on the five clean masks; no held-out or negative-pair evidence supports an upgrade."
+  },
+  "claim_boundary": {
+    "development_only": true,
+    "no_negative_pairs": true,
+    "general_association_performance": null,
+    "cubicle_held_out_untouched": true
+  }
+}
