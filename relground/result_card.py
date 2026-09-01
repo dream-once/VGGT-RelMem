@@ -9,18 +9,19 @@ import json
 import re
 
 
-D21_SCHEMA_VERSION = "0.1"
-D21_STATUS = "GPU_AND_CPU_COMPLETE"
+D21_SCHEMA_VERSION = "0.2"
+D21_STATUS = "GPU_AND_CPU_COMPLETE_WITH_EXTERNAL_PACKAGING_GAPS"
 PROJECT_POSITIONING = "VGGT-SLAM 几何之上的可审计语义定位可靠性层"
 FINAL_CONCLUSION = (
     "完成可复现基准、查询策略与关联策略隔离、"
-    "可靠拒答协议、跨场景固定确认和失败分析"
+    "显式拒答协议、跨场景固定确认和失败分析"
 )
 LIMITED_PERFORMANCE_CLAIM = {
-    "scope": "Cubicle 18-task frozen object-grounding benchmark",
+    "scope": "Cubicle 18-task fixed-confirmatory frozen-Q1F object-grounding benchmark",
+    "policy_id": "Q1F",
     "metric": "strict predicted-center-in-oriented-GT-OBB Acc@1",
     "q0": 0.277777777778,
-    "q1": 0.388888888889,
+    "q1f": 0.388888888889,
     "delta_percentage_points": 11.1111111111,
     "a2_pairwise_attribution": False,
 }
@@ -62,12 +63,17 @@ RESULT_IDS = (
 REQUIRED_GAPS = {
     "clio_download": "APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED",
     "data_license": "DATA_LICENSE_UNVERIFIED",
-    "clio_held_out": "CUBICLE_OBJECT_GROUNDING_FROZEN_RELATION_FIXED_CONFIRMATORY",
+    "clio_held_out": "CUBICLE_Q1F_FROZEN_ASSOCIATION_RELATION_FIXED_CONFIRMATORY",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
-    "real_ablation": "ASSOCIATION_LABELLED_COMPLETE_QUERY_POLICY_ABLATION_PENDING",
+    "query_policy_ablation": "LABELLED_QUERY_POLICY_ABLATION_PENDING",
+    "instance_metrics": "INSTANCE_RECALL_DUPLICATE_RATE_COUNT_ERROR_PENDING",
+    "statistical_intervals": "STATISTICAL_CONFIDENCE_INTERVALS_PENDING",
+    "final_costs": "FULL_36_TASK_LATENCY_AND_PEAK_VRAM_PENDING",
     "new_gpu_inference": "CLIO_APARTMENT_AND_CUBICLE_COMPLETE",
     "found_it_comparison": "OUT_OF_SCOPE_BY_PROJECT_DEFINITION",
     "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING",
+    "demo_recording": "DEMO_RECORDING_PENDING",
+    "release_tag": "RELEASE_TAG_PENDING_UNCOMMITTED_FIXES",
 }
 
 
@@ -105,7 +111,7 @@ def validate_result_card_manifest(
     if payload["stage"] != "D21-final-result-card":
         raise ValueError("D21 stage changed")
     if payload["status"] != D21_STATUS:
-        raise ValueError("D21 status must remain CPU_COMPLETE")
+        raise ValueError("D21 source status changed")
     if re.fullmatch(
         r"[0-9a-f]{40}", str(payload["repository_base_commit"])
     ) is None:
@@ -426,7 +432,7 @@ def build_result_card(
                 "apartment_geometry_frames": clio_final["scenes"]["apartment"]["geometry_frames"],
                 "cubicle_geometry_frames": clio_final["scenes"]["cubicle"]["geometry_frames"],
             },
-            "budget": {"Q0_sam_calls": 1, "Q1_sam_calls": 5},
+            "budget": {"Q0_sam_calls": 1, "Q1F_sam_calls": 5},
             "validation_status": clio_final_validation["status"],
             "scope": "metric_specific_frozen_cubicle_object_grounding_not_general_superiority",
         },
@@ -453,7 +459,7 @@ def build_result_card(
             },
             "budget": {"uncalibrated_answer_threshold": 0.60},
             "validation_status": clio_final_validation["status"],
-            "scope": "fixed_confirmatory_real_relations_calibration_pending",
+            "scope": "fixed_confirmatory_target_reference_pair_relations_calibration_pending",
         },
     ]
     if tuple(item["result_id"] for item in results) != RESULT_IDS:

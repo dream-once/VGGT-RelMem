@@ -8,6 +8,7 @@ from pathlib import Path
 import tempfile
 
 from relground.result_card import (
+    D21_SCHEMA_VERSION,
     D21_STATUS,
     FINAL_CONCLUSION,
     LIMITED_PERFORMANCE_CLAIM,
@@ -103,7 +104,7 @@ def run(args: argparse.Namespace) -> dict[str, object]:
         }
     status = "PASS" if all(checks.values()) else "FAIL"
     validation = {
-        "schema_version": "0.1",
+        "schema_version": D21_SCHEMA_VERSION,
         "status": status,
         "stage": "D21-validation",
         "checks": checks,

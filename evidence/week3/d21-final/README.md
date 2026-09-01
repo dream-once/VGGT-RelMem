@@ -1,6 +1,6 @@
 # D21 final result card
 
-Status: `CPU_COMPLETE`.
+Status: `GPU_AND_CPU_COMPLETE_WITH_EXTERNAL_PACKAGING_GAPS`.
 
 This lightweight bundle freezes the final source/CPU result boundary. It is
 rebuilt from the D16 and D20 canonical JSON inputs; no result number is entered
@@ -16,8 +16,9 @@ Files:
   improvement/navigation/superiority/SOTA terminology;
 - `validation.json`: independent rebuild and source-reference validation;
 - `docs/PROJECT_PRESENTATION.md`: hash-pinned current resume wording, result
-  boundaries and a 3-minute demo script. The actual narrated recording remains
-  `DEMO_RECORDING_PENDING`.
+  boundaries, two resume bullets, a 5-minute demo script and 10 interview Q&As.
+  The actual narrated recording remains `DEMO_RECORDING_PENDING`; a release tag
+  remains pending until the corrected files are explicitly committed.
 
 Rebuild:
 

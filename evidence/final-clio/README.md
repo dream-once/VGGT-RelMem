@@ -5,13 +5,13 @@ This lightweight bundle retains aggregate metrics, denominators, local full-repo
 Key result on the 18-task Cubicle object-grounding protocol:
 
 - Q0 Top-1 strict center Acc@1: `27.78%`;
-- Q1 Top-5 + A2 strict center Acc@1: `38.89%` (`+11.11pp`);
+- frozen Q1F Top-5 + A2 with deterministic Q0 fallback strict center Acc@1: `38.89%` (`+11.11pp`);
 - alignment-RMSE-padded difference: `+16.67pp`;
-- A2 pairwise association F1 is `91.56%`, below A1's `93.85%`, so the grounding gain is not attributed to A2 alone;
-- fixed-confirmatory relation positives: strict/padded Acc@1 `22.82% / 59.06%`;
-- negative rejection / explicit relation-conflict rejection: `98.66% / 67.79%`.
+- final-cluster A2 pairwise F1 is `91.56%`, below A1's `93.47%`, so the grounding gain is not attributed to A2 alone;
+- fixed-confirmatory relation positives require both target and reference GT matches: strict/padded Acc@1 `11.41% / 48.32%`;
+- negative rejection / reason-matched rejection / pair-grounded relation rejection: `98.66% / 67.79% / 44.97%`.
 
-The object-grounding policy was frozen before Cubicle archive content was inspected. The association evaluator and the later relation protocol are reported as fixed-confirmatory, not as an untouched held-out benchmark. The directional benchmark still uses the uncalibrated engineering threshold `0.60`. FOUND-IT is outside this project's definition, not a pending implementation or comparison.
+The Q1F object-grounding policy was frozen before Cubicle archive content was inspected and is now semantically checked by the validator. The association evaluator and the later relation protocol are reported as fixed-confirmatory, not as an untouched held-out benchmark. The directional benchmark still uses the uncalibrated engineering threshold `0.60`. FOUND-IT is outside this project's definition, not a pending implementation or comparison.
 
 Validate the public summary without downloading Clio:
 

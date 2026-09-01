@@ -1,20 +1,20 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "stage": "D21-final-result-card",
-  "status": "GPU_AND_CPU_COMPLETE",
+  "status": "GPU_AND_CPU_COMPLETE_WITH_EXTERNAL_PACKAGING_GAPS",
   "repository_base_commit": "23f8b612228982f7cb805c0de745fe723b90b009",
   "project_positioning": "VGGT-SLAM 几何之上的可审计语义定位可靠性层",
-  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、可靠拒答协议、跨场景固定确认和失败分析",
+  "final_conclusion": "完成可复现基准、查询策略与关联策略隔离、显式拒答协议、跨场景固定确认和失败分析",
   "inputs": [
     {
       "input_id": "readme",
       "path": "README.md",
-      "sha256": "c23458f7d615363ab0758591032581dd158b68a5270691b9c70313774b10af8f"
+      "sha256": "49bf96464eddb7f670a4e7f9d0d165ec1dcde4ac4d986aef9066ed4b3c3c9747"
     },
     {
       "input_id": "presentation_material",
       "path": "docs/PROJECT_PRESENTATION.md",
-      "sha256": "208be9e212071f215d8a868faccdd9e35d97917b2e180872aded91ac090bf78f"
+      "sha256": "a728389002def68f4b4ecddd7140e9865e25c3230042bd3d22c7dbe7500b1363"
     },
     {
       "input_id": "d16_config",
@@ -74,17 +74,17 @@
     {
       "input_id": "clio_final_summary",
       "path": "evidence/final-clio/benchmark_summary.json",
-      "sha256": "c3a0961ea67ff73d85a0366b76820ef2b53f3a0280aab1fc415a0803acb6dfa1"
+      "sha256": "3e569e64f2c68dc03631cf9985c3bc500a59763c778c153d917fba0f6bd609cb"
     },
     {
       "input_id": "clio_final_validation",
       "path": "evidence/final-clio/validation_report.json",
-      "sha256": "c1383d1a5b592d8dc77d228da83516e6546e5d6611c55d0baca21b10ea6c9e81"
+      "sha256": "1d0a81a0b6e54a83eca711370ecef1c1d7296c739b1d6828ec00f3d77bd7ee8c"
     },
     {
       "input_id": "clio_relation_protocol",
       "path": "configs/clio_relation_confirmatory_protocol.json",
-      "sha256": "2be733b382d346cc064082ed62c4014654fab554844a34c7ab3e4511539b2175"
+      "sha256": "9bf7798c7bed97b45c4e16ebe35bb6064f34fa9f41d7a08a5fd2ffa54f654487"
     }
   ],
   "claim_terms": [
@@ -100,12 +100,17 @@
   "required_gaps": {
     "clio_download": "APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED",
     "data_license": "DATA_LICENSE_UNVERIFIED",
-    "clio_held_out": "CUBICLE_OBJECT_GROUNDING_FROZEN_RELATION_FIXED_CONFIRMATORY",
+    "clio_held_out": "CUBICLE_Q1F_FROZEN_ASSOCIATION_RELATION_FIXED_CONFIRMATORY",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
-    "real_ablation": "ASSOCIATION_LABELLED_COMPLETE_QUERY_POLICY_ABLATION_PENDING",
+    "query_policy_ablation": "LABELLED_QUERY_POLICY_ABLATION_PENDING",
+    "instance_metrics": "INSTANCE_RECALL_DUPLICATE_RATE_COUNT_ERROR_PENDING",
+    "statistical_intervals": "STATISTICAL_CONFIDENCE_INTERVALS_PENDING",
+    "final_costs": "FULL_36_TASK_LATENCY_AND_PEAK_VRAM_PENDING",
     "new_gpu_inference": "CLIO_APARTMENT_AND_CUBICLE_COMPLETE",
     "found_it_comparison": "OUT_OF_SCOPE_BY_PROJECT_DEFINITION",
-    "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING"
+    "optional_binary_release": "OPTIONAL_BINARY_RELEASE_PENDING",
+    "demo_recording": "DEMO_RECORDING_PENDING",
+    "release_tag": "RELEASE_TAG_PENDING_UNCOMMITTED_FIXES"
   },
   "result_ids": [
     "D15.5-scene-visualization",
@@ -118,5 +123,5 @@
     "Clio-final-object-grounding-association",
     "Clio-final-relation-abstention"
   ],
-  "frozen_at": "2026-08-31T23:45:00+00:00"
+  "frozen_at": "2026-09-02T00:00:00+00:00"
 }

@@ -1,6 +1,12 @@
+import json
+from pathlib import Path
 import unittest
 
-from relground.clio_grounding_benchmark import _aggregate, _quality
+from relground.clio_grounding_benchmark import (
+    _aggregate,
+    _quality,
+    _validate_frozen_policy,
+)
 
 
 class ClioGroundingBenchmarkTests(unittest.TestCase):
@@ -32,6 +38,25 @@ class ClioGroundingBenchmarkTests(unittest.TestCase):
         q1["answered"] = True
         selected = q1 if q1["answered"] else q0
         self.assertIs(selected, q1)
+
+    def test_frozen_policy_content_is_validated_not_just_its_path(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        policy = json.loads(
+            (root / "configs/clio_cubicle_frozen_policy.json").read_text()
+        )
+        validated = _validate_frozen_policy(policy, scene_id="cubicle")
+        self.assertEqual(validated["decision_policy"]["name"], "Q1F")
+        policy["decision_policy"]["name"] = "Q1"
+        with self.assertRaisesRegex(ValueError, "must be Q1F"):
+            _validate_frozen_policy(policy, scene_id="cubicle")
+
+    def test_frozen_policy_rejects_wrong_scene(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        policy = json.loads(
+            (root / "configs/clio_cubicle_frozen_policy.json").read_text()
+        )
+        with self.assertRaisesRegex(ValueError, "scene"):
+            _validate_frozen_policy(policy, scene_id="apartment")
 
 
 if __name__ == "__main__":

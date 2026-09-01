@@ -28,10 +28,14 @@ from .a2_association import (
 from .association import ObjectMemory
 from .clio_retrieval_evaluation import slugify_task
 from .clio_task_evaluation import _parse_gt_boxes, point_in_obb
-from .d9_association import SpatialGateConfig, predict_all_pairs as predict_a1_pairs
+from .d9_association import (
+    SpatialGateConfig,
+    predict_all_pairs as predict_a1_pairs,
+    predicted_components,
+)
 
 
-SCHEMA_VERSION = "0.1"
+SCHEMA_VERSION = "0.2"
 STAGE = "clio-instance-association-benchmark"
 POLICY_IDS = ("A1", "A2", "A2.1-development")
 
@@ -83,6 +87,24 @@ def _task_paths(run_root: Path, scene_id: str, task: str) -> tuple[Path, Path]:
     )
 
 
+def _a1_component_prediction_map(
+    observations: Sequence[Any], pairs: Sequence[Any]
+) -> dict[tuple[str, str], bool]:
+    """Return A1's production equivalence relation after component closure."""
+
+    components = predicted_components(observations, pairs)
+    component_by_id = {
+        observation.obs_id: index
+        for index, component in enumerate(components)
+        for observation in component
+    }
+    return {
+        (item.obs_id_a, item.obs_id_b):
+        component_by_id[item.obs_id_a] == component_by_id[item.obs_id_b]
+        for item in pairs
+    }
+
+
 def _prediction_maps(
     observations: Sequence[Any],
     policy_ids: Sequence[str] = POLICY_IDS,
@@ -93,10 +115,7 @@ def _prediction_maps(
     raw_a2 = predict_a2_pairs(observations, EvidenceAssociationConfig())
     _, a2, _ = complete_link_clusters(observations, raw_a2)
     predictions = {
-        "A1": {
-            (item.obs_id_a, item.obs_id_b): bool(item.predicted_same)
-            for item in a1
-        },
+        "A1": _a1_component_prediction_map(observations, a1),
         "A2": {
             (item.obs_id_a, item.obs_id_b): bool(item.predicted_same)
             for item in a2
@@ -356,6 +375,10 @@ def build_clio_association_benchmark(
         "scene_id": scene_id,
         "split_role": split_role,
         "contract": {
+            "policy_pair_semantics": (
+                "same final association cluster; A1 uses connected-component "
+                "closure and A2 uses complete-link clusters"
+            ),
             "prediction_runs_before_gt_read": True,
             "gt_and_world_alignment_are_evaluator_only": True,
             "target_assignment": "nearest official GT OBB containing center after alignment-RMSE padding",

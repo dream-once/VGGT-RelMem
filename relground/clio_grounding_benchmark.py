@@ -14,7 +14,7 @@ from .clio_retrieval_evaluation import slugify_task
 from .clio_task_evaluation import _parse_gt_boxes, _transform_object, point_in_obb
 
 
-SCHEMA_VERSION = "0.2"
+SCHEMA_VERSION = "0.3"
 STAGE = "clio-grounding-benchmark"
 
 
@@ -119,6 +119,47 @@ def _aggregate(rows: Sequence[Mapping[str, Any]], key: str) -> dict[str, Any]:
     }
 
 
+def _validate_frozen_policy(
+    policy: Mapping[str, Any], *, scene_id: str
+) -> dict[str, Any]:
+    """Reject manifests that do not describe the policy this benchmark runs."""
+
+    if policy.get("schema_version") != "0.1":
+        raise ValueError("unsupported frozen policy schema")
+    if policy.get("heldout_scene") != scene_id:
+        raise ValueError("frozen policy held-out scene does not match benchmark")
+    if policy.get("association_policy") != "A2 evidence-aware complete-link":
+        raise ValueError("frozen policy association does not match A2")
+    decision = policy.get("decision_policy", {})
+    if decision.get("name") != "Q1F":
+        raise ValueError("frozen policy decision must be Q1F")
+    if decision.get("selection_uses_ground_truth") is not False:
+        raise ValueError("frozen Q1F selection must be label-free")
+    query = policy.get("query_policy", {})
+    expected_query = {
+        "budget": 5,
+        "redundancy": "hybrid",
+        "min_frame_gap": 2,
+        "min_camera_distance_m": 0.15,
+        "min_view_angle_deg": 3.0,
+    }
+    for key, expected in expected_query.items():
+        if query.get(key) != expected:
+            raise ValueError(f"frozen query policy mismatch: {key}")
+    perception = policy.get("perception_policy", {})
+    expected_perception = {
+        "sam_threshold": 0.5,
+        "geometry_confidence_threshold": 0.5,
+        "min_points": 30,
+        "outlier_mad_scale": 3.5,
+        "adaptive_threshold_retry": False,
+    }
+    for key, expected in expected_perception.items():
+        if perception.get(key) != expected:
+            raise ValueError(f"frozen perception policy mismatch: {key}")
+    return dict(policy)
+
+
 def build_clio_grounding_benchmark(
     *,
     project_root: Path,
@@ -133,8 +174,14 @@ def build_clio_grounding_benchmark(
     query_manifest = json.loads(query_manifest_path.read_text(encoding="utf-8"))
     scene_id = str(query_manifest["scene_id"])
     split_role = str(query_manifest["role"])
+    frozen_policy = None
     if split_role == "held-out" and frozen_policy_path is None:
         raise ValueError("held-out benchmark requires a frozen policy manifest")
+    if frozen_policy_path is not None:
+        frozen_policy = _validate_frozen_policy(
+            json.loads(frozen_policy_path.read_text(encoding="utf-8")),
+            scene_id=scene_id,
+        )
     alignment = json.loads(world_alignment_path.read_text(encoding="utf-8"))
     if alignment.get("status") != "PASS" or alignment.get("contract", {}).get("use") != "evaluator_only":
         raise ValueError("benchmark requires a passing evaluator-only world alignment")
@@ -251,8 +298,12 @@ def build_clio_grounding_benchmark(
             "uncertainty_metric": "same containment with measured alignment RMSE padding",
             "failed_or_abstained_tasks_remain_in_denominator": True,
             "official_clio_metric_claim": False,
+            "frozen_policy_metric_key": (
+                "q1f_top5_a2_with_q0_fallback" if frozen_policy is not None else None
+            ),
+            "frozen_policy_id": frozen_policy.get("policy_id") if frozen_policy else None,
             "frozen_before_heldout": (
-                split_role != "held-out" or frozen_policy_path is not None
+                split_role != "held-out" or frozen_policy is not None
             ),
         },
         "sources": {
@@ -334,6 +385,10 @@ def validate_clio_grounding_benchmark(payload: Mapping[str, Any], *, project_roo
             raise ValueError("Clio grounding benchmark differs from deterministic replay")
         if payload["contract"]["gt_is_evaluator_only"] is not True:
             raise ValueError("GT evaluator-only guard changed")
+        if payload["split_role"] == "held-out" and payload["contract"].get(
+            "frozen_policy_metric_key"
+        ) != "q1f_top5_a2_with_q0_fallback":
+            raise ValueError("held-out report is not bound to frozen Q1F")
     except (KeyError, TypeError, ValueError, OSError, json.JSONDecodeError) as error:
         failures.append(str(error))
     return {

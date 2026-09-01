@@ -274,14 +274,18 @@ risk–coverage 只覆盖实际回答，正确拒答不进入回答覆盖率，�
 
 **产物与算力**：开发/held-out 原始 JSON、冻结配置和主结果表；有缓存时评测 CPU，端到端补跑需要 GPU。
 
-**当前状态（2026-08-30，已修正）**：D18 已按 CPU/source 口径完成。
+**D18 阶段状态（2026-08-30）**：D18 已按 CPU/source 口径完成。
 Q0×A1/A2、Q1×A1/A2、Q2×A2 正式矩阵与 Q2×A1 诊断项已冻结；所有组合读取
 同一 candidate cache。office-loop 已切换到公开的 8/8 complete cache，六项
 `development engineering replay` 全部完成但不读取标签、不产生性能数字；
 complete synthetic 只验证带标签路径。旧 partial cache 的缺 outcome fail-closed
 行为保留为回归测试。Clio apartment 24/24 complete cache 的六项无标签开发重放也
-已完成：Q0/Q1/Q2 observation 为 0/1/1，均为 0 个永久对象；`cubicle` 仍为
-`CLIO_HELD_OUT_PENDING`。
+已完成：Q0/Q1/Q2 observation 为 0/1/1，均为 0 个永久对象；该阶段的 `cubicle`
+状态为 `CLIO_HELD_OUT_PENDING`。
+
+**后续补验（2026-09-02）**：Cubicle 18-task GPU 物化、Q1F 对象定位、最终聚类
+关联和 target/reference 双端关系评测均已完成。上面的 pending 仅是 D18 历史快照；
+当前结论和限定口径以 README 与 `evidence/final-clio/` 为准。
 
 ### D19：消融、鲁棒性与失败案例审计
 

@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 
-SCHEMA_VERSION = "0.1"
+SCHEMA_VERSION = "0.2"
 STAGE = "clio-final-benchmark-summary"
 
 
@@ -43,6 +43,7 @@ def _scene(
 ) -> dict[str, Any]:
     q0 = grounding["metrics"]["q0_top1"]
     q1 = grounding["metrics"]["q1_top5_a2"]
+    q1f = grounding["metrics"]["q1f_top5_a2_with_q0_fallback"]
     assoc_a1 = association["metrics"]["A1"]
     assoc_a2 = association["metrics"]["A2"]
     rel = relation["metrics"]
@@ -53,9 +54,12 @@ def _scene(
         "object_grounding": {
             "metric": "predicted center inside official oriented GT OBB",
             "official_clio_metric_claim": False,
+            "primary_policy": "Q1F frozen Top-5+A2 with deterministic Q0 fallback",
             "q0_top1": q0,
-            "q1_top5_a2": q1,
-            "delta_q1_minus_q0": grounding["metrics"]["delta_q1_minus_q0"],
+            "q1_top5_a2_diagnostic": q1,
+            "q1f_top5_a2_with_q0_fallback": q1f,
+            "delta_q1_diagnostic_minus_q0": grounding["metrics"]["delta_q1_minus_q0"],
+            "delta_q1f_minus_q0": grounding["metrics"]["delta_q1f_minus_q0"],
         },
         "association": {
             "label_rule": "same padded target GT OBB; background/background pairs excluded as unknown",
@@ -73,11 +77,13 @@ def _scene(
             "query_count": rel["query_count"],
             "positive_count": rel["positive_count"],
             "negative_count": rel["negative_count"],
-            "positive_grounding_acc_at_1_strict": rel["positive_grounding_acc_at_1_strict"],
-            "positive_grounding_acc_at_1_alignment_rmse_padded": rel["positive_grounding_acc_at_1_alignment_rmse_padded"],
+            "positive_pair_grounding_acc_at_1_strict": rel["positive_pair_grounding_acc_at_1_strict"],
+            "positive_pair_grounding_acc_at_1_alignment_rmse_padded": rel["positive_pair_grounding_acc_at_1_alignment_rmse_padded"],
             "negative_rejection_accuracy": rel["negative_rejection_accuracy"],
+            "reason_matched_negative_rejection_accuracy": rel["reason_matched_negative_rejection_accuracy"],
             "relation_aware_negative_rejection_accuracy": rel["relation_aware_negative_rejection_accuracy"],
-            "task_accuracy_alignment_rmse_padded": rel["task_accuracy_alignment_rmse_padded"],
+            "end_to_end_task_accuracy_alignment_rmse_padded": rel["end_to_end_task_accuracy_alignment_rmse_padded"],
+            "pair_grounded_task_accuracy_alignment_rmse_padded": rel["pair_grounded_task_accuracy_alignment_rmse_padded"],
             "answer_coverage": rel["answer_coverage"],
             "answer_aurc_discrete": rel["answer_aurc_discrete"],
             "answerability_proxy_brier": rel["answerability_proxy_brier"],
@@ -137,15 +143,17 @@ def build_summary(
         "project_positioning": "VGGT-SLAM geometry plus an auditable semantic-localization reliability layer",
         "scenes": {"apartment": apartment, "cubicle": cubicle},
         "headline_result": {
-            "scope": "Cubicle 18-task frozen object-grounding benchmark",
+            "scope": "Cubicle 18-task fixed-confirmatory frozen-Q1F object-grounding benchmark",
+            "policy_id": "Q1F",
             "q0_strict_acc_at_1": cubicle["object_grounding"]["q0_top1"]["grounding_acc_at_1"],
-            "q1_strict_acc_at_1": cubicle["object_grounding"]["q1_top5_a2"]["grounding_acc_at_1"],
-            "strict_delta_percentage_points": 100.0 * cubicle["object_grounding"]["delta_q1_minus_q0"]["grounding_acc_at_1"],
-            "alignment_rmse_padded_delta_percentage_points": 100.0 * cubicle["object_grounding"]["delta_q1_minus_q0"]["grounding_acc_at_1_with_alignment_rmse_margin"],
-            "attribution": "Top-K multiframe retrieval/lifting plus available A2 object memory; not evidence that A2 pairwise association alone improves",
+            "q1f_strict_acc_at_1": cubicle["object_grounding"]["q1f_top5_a2_with_q0_fallback"]["grounding_acc_at_1"],
+            "strict_delta_percentage_points": 100.0 * cubicle["object_grounding"]["delta_q1f_minus_q0"]["grounding_acc_at_1"],
+            "alignment_rmse_padded_delta_percentage_points": 100.0 * cubicle["object_grounding"]["delta_q1f_minus_q0"]["grounding_acc_at_1_with_alignment_rmse_margin"],
+            "attribution": "Frozen Q1F system: Top-K multiframe retrieval/lifting, available A2 object memory, and deterministic Q0 fallback; not evidence that A2 association alone improves",
         },
         "claim_boundary": {
             "cubicle_object_grounding_policy_frozen_before_data_inspection": True,
+            "cubicle_q1f_policy_semantically_validated": True,
             "association_and_relation_reports_are_fixed_confirmatory_not_untouched_held_out": True,
             "a2_pairwise_improvement_on_cubicle": False,
             "real_calibration_complete": False,
@@ -177,14 +185,16 @@ def validate_summary(payload: Mapping[str, Any]) -> dict[str, Any]:
         if apartment["role"] != "development" or cubicle["role"] != "fixed-confirmatory":
             raise ValueError("scene roles changed")
         for scene in (apartment, cubicle):
+            if scene["object_grounding"]["primary_policy"] != "Q1F frozen Top-5+A2 with deterministic Q0 fallback":
+                raise ValueError("final summary primary policy is not frozen Q1F")
             q0 = scene["object_grounding"]["q0_top1"]
-            q1 = scene["object_grounding"]["q1_top5_a2"]
-            delta = scene["object_grounding"]["delta_q1_minus_q0"]
+            q1f = scene["object_grounding"]["q1f_top5_a2_with_q0_fallback"]
+            delta = scene["object_grounding"]["delta_q1f_minus_q0"]
             for key in (
                 "coverage", "grounding_acc_at_1",
                 "grounding_acc_at_1_with_alignment_rmse_margin",
             ):
-                if abs(float(delta[key]) - (float(q1[key]) - float(q0[key]))) > 1e-11:
+                if abs(float(delta[key]) - (float(q1f[key]) - float(q0[key]))) > 1e-11:
                     raise ValueError(f"grounding delta mismatch: {key}")
             a1 = scene["association"]["A1"]
             a2 = scene["association"]["A2"]
@@ -193,11 +203,16 @@ def validate_summary(payload: Mapping[str, Any]) -> dict[str, Any]:
                 if abs(float(assoc_delta[key]) - (float(a2[key]) - float(a1[key]))) > 1e-11:
                     raise ValueError(f"association delta mismatch: {key}")
         headline = payload["headline_result"]
+        if headline.get("policy_id") != "Q1F":
+            raise ValueError("headline policy is not Q1F")
         if abs(
             float(headline["strict_delta_percentage_points"])
-            - 100.0 * float(cubicle["object_grounding"]["delta_q1_minus_q0"]["grounding_acc_at_1"])
+            - 100.0 * float(cubicle["object_grounding"]["delta_q1f_minus_q0"]["grounding_acc_at_1"])
         ) > 1e-9:
             raise ValueError("headline strict delta does not match Cubicle metrics")
+        if payload["claim_boundary"].get("cubicle_q1f_policy_semantically_validated") is not True:
+            raise ValueError("Cubicle frozen Q1F semantic validation was removed")
+
         if payload["claim_boundary"]["a2_pairwise_improvement_on_cubicle"] is not False:
             raise ValueError("A2 Cubicle association regression was hidden")
         serialized = json.dumps(payload["sources"], sort_keys=True)

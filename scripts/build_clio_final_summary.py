@@ -24,10 +24,10 @@ def main() -> None:
         project_root=Path(args.project_root),
         apartment_grounding_path=apartment / "grounding_benchmark.json",
         apartment_association_path=apartment / "association_benchmark.json",
-        apartment_relation_path=apartment / "relation-benchmark-v1/evaluation.json",
+        apartment_relation_path=apartment / "relation-benchmark-v2/evaluation.json",
         cubicle_grounding_path=cubicle / "grounding_benchmark.json",
         cubicle_association_path=cubicle / "association_benchmark.json",
-        cubicle_relation_path=cubicle / "relation-benchmark-v1/evaluation.json",
+        cubicle_relation_path=cubicle / "relation-benchmark-v2/evaluation.json",
         protocol_path=Path(args.protocol),
         created_at=args.created_at,
     )

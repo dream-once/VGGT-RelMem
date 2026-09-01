@@ -1,7 +1,7 @@
 {
-  "schema_version": "0.1",
-  "protocol_id": "CLIO-relation-confirmatory-v1",
-  "frozen_at": "2026-08-31T23:15:00+00:00",
+  "schema_version": "0.2",
+  "protocol_id": "CLIO-relation-confirmatory-v2",
+  "frozen_at": "2026-09-02T00:00:00+00:00",
   "design_scene": "apartment",
   "confirmation_scene": "cubicle",
   "confirmation_claim": "fixed-confirmatory-not-untouched-held-out",
@@ -28,10 +28,11 @@
     "calibration_status": "ENGINEERING_DEFAULT_UNCALIBRATED"
   },
   "evaluation": {
-    "positive_correct_strict": "answered top-1 object center lies inside official target OBB",
-    "positive_correct_uncertainty": "answered top-1 object center lies inside target OBB padded by measured alignment RMSE",
+    "positive_correct_strict": "answered top-1 target and the reference used for the relation both lie inside their official OBBs",
+    "positive_correct_uncertainty": "answered top-1 target and used reference both lie inside their OBBs padded by measured alignment RMSE",
     "negative_correct": "query abstained; correct rejections never increase answer coverage",
-    "relation_aware_negative_correct": "abstain reason is relation_conflict_or_boundary",
+    "reason_matched_negative_correct": "abstain reason is relation_conflict_or_boundary, irrespective of pair localization",
+    "relation_aware_negative_correct": "abstain reason is relation_conflict_or_boundary and both the target and used reference match their alignment-RMSE-padded GT OBBs",
     "risk_coverage": "risk among emitted answers as coverage grows over the full frozen query set",
     "failed_detection_or_association_remains_in_denominator": true,
     "official_clio_metric_claim": false

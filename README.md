@@ -8,31 +8,136 @@ FOUND-IT 明确不属于本项目范围：本仓库不接入、不复现，也�
 
 ## 最终结果边界
 
-当前结论为：**完成可复现基准、查询策略与关联策略隔离、可靠拒答协议、跨场景固定确认和失败分析**。Cubicle 的 18-task 对象定位策略在读取其数据内容前冻结，可报告限定到该协议的指标差异；新加入的关联/关系 evaluator 则是固定确认结果，不包装成完全未接触的 held-out。结果不支持 SOTA、优于 FOUND-IT 或完整闭环导航的结论，A2 在 Cubicle 的 pairwise F1 还低于 A1。定稿简历表述、真实数字边界和约 3 分钟演示讲稿见
+当前结论为：**完成可复现基准、查询策略与关联策略隔离、显式拒答协议、跨场景固定确认和失败分析**。Cubicle 的 18-task 对象定位 Q1F 策略在读取其数据内容前冻结，可报告限定到该协议的系统差值；关联与关系 evaluator 是后续固定确认，不包装成完全未接触的 held-out。结果不支持 SOTA、优于 FOUND-IT、已校准可靠性或完整闭环导航的结论。定稿简历表述、真实数字边界、5 分钟讲稿与追问答案见
 [项目对外表述与演示讲稿](docs/PROJECT_PRESENTATION.md)；当前完整录屏状态仍为
 `DEMO_RECORDING_PENDING`.
 
 ## Clio Apartment → Cubicle 最终实验（2026-08-31）
 
-所有任务分母均来自 Clio 的官方 task OBB；GT 与 VGGT→Clio Sim(3) 只进入 evaluator。对象定位使用“预测中心是否落在 oriented GT OBB 内”的自定义透明指标，不是 Clio 官方 IoU matching 指标。`±RMSE` 列表示给 GT OBB 加入实测配准 RMSE 后的敏感性结果。
+所有任务分母均来自 Clio 的官方 task OBB；GT 与 VGGT→Clio Sim(3) 只进入 evaluator。对象定位使用“预测中心是否落在 oriented GT OBB 内”的自定义透明指标，不是 Clio 官方 IoU matching 指标。冻结主策略是 Q1F：优先使用 Top-5+A2 永久对象，没有永久对象时确定性回退 Q0。`±RMSE` 表示给 GT OBB 加入实测配准 RMSE 后的敏感性结果。
 
 | 指标 | Apartment development | Cubicle fixed-confirmatory |
 |---|---:|---:|
 | Q0 Top-1 严格 Acc@1 | 11.11% | 27.78% |
-| Q1 Top-5+A2 严格 Acc@1 | 5.56% | 38.89% |
-| Q1−Q0 严格差值 | −5.56pp | **+11.11pp** |
-| Q1−Q0 `±RMSE` 差值 | −11.11pp | **+16.67pp** |
-| A1 pairwise F1 | 87.88% | **93.85%** |
+| Q1F Top-5+A2＋Q0 fallback 严格 Acc@1 | 11.11% | 38.89% |
+| Q1F−Q0 严格差值 | 0.00pp | **+11.11pp** |
+| Q1F−Q0 `±RMSE` 差值 | +5.56pp | **+16.67pp** |
+| A1 最终连通分量 pair F1 | 85.29% | **93.47%** |
 | A2 pairwise F1 | **88.14%** | 91.56% |
-| 方向关系正例严格 / `±RMSE` Acc@1 | 6.62% / 25.74% | 22.82% / 59.06% |
-| 负例拒答 / 方向冲突拒答 | 100.00% / 31.62% | 98.66% / 67.79% |
+| 关系正例 target+reference 严格 / `±RMSE` Acc@1 | 0.00% / 11.76% | 11.41% / 48.32% |
+| 负例拒答 / 原因命中 / 双端定位后关系拒答 | 100.00% / 31.62% / 10.29% | 98.66% / 67.79% / 44.97% |
 
-Cubicle 上 Q1 相比 Q0 的 +11.11pp 是 Top-K 多帧检索/lifting、可用 A2 对象记忆及整条策略共同产生的系统级结果，不能归因成“A2 关联本身更好”：A2 的 Cubicle F1 实际下降 2.28pp，主要因为 recall 从 95.62% 降到 90.72%。关系评测继续使用未校准的 0.60 工程阈值，因此 Brier/ECE 是诊断值，真实 calibration 仍未完成。
+Cubicle 上 Q1F 相比 Q0 的 +11.11pp 是 Top-K 多帧检索/lifting、可用 A2 对象记忆、确定性 fallback 及整条策略共同产生的 fixed-confirmatory 系统差值，不能归因成“A2 关联本身更好”：最终聚类同口径下，A2 F1 比 A1 低 1.91pp。关系正确性同时要求返回 target 和用于方向计算的 reference 命中各自 GT；旧 target-only 数字已废弃。关系仍使用未校准的 0.60 工程阈值，因此 Brier/ECE 只是诊断值，真实 calibration 尚未完成。
 
-公开仓库仅保留 10 KiB 聚合摘要、报告/配置 SHA-256 和边界说明，见 [Clio 最终轻量证据](evidence/final-clio/README.md)。原始 Clio 数据、YAML、mask、点云、视频和约 0.9 MiB pair-level 本地报告不进入 Git。clean clone 可运行：
+求职版不把 Q2 写成正式贡献：现有 Q2 仍是 `coverage_aware=false` 的停止策略诊断，没有带标签的真实查询策略消融。最终主表也不声称提供 Instance Recall、Duplicate Rate、Count Error、整条 36-task 延迟/峰值显存或统计置信区间；这些未测项目不会由工程计数替代。逐例真实失败见 [Clio 最终失败案例](docs/CLIO_FINAL_FAILURE_CASES.md)。
+
+公开仓库仅保留轻量聚合摘要、报告/配置 SHA-256 和边界说明，见 [Clio 最终轻量证据](evidence/final-clio/README.md)。原始 Clio 数据、YAML、mask、点云、视频和 pair-level 本地报告不进入 Git。clean clone 可运行：
 
 ```bash
 python -m scripts.validate_clio_final_summary
+```
+
+### Clio 最终 evaluator 重放命令
+
+公开 clone 只能校验聚合摘要。取得 Clio 数据并物化两个 run root 后，先核对任务清单；这一步明确依赖本地 YAML，不属于单测：
+
+```bash
+python -m scripts.validate_clio_query_manifest \
+  --query-manifest configs/clio_apartment_queries.json \
+  --task-yaml data/clio/apartment/metadata/tasks_apartment.yaml
+python -m scripts.validate_clio_query_manifest \
+  --query-manifest configs/clio_cubicle_queries.json \
+  --task-yaml data/clio/cubicle/tasks_cubicle.yaml
+```
+
+每个 task 的 GPU 物化顺序固定为 PE Top-5 检索 → SAM 3＋3D lifting → D7 cache → D8 memory → A2。下面是 Cubicle `get condiment packets` 的实际命令模板；Apartment 使用相同命令，只替换 scene、task、query 和输出目录。两个场景的几何生成命令见后文“VGGT-SLAM 2.0 几何接入”，每次运行的完整 argv 也保存在相应 `run_manifest.json`。
+
+```bash
+conda run --no-capture-output -p /root/autodl-tmp/envs/open_vocab \
+  python -m scripts.run_pe_topk \
+  --geometry runs/clio-cubicle-heldout-v1/geometry.npz \
+  --geometry-manifest runs/clio-cubicle-heldout-v1/geometry.manifest.json \
+  --anchor-poses runs/clio-cubicle-heldout-v1/geometry.anchor_poses.json \
+  --query 'get condiment packets' --k 1 3 5 --redundancy hybrid \
+  --min-frame-gap 2 --min-camera-distance 0.15 --min-view-angle-deg 3.0 \
+  --output-dir runs/clio-cubicle-heldout-v1/retrieval-get-condiment-packets
+
+conda run --no-capture-output -p /root/autodl-tmp/envs/open_vocab \
+  python -m scripts.run_sam_topk_lifting \
+  --selection runs/clio-cubicle-heldout-v1/retrieval-get-condiment-packets/topk_5.json \
+  --geometry runs/clio-cubicle-heldout-v1/geometry.npz \
+  --geometry-manifest runs/clio-cubicle-heldout-v1/geometry.manifest.json \
+  --sam-query 'condiment packets' --sam-threshold 0.5 \
+  --geometry-confidence-threshold 0.5 --min-points 30 --outlier-mad-scale 3.5 \
+  --sam3-checkpoint /root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt \
+  --output-dir runs/clio-cubicle-heldout-v1/d6-get-condiment-packets-k5
+
+python -m scripts.cache_scene_observations \
+  --d6-dir runs/clio-cubicle-heldout-v1/d6-get-condiment-packets-k5 \
+  --geometry-manifest runs/clio-cubicle-heldout-v1/geometry.manifest.json \
+  --image-folder data/clio/cubicle/images \
+  --output-dir runs/clio-cubicle-heldout-v1/d7-get-condiment-packets-k5 \
+  --scene-id clio-cubicle-get-condiment-packets
+python -m scripts.prepare_object_memory \
+  --cache runs/clio-cubicle-heldout-v1/d7-get-condiment-packets-k5/observations.json \
+  --output-dir runs/clio-cubicle-heldout-v1/d8-get-condiment-packets-k5
+python -m scripts.run_a2_association \
+  --memory runs/clio-cubicle-heldout-v1/d8-get-condiment-packets-k5/object_memory.json \
+  --output-dir runs/clio-cubicle-heldout-v1/a2-get-condiment-packets-k5/prediction
+```
+
+36 个 task 均完成物化后，用下面的 CPU evaluator 命令重建最终 Apartment/Cubicle 报告。`relation-benchmark-v2` 必须是空目录；重复运行时请选择新的空输出目录或先归档旧目录。
+
+```bash
+python -m scripts.evaluate_clio_grounding_benchmark \
+  --query-manifest configs/clio_apartment_queries.json \
+  --task-yaml data/clio/apartment/metadata/tasks_apartment.yaml \
+  --world-alignment runs/clio-apartment-dev-v2-lc/vggt_to_clio_world_alignment.json \
+  --run-root runs/clio-apartment-dev-v2-lc \
+  --output runs/clio-apartment-dev-v2-lc/grounding_benchmark.json
+python -m scripts.evaluate_clio_grounding_benchmark \
+  --query-manifest configs/clio_cubicle_queries.json \
+  --task-yaml data/clio/cubicle/tasks_cubicle.yaml \
+  --world-alignment runs/clio-cubicle-heldout-v1/vggt_to_clio_world_alignment.json \
+  --run-root runs/clio-cubicle-heldout-v1 \
+  --frozen-policy configs/clio_cubicle_frozen_policy.json \
+  --output runs/clio-cubicle-heldout-v1/grounding_benchmark.json
+
+python -m scripts.evaluate_clio_association \
+  --query-manifest configs/clio_apartment_queries.json \
+  --task-yaml data/clio/apartment/metadata/tasks_apartment.yaml \
+  --world-alignment runs/clio-apartment-dev-v2-lc/vggt_to_clio_world_alignment.json \
+  --run-root runs/clio-apartment-dev-v2-lc \
+  --output runs/clio-apartment-dev-v2-lc/association_benchmark.json
+python -m scripts.evaluate_clio_association \
+  --query-manifest configs/clio_cubicle_queries.json \
+  --task-yaml data/clio/cubicle/tasks_cubicle.yaml \
+  --world-alignment runs/clio-cubicle-heldout-v1/vggt_to_clio_world_alignment.json \
+  --run-root runs/clio-cubicle-heldout-v1 \
+  --output runs/clio-cubicle-heldout-v1/association_benchmark.json
+
+python -m scripts.run_clio_relation_benchmark \
+  --query-manifest configs/clio_apartment_queries.json \
+  --task-yaml data/clio/apartment/metadata/tasks_apartment.yaml \
+  --world-alignment runs/clio-apartment-dev-v2-lc/vggt_to_clio_world_alignment.json \
+  --geometry-anchor-poses runs/clio-apartment-dev-v2-lc/geometry.anchor_poses.json \
+  --run-root runs/clio-apartment-dev-v2-lc \
+  --output-dir runs/clio-apartment-dev-v2-lc/relation-benchmark-v2
+python -m scripts.run_clio_relation_benchmark \
+  --query-manifest configs/clio_cubicle_queries.json \
+  --task-yaml data/clio/cubicle/tasks_cubicle.yaml \
+  --world-alignment runs/clio-cubicle-heldout-v1/vggt_to_clio_world_alignment.json \
+  --geometry-anchor-poses runs/clio-cubicle-heldout-v1/geometry.anchor_poses.json \
+  --run-root runs/clio-cubicle-heldout-v1 \
+  --output-dir runs/clio-cubicle-heldout-v1/relation-benchmark-v2
+
+python -m scripts.validate_clio_relation_benchmark \
+  runs/clio-apartment-dev-v2-lc/relation-benchmark-v2
+python -m scripts.validate_clio_relation_benchmark \
+  runs/clio-cubicle-heldout-v1/relation-benchmark-v2
+python -m scripts.build_clio_final_summary
+python -m scripts.validate_clio_final_summary \
+  evidence/final-clio/benchmark_summary.json
 ```
 
 ## 目录
@@ -829,14 +934,14 @@ python -m scripts.evaluate \
 - 已完成 D12：A2 complete-link、证据记录和反桥接测试保持冻结；完整 GPU outcome 驱动的无标签 CPU prediction 重放为 PASS，没有新增标签评测或 F1 结论。
 - 已完成 D13：Q0 继续保持 `upstream-aligned`；10/10 静态语义检查与真实 `frame_0001` B0/B1 单视角 GPU 补验均通过，仍不称 FOUND-IT 官方复现。
 - 已完成 D14：Q1 在完整真实 GPU outcome cache 上按 metadata 先选后揭示，K=1 与 Q0 一致；本次只验收 prediction replay，不新增 recall 数字。
-- 已完成 D15：Q2 retrieval＋pose-novelty search 在完整真实 cache 上跑满 5 步并通过 trace 重算；`new_observation_count=14`（legacy 字段 `observed_gain`）、`coverage_aware=false`、`performance_claim=null`。
+- D15/Q2 归入诊断：retrieval＋pose-novelty trace 可重算，但 `coverage_aware=false`、`performance_claim=null`，不进入求职版主贡献或最终 Clio 主表。
 - 已完成 D15.5：95 帧长轨迹生成可审计的场景级 RGB 点云、轨迹、Top-K 视角、对象记忆、PLY/MP4/Viser；3/8 个预测对象满足严格对象中心多视角门槛。
 - 已完成 D16＋GPU 数据验收：`apartment=development` 与 `cubicle=fixed-confirmatory` 均已本地物化和对齐；192/172 帧几何、18+18 官方 task 分母及 evaluator-only Sim(3) 通过重放。
-- 已完成 D17 真实数据补验：Apartment/Cubicle 分别完成 136+136 与 149+149 个方向正负查询；正确拒答不计入 selective answer coverage，0.60 阈值仍明确未校准。
-- 已完成 D18＋Clio 完整场景补验：Cubicle 的 Q0→Q1 严格 Acc@1 为 27.78%→38.89%，但 A2 pairwise F1 低于 A1，因此只报告系统级对象定位差值，不宣传 A2 单项改进。
+- 已完成 D17 严格重算：Apartment/Cubicle 分别为 136+136 与 149+149 个方向正负查询；正例同时要求 target/reference 命中 GT，负例同时报告端到端拒答、原因命中和双端定位后的关系拒答；0.60 阈值仍明确未校准。
+- 已完成 D18＋Clio 完整场景补验：冻结 Q1F 在 Cubicle 的严格 Acc@1 为 27.78%→38.89%；A1/A2 均按最终聚类同簇关系计分，A2 F1 仍低于 A1，因此只报告 fixed-confirmatory 系统差值。
 - 已完成 D19＋Clio 工程消融：Q2 的 pose-novelty/gain-patience 与 A2 的 semantic/OBB/quality/complete-link 单因素变体均可确定性重放；Clio 结果保留停止过早和 0 永久对象的失败，真实标签指标仍待后续。
 - 已完成 D20 CPU/source：单个 CPU 命令可重跑 D16–D19 validator、从规范 JSON 重建 Q×A/关系/消融表、核对 README 数字，并在移动目录中逐字节复验 retained outputs。
 - 已完成 D21＋post-D21 Clio 结果集成：轻量最终摘要绑定本地完整报告 hash、冻结关系配置、样本量、分母和适用边界；Cubicle 不再是未运行状态。
-- 仍未完成的是独立真实 calibration、统计显著性分析、带标签查询策略消融与约 3 分钟录屏；FOUND-IT 同条件对照明确不在本项目范围，这些实际缺口也不被写成 SOTA 或普遍优越性结论。
+- 仍未完成的是独立真实 calibration、统计置信区间、带标签查询策略消融、Instance Recall/Duplicate Rate/Count Error、整条最终延迟/峰值显存和约 3 分钟配音录屏；FOUND-IT 同条件对照明确不在项目范围，这些缺口不被写成已完成贡献。
 - GT depth、pose、OBB 只应进入 evaluator 或 geometry oracle，不得进入主推理输入。
 - 当前是目标定位感知前端，不包含路径规划、控制或闭环导航，因此不称“完整导航系统”。

@@ -1,6 +1,12 @@
+from types import SimpleNamespace
 import unittest
 
-from relground.clio_association_benchmark import _accumulate, _metrics, label_pair
+from relground.clio_association_benchmark import (
+    _a1_component_prediction_map,
+    _accumulate,
+    _metrics,
+    label_pair,
+)
 
 
 class ClioAssociationBenchmarkTests(unittest.TestCase):
@@ -25,6 +31,22 @@ class ClioAssociationBenchmarkTests(unittest.TestCase):
         self.assertEqual(metrics["pair_count"], 2)
         self.assertEqual(metrics["precision"], 0.5)
         self.assertEqual(metrics["recall"], 1.0)
+
+    def test_a1_metrics_use_production_component_closure(self) -> None:
+        observations = [SimpleNamespace(obs_id=value) for value in ("a", "b", "c")]
+        pairs = [
+            SimpleNamespace(obs_id_a="a", obs_id_b="b", predicted_same=True),
+            SimpleNamespace(obs_id_a="a", obs_id_b="c", predicted_same=False),
+            SimpleNamespace(obs_id_a="b", obs_id_b="c", predicted_same=True),
+        ]
+        self.assertEqual(
+            _a1_component_prediction_map(observations, pairs),
+            {
+                ("a", "b"): True,
+                ("a", "c"): True,
+                ("b", "c"): True,
+            },
+        )
 
 
 if __name__ == "__main__":

@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-09-01 post-D21 Apartment/Cubicle fixed-confirmatory benchmark publication
+- Updated: 2026-09-02 strict Apartment/Cubicle evaluator repair and portfolio handoff
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `ea09242b8dd71bbbe01f1de4473a436362767912`
-- Current milestone: the full Apartment development and Cubicle fixed-confirmatory GPU pipeline is complete on 192/172 geometry frames. The frozen Cubicle 18-task object-grounding result is Q0 `27.78%` versus Q1 Top-5+A2 `38.89%` strict Acc@1 (`+11.11pp`); A2 pairwise F1 is lower than A1, so the gain is explicitly system-level rather than attributed to A2 alone.
-- Next milestone: user review of the public result package, then an independent calibration split, labelled query-policy ablation/statistical analysis and a complete demonstration. FOUND-IT is outside project scope and is not a future task. Dataset redistribution remains disallowed until its licence is verified.
-- Publication state: source, 254 CPU tests, Apartment/Cubicle association and relation validators, D20/D21, and the lightweight final Clio summary pass. Raw Clio files, task YAML, full reports, geometry, masks, point clouds and videos remain local-only.
+- Publication target and pre-publication HEAD: `main` at `22daa3f2e7f6839d9d775b26856348cba6c7f98a`
+- Current milestone: the full Apartment development and Cubicle fixed-confirmatory GPU pipeline is complete on 192/172 geometry frames. The frozen Cubicle 18-task Q1F result is Q0 `27.78%` versus Top-5+A2 with deterministic Q0 fallback `38.89%` strict Acc@1 (`+11.11pp`). Strict association and relation evaluators now score final A1 components and require both target and reference to hit their GT objects.
+- Next milestone: publish a research-complete snapshot, curate the internship-facing main branch, archive superseded tests outside the working tree, and record a five-minute demonstration. FOUND-IT is outside project scope and is not a future task. Dataset redistribution remains disallowed until its licence is verified.
+- Publication state: all 262 local CPU tests and the 254-test public-clone subset pass. Apartment/Cubicle query-manifest, grounding, association and relation validators, D20/D21, and the lightweight final Clio summary all pass. Raw Clio files, task YAML, full reports, geometry, masks, point clouds and videos remain local-only.
 
 ## Document-day progress
 
@@ -34,9 +34,9 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 | D16 | Apartment and Cubicle local data complete | Public access needed no author approval. Both scenes, COLMAP poses and evaluator-only world alignments are locally materialized; raw redistribution remains blocked by unverified data licence. |
 | D17 | Real fixed-confirmatory evaluation complete; calibration pending | Apartment/Cubicle contain 272/298 positive/negative direction queries. Selective answer risk excludes rejected samples; threshold `0.60` remains an uncalibrated engineering default. |
 | D18 | Full-scene object grounding complete | The 18-task Cubicle frozen policy gives Q0 `27.78%` and Q1 Top-5+A2 `38.89%` strict Acc@1. The result is fixed-confirmatory, not an untouched held-out or SOTA claim. |
-| D19 | Labelled association complete; query-policy ablation pending | Apartment A2 F1 is `88.14%` versus A1 `87.88%`; Cubicle A2 is `91.56%` versus A1 `93.85%`. This preserves the negative A2 result rather than misattributing the system gain. |
+| D19 | Labelled association complete; query-policy ablation pending | Under final-cluster scoring, Apartment A2 F1 is `88.14%` versus A1 `85.29%`; Cubicle A2 is `91.56%` versus A1 `93.47%`. This preserves the negative Cubicle A2 result rather than misattributing the system gain. |
 | D20 | Complete at reproducibility scope | Canonical JSON, clean-clone validation and a lightweight final summary preserve metrics, denominators, hashes and boundaries without publishing Clio binaries. |
-| D21 | GPU and CPU complete with explicit boundaries | Nine result-card entries and the final Apartment→Cubicle supplement pass. Calibration, statistical analysis, labelled query-policy ablation and a three-minute demo remain; FOUND-IT is explicitly out of scope. |
+| D21 | GPU and CPU complete with explicit boundaries | Nine result-card entries and the strict Apartment→Cubicle supplement pass. Calibration, statistical analysis, labelled query-policy ablation and a five-minute demo recording remain; FOUND-IT is explicitly out of scope. |
 
 ## D3 acceptance evidence
 
@@ -232,15 +232,15 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 - Apartment development uses 192 geometry frames; Cubicle fixed-confirmatory uses 172. Both contain 18 official task OBB denominators, while GT and VGGT→Clio Sim(3) are evaluator-only.
 - Cubicle Q0 Top-1 strict center Acc@1 is `27.78%`; Q1 Top-5+A2 is `38.89%`, a frozen-protocol system delta of `+11.11pp`. With the measured alignment-RMSE padding, the delta is `+16.67pp`.
-- Association is evaluated independently: Apartment A1/A2 F1 is `87.88%/88.14%`; Cubicle is `93.85%/91.56%`. Therefore the object-grounding gain is attributed to the complete Top-K multiframe/lifting/object-memory pipeline, not to A2 alone.
-- Fixed-confirmatory Cubicle directional positives have strict/RMSE-padded Acc@1 `22.82%/59.06%`; negative rejection is `98.66%`, and explicit relation-conflict rejection is `67.79%`. The `0.60` threshold is still uncalibrated.
+- Association is evaluated on final cluster membership: Apartment A1/A2 F1 is `85.29%/88.14%`; Cubicle is `93.47%/91.56%`. Therefore the object-grounding gain is attributed to the complete Top-K multiframe/lifting/object-memory/fallback pipeline, not to A2 alone.
+- Directional positives now require both target and reference to hit their GT objects. Apartment/Cubicle strict/RMSE-padded Acc@1 is `0.00%/11.76%` and `11.41%/48.32%`; negative rejection is `100%/98.66%`, while relation-aware rejection after both objects are grounded is only `10.29%/44.97%`. The `0.60` threshold is still uncalibrated.
 - `evidence/final-clio` contains only a roughly 10 KiB aggregate summary, validation report and source hashes. Six full deterministic reports total about 0.9 MiB locally and are ignored together with raw data, masks, point clouds and videos.
 - FOUND-IT is not part of this project definition. It is neither an implementation target nor an outstanding comparison; no SOTA or superiority claim is made.
 
 ## Publication verification
 
-- `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -s tests -q`: all 254 tests pass for the final publication candidate.
-- Apartment/Cubicle association validators, relation validators, the Clio final-summary validator, D20 and D21 all report `PASS`.
+- `python -m unittest discover -s tests -v`: all 262 local tests pass; `python -m scripts.verify_public_clone --verbosity 0` selects and passes 254 tracked-only tests.
+- Apartment/Cubicle query-manifest, grounding, association and relation validators, the Clio final-summary validator, D20 and D21 all report `PASS` after the strict evaluator repair.
 - `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 206 tests passed after the Clio GPU development replay and D16–D21 corrections.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
@@ -306,13 +306,12 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Let the user review the public source, lightweight final evidence and honest attribution boundary.
-2. If continuing, create an independent real calibration split and run labelled Q0/Q1 query-policy ablations plus confidence intervals/significance analysis without retuning on Cubicle.
-3. Produce the final approximately three-minute demonstration and resolve the Clio data licence before redistributing any raw assets. FOUND-IT remains outside scope.
+1. Preserve this complete research state in Git history and a named research-complete tag.
+2. Curate the internship-facing main branch around the runtime pipeline and a compact core test set; keep superseded tests in a recoverable local archive.
+3. Record the final approximately five-minute demonstration. Independent calibration, labelled policy ablation and statistical intervals are optional research follow-ups rather than blockers for the internship project. FOUND-IT remains outside scope.
 
 ## Publication history
 
-- 2026-08-29: Published the D11–D15 GPU completion validator, D15.5 long-trajectory scene-memory visualization/audit/validator, 147-test regression, updated documentation, memory and baseline without publishing binary run artifacts (pre-publication HEAD `3073b46`).
 - 2026-08-30: Published D16 fail-closed Clio data protocol without downloading data (`db44e9f`).
 - 2026-08-30: Published D17 label-free relation prediction, abstention evaluation and calibration boundaries (`5ea7b86`).
 - 2026-08-30: Published D18 frozen Q×A experiment protocol and development/synthetic replay (`79d7d12`).
@@ -322,6 +321,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-30: Published tolerant D15 replay, corrected Q2 semantics and portable GPU/D15/D15.5 evidence; 190 tests and final validators pass (commit containing this entry, pre-publication parent `5dc3a59`).
 - 2026-08-30: Published corrected D17 selective risk, complete-cache D18, Clio apartment RTX 4090 development replay through D21, 206 tests and lightweight Week 4 evidence (commit containing this entry, pre-publication parent `23f8b61`).
 - 2026-09-01: Published full Apartment development and Cubicle fixed-confirmatory GPU benchmarks, labelled association and relation/rejection evaluation, lightweight final evidence, honest system-level `+11.11pp` Cubicle grounding delta, 254 CPU tests, and an explicit FOUND-IT out-of-scope boundary (commit containing this entry, pre-publication parent `ea09242`).
+- 2026-09-02: Prepared the strict evaluator repair: Q1F fallback is explicit, A1 is scored on final connected components, relation positives require both target and reference, all 262 local tests and all final Clio validators pass, and the portfolio-cleanup handoff is recorded (pre-publication HEAD `22daa3f`).
 
 ## Scope reminder
 

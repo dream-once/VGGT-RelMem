@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.1",
+  "schema_version": "0.2",
   "status": "PASS",
   "stage": "clio-final-benchmark-summary",
   "project_positioning": "VGGT-SLAM geometry plus an auditable semantic-localization reliability layer",
@@ -11,6 +11,7 @@
       "object_grounding": {
         "metric": "predicted center inside official oriented GT OBB",
         "official_clio_metric_claim": false,
+        "primary_policy": "Q1F frozen Top-5+A2 with deterministic Q0 fallback",
         "q0_top1": {
           "task_count": 18,
           "answered_tasks": 13,
@@ -20,7 +21,7 @@
           "conditional_acc_at_1": 0.153846153846,
           "conditional_acc_at_1_with_alignment_rmse_margin": 0.846153846154
         },
-        "q1_top5_a2": {
+        "q1_top5_a2_diagnostic": {
           "task_count": 18,
           "answered_tasks": 10,
           "coverage": 0.555555555556,
@@ -29,10 +30,24 @@
           "conditional_acc_at_1": 0.1,
           "conditional_acc_at_1_with_alignment_rmse_margin": 0.9
         },
-        "delta_q1_minus_q0": {
+        "q1f_top5_a2_with_q0_fallback": {
+          "task_count": 18,
+          "answered_tasks": 13,
+          "coverage": 0.722222222222,
+          "grounding_acc_at_1": 0.111111111111,
+          "grounding_acc_at_1_with_alignment_rmse_margin": 0.666666666667,
+          "conditional_acc_at_1": 0.153846153846,
+          "conditional_acc_at_1_with_alignment_rmse_margin": 0.923076923077
+        },
+        "delta_q1_diagnostic_minus_q0": {
           "coverage": -0.166666666667,
           "grounding_acc_at_1": -0.055555555556,
           "grounding_acc_at_1_with_alignment_rmse_margin": -0.111111111111
+        },
+        "delta_q1f_minus_q0": {
+          "coverage": 0.0,
+          "grounding_acc_at_1": 0.0,
+          "grounding_acc_at_1_with_alignment_rmse_margin": 0.055555555556
         }
       },
       "association": {
@@ -45,13 +60,13 @@
           "positive_pairs": 29,
           "negative_pairs": 24,
           "true_positive": 29,
-          "false_positive": 8,
-          "true_negative": 16,
+          "false_positive": 10,
+          "true_negative": 14,
           "false_negative": 0,
-          "precision": 0.783783783784,
+          "precision": 0.74358974359,
           "recall": 1.0,
-          "f1": 0.878787878788,
-          "accuracy": 0.849056603774,
+          "f1": 0.852941176471,
+          "accuracy": 0.811320754717,
           "associable_task_count": 8,
           "recovered_associable_tasks": 8,
           "conditional_associable_task_recall": 1.0,
@@ -75,23 +90,25 @@
           "full_pipeline_association_task_recall": 0.444444444444
         },
         "delta_A2_minus_A1": {
-          "precision": 0.08288288288299994,
+          "precision": 0.12307692307700002,
           "recall": -0.103448275862,
-          "f1": 0.0025680534149999934,
-          "accuracy": 0.018867924527999902
+          "f1": 0.02841475573200003,
+          "accuracy": 0.056603773584999906
         }
       },
       "relation_and_abstention": {
         "query_count": 272,
         "positive_count": 136,
         "negative_count": 136,
-        "positive_grounding_acc_at_1_strict": 0.066176470588,
-        "positive_grounding_acc_at_1_alignment_rmse_padded": 0.257352941176,
+        "positive_pair_grounding_acc_at_1_strict": 0.0,
+        "positive_pair_grounding_acc_at_1_alignment_rmse_padded": 0.117647058824,
         "negative_rejection_accuracy": 1.0,
-        "relation_aware_negative_rejection_accuracy": 0.316176470588,
-        "task_accuracy_alignment_rmse_padded": 0.628676470588,
+        "reason_matched_negative_rejection_accuracy": 0.316176470588,
+        "relation_aware_negative_rejection_accuracy": 0.102941176471,
+        "end_to_end_task_accuracy_alignment_rmse_padded": 0.558823529412,
+        "pair_grounded_task_accuracy_alignment_rmse_padded": 0.110294117647,
         "answer_coverage": 0.143382352941,
-        "answer_aurc_discrete": 0.034342777495,
+        "answer_aurc_discrete": 0.498710417605,
         "answerability_proxy_brier": 0.351054837089,
         "answerability_proxy_ece_10": 0.366194795761,
         "calibration_status": "ENGINEERING_DEFAULT_UNCALIBRATED"
@@ -104,6 +121,7 @@
       "object_grounding": {
         "metric": "predicted center inside official oriented GT OBB",
         "official_clio_metric_claim": false,
+        "primary_policy": "Q1F frozen Top-5+A2 with deterministic Q0 fallback",
         "q0_top1": {
           "task_count": 18,
           "answered_tasks": 13,
@@ -113,7 +131,7 @@
           "conditional_acc_at_1": 0.384615384615,
           "conditional_acc_at_1_with_alignment_rmse_margin": 0.769230769231
         },
-        "q1_top5_a2": {
+        "q1_top5_a2_diagnostic": {
           "task_count": 18,
           "answered_tasks": 14,
           "coverage": 0.777777777778,
@@ -122,7 +140,21 @@
           "conditional_acc_at_1": 0.5,
           "conditional_acc_at_1_with_alignment_rmse_margin": 0.928571428571
         },
-        "delta_q1_minus_q0": {
+        "q1f_top5_a2_with_q0_fallback": {
+          "task_count": 18,
+          "answered_tasks": 14,
+          "coverage": 0.777777777778,
+          "grounding_acc_at_1": 0.388888888889,
+          "grounding_acc_at_1_with_alignment_rmse_margin": 0.722222222222,
+          "conditional_acc_at_1": 0.5,
+          "conditional_acc_at_1_with_alignment_rmse_margin": 0.928571428571
+        },
+        "delta_q1_diagnostic_minus_q0": {
+          "coverage": 0.055555555556,
+          "grounding_acc_at_1": 0.111111111111,
+          "grounding_acc_at_1_with_alignment_rmse_margin": 0.166666666667
+        },
+        "delta_q1f_minus_q0": {
           "coverage": 0.055555555556,
           "grounding_acc_at_1": 0.111111111111,
           "grounding_acc_at_1_with_alignment_rmse_margin": 0.166666666667
@@ -137,14 +169,14 @@
           "pair_count": 1375,
           "positive_pairs": 981,
           "negative_pairs": 394,
-          "true_positive": 938,
-          "false_positive": 80,
-          "true_negative": 314,
-          "false_negative": 43,
-          "precision": 0.92141453831,
-          "recall": 0.956167176351,
-          "f1": 0.938469234617,
-          "accuracy": 0.910545454545,
+          "true_positive": 981,
+          "false_positive": 137,
+          "true_negative": 257,
+          "false_negative": 0,
+          "precision": 0.877459749553,
+          "recall": 1.0,
+          "f1": 0.934730824202,
+          "accuracy": 0.900363636364,
           "associable_task_count": 13,
           "recovered_associable_tasks": 13,
           "conditional_associable_task_recall": 1.0,
@@ -168,23 +200,25 @@
           "full_pipeline_association_task_recall": 0.722222222222
         },
         "delta_A2_minus_A1": {
-          "precision": 0.002780684951000034,
-          "recall": -0.048929663608999974,
-          "f1": -0.02283137453500006,
-          "accuracy": -0.029818181818
+          "precision": 0.04673547370800002,
+          "recall": -0.09276248725799996,
+          "f1": -0.019092964120000055,
+          "accuracy": -0.019636363636999943
         }
       },
       "relation_and_abstention": {
         "query_count": 298,
         "positive_count": 149,
         "negative_count": 149,
-        "positive_grounding_acc_at_1_strict": 0.228187919463,
-        "positive_grounding_acc_at_1_alignment_rmse_padded": 0.590604026846,
+        "positive_pair_grounding_acc_at_1_strict": 0.114093959732,
+        "positive_pair_grounding_acc_at_1_alignment_rmse_padded": 0.48322147651,
         "negative_rejection_accuracy": 0.986577181208,
-        "relation_aware_negative_rejection_accuracy": 0.677852348993,
-        "task_accuracy_alignment_rmse_padded": 0.788590604027,
+        "reason_matched_negative_rejection_accuracy": 0.677852348993,
+        "relation_aware_negative_rejection_accuracy": 0.44966442953,
+        "end_to_end_task_accuracy_alignment_rmse_padded": 0.734899328859,
+        "pair_grounded_task_accuracy_alignment_rmse_padded": 0.46644295302,
         "answer_coverage": 0.305369127517,
-        "answer_aurc_discrete": 0.003723506857,
+        "answer_aurc_discrete": 0.358822624073,
         "answerability_proxy_brier": 0.190978951557,
         "answerability_proxy_ece_10": 0.237495974996,
         "calibration_status": "ENGINEERING_DEFAULT_UNCALIBRATED"
@@ -192,15 +226,17 @@
     }
   },
   "headline_result": {
-    "scope": "Cubicle 18-task frozen object-grounding benchmark",
+    "scope": "Cubicle 18-task fixed-confirmatory frozen-Q1F object-grounding benchmark",
+    "policy_id": "Q1F",
     "q0_strict_acc_at_1": 0.277777777778,
-    "q1_strict_acc_at_1": 0.388888888889,
+    "q1f_strict_acc_at_1": 0.388888888889,
     "strict_delta_percentage_points": 11.1111111111,
     "alignment_rmse_padded_delta_percentage_points": 16.6666666667,
-    "attribution": "Top-K multiframe retrieval/lifting plus available A2 object memory; not evidence that A2 pairwise association alone improves"
+    "attribution": "Frozen Q1F system: Top-K multiframe retrieval/lifting, available A2 object memory, and deterministic Q0 fallback; not evidence that A2 association alone improves"
   },
   "claim_boundary": {
     "cubicle_object_grounding_policy_frozen_before_data_inspection": true,
+    "cubicle_q1f_policy_semantically_validated": true,
     "association_and_relation_reports_are_fixed_confirmatory_not_untouched_held_out": true,
     "a2_pairwise_improvement_on_cubicle": false,
     "real_calibration_complete": false,
@@ -213,37 +249,37 @@
   "sources": {
     "apartment_grounding": {
       "path": "runs/clio-apartment-dev-v2-lc/grounding_benchmark.json",
-      "sha256": "78266d0ec618213fd0285c52b95327d0c3247f3db88f22954db6f2080abb7b14",
+      "sha256": "ffbb1e4e52d27c352b728e95b9df8a704af82731f8968d1b3ecad56b1de7effc",
       "retention": "local_ignored_full_report"
     },
     "apartment_association": {
       "path": "runs/clio-apartment-dev-v2-lc/association_benchmark.json",
-      "sha256": "eab36d29e80e26da3f671189fc3db933a197510dcc94b64fd6463fd735213cf2",
+      "sha256": "10c8f8700df493f8e9c044e0bd465cf1ea9882a62190a797936156170d2090db",
       "retention": "local_ignored_full_report"
     },
     "apartment_relation": {
-      "path": "runs/clio-apartment-dev-v2-lc/relation-benchmark-v1/evaluation.json",
-      "sha256": "757222d67c9eae55ea3e6b5502d7301540af972155c762ef94d3521926f78f78",
+      "path": "runs/clio-apartment-dev-v2-lc/relation-benchmark-v2/evaluation.json",
+      "sha256": "df741330a3db88457127ae25b86780068878a5f4717ab3b577aebbb3ff8fc716",
       "retention": "local_ignored_full_report"
     },
     "cubicle_grounding": {
       "path": "runs/clio-cubicle-heldout-v1/grounding_benchmark.json",
-      "sha256": "0e7ed85f72a79646eb738b7fe7beb37400c66988a610f4fac11a6ab2f34bf57b",
+      "sha256": "2596cdc0ce28efa2d50469172719430ccae9db04f2d893b6f41a2f5ef6c9e5d6",
       "retention": "local_ignored_full_report"
     },
     "cubicle_association": {
       "path": "runs/clio-cubicle-heldout-v1/association_benchmark.json",
-      "sha256": "c1a6c234d9a1324ab4505e24a34d8fd86bf4ecd569c5010f6e5a01c9a8d925b2",
+      "sha256": "9708dd3e676bdc4a8992d9d74b2772113faae271fcee5f1c1f8f3656cd964360",
       "retention": "local_ignored_full_report"
     },
     "cubicle_relation": {
-      "path": "runs/clio-cubicle-heldout-v1/relation-benchmark-v1/evaluation.json",
-      "sha256": "1674840be402ae7f4ccb439c66c83028a40e231208bcdc7d6fc8b37bb730b6bf",
+      "path": "runs/clio-cubicle-heldout-v1/relation-benchmark-v2/evaluation.json",
+      "sha256": "6e6f1c399ec8bcc179a98aab71c3bca3715ac372ea126b20dbd9fd363605bb07",
       "retention": "local_ignored_full_report"
     },
     "relation_protocol": {
       "path": "configs/clio_relation_confirmatory_protocol.json",
-      "sha256": "2be733b382d346cc064082ed62c4014654fab554844a34c7ab3e4511539b2175",
+      "sha256": "9bf7798c7bed97b45c4e16ebe35bb6064f34fa9f41d7a08a5fd2ffa54f654487",
       "retention": "local_ignored_full_report"
     }
   },
@@ -252,5 +288,5 @@
     "summary_omits": "Clio RGB/depth/bag, task YAML, masks, point clouds, videos, and pair-level rows",
     "full_report_replay": "requires locally acquired public Clio scenes"
   },
-  "created_at": "2026-08-31T15:25:53.064093+00:00"
+  "created_at": "2026-09-01T16:18:12.247190+00:00"
 }

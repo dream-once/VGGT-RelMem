@@ -29,7 +29,7 @@ from .relation_protocol import (
 from .schemas import MemoryObject
 
 
-SCHEMA_VERSION = "0.1"
+SCHEMA_VERSION = "0.2"
 STAGE = "clio-relation-confirmatory-benchmark"
 OPPOSITE = {
     "left_of": "right_of",
@@ -251,6 +251,7 @@ def build_relation_queries_and_labels(
                 {"query_id": negative_id, "relation": OPPOSITE[positive_relation], **common},
             ])
             target_matches = matches[target_task]
+            reference_matches = matches[reference_task]
             labels.extend([
                 {
                     "query_id": positive_id,
@@ -259,8 +260,10 @@ def build_relation_queries_and_labels(
                     "reference_task": reference_task,
                     "relation": positive_relation,
                     "signed_axis_distance_m": magnitude,
-                    "acceptable_object_ids_strict": target_matches["strict"],
-                    "acceptable_object_ids_alignment_rmse_padded": target_matches["alignment_rmse_padded"],
+                    "acceptable_target_object_ids_strict": target_matches["strict"],
+                    "acceptable_target_object_ids_alignment_rmse_padded": target_matches["alignment_rmse_padded"],
+                    "acceptable_reference_object_ids_strict": reference_matches["strict"],
+                    "acceptable_reference_object_ids_alignment_rmse_padded": reference_matches["alignment_rmse_padded"],
                     "expected_abstain_reason": None,
                 },
                 {
@@ -270,8 +273,10 @@ def build_relation_queries_and_labels(
                     "reference_task": reference_task,
                     "relation": OPPOSITE[positive_relation],
                     "signed_axis_distance_m": -magnitude,
-                    "acceptable_object_ids_strict": [],
-                    "acceptable_object_ids_alignment_rmse_padded": [],
+                    "acceptable_target_object_ids_strict": target_matches["strict"],
+                    "acceptable_target_object_ids_alignment_rmse_padded": target_matches["alignment_rmse_padded"],
+                    "acceptable_reference_object_ids_strict": reference_matches["strict"],
+                    "acceptable_reference_object_ids_alignment_rmse_padded": reference_matches["alignment_rmse_padded"],
                     "expected_abstain_reason": "relation_conflict_or_boundary",
                 },
             ])
@@ -301,6 +306,34 @@ def build_relation_queries_and_labels(
     return _rounded(query_bundle), _rounded(label_bundle), _rounded(generation)
 
 
+def _pair_gt_matches(
+    label: Mapping[str, Any],
+    *,
+    predicted_target_id: str | None,
+    predicted_reference_id: str | None,
+) -> dict[str, bool]:
+    """Check both semantic roles against their evaluator-only GT instances."""
+
+    target_strict = predicted_target_id in label["acceptable_target_object_ids_strict"]
+    target_padded = predicted_target_id in label[
+        "acceptable_target_object_ids_alignment_rmse_padded"
+    ]
+    reference_strict = predicted_reference_id in label[
+        "acceptable_reference_object_ids_strict"
+    ]
+    reference_padded = predicted_reference_id in label[
+        "acceptable_reference_object_ids_alignment_rmse_padded"
+    ]
+    return {
+        "target_strict": target_strict,
+        "target_padded": target_padded,
+        "reference_strict": reference_strict,
+        "reference_padded": reference_padded,
+        "pair_strict": target_strict and reference_strict,
+        "pair_padded": target_padded and reference_padded,
+    }
+
+
 def evaluate_clio_relation_prediction(
     prediction: Mapping[str, Any],
     labels: Mapping[str, Any],
@@ -315,17 +348,25 @@ def evaluate_clio_relation_prediction(
     answered_flags: list[bool] = []
     answer_correct: list[bool] = []
     answerability: list[bool] = []
-    positive_strict = positive_padded = negative_rejected = relation_negative = 0
+    positive_strict = positive_padded = negative_rejected = 0
+    reason_matched_negative = pair_grounded_relation_negative = 0
     positive_count = negative_count = 0
     reasons: dict[str, int] = {}
     for query, result in zip(prediction["queries"], prediction["results"]):
         label = label_by_id[str(query["query_id"])]
         predicted_id = result["ranked_ids"][0] if result["ranked_ids"] else None
+        explanation = result.get("explanation") or {}
+        predicted_reference_id = explanation.get("reference_id")
+        pair_match = _pair_gt_matches(
+            label,
+            predicted_target_id=predicted_id,
+            predicted_reference_id=predicted_reference_id,
+        )
         answered = not bool(result["abstain"])
         if label["answerable"]:
             positive_count += 1
-            strict_correct = answered and predicted_id in label["acceptable_object_ids_strict"]
-            padded_correct = answered and predicted_id in label["acceptable_object_ids_alignment_rmse_padded"]
+            strict_correct = answered and pair_match["pair_strict"]
+            padded_correct = answered and pair_match["pair_padded"]
             positive_strict += int(strict_correct)
             positive_padded += int(padded_correct)
             current_correct = bool(padded_correct)
@@ -333,8 +374,13 @@ def evaluate_clio_relation_prediction(
             negative_count += 1
             strict_correct = padded_correct = False
             negative_rejected += int(result["abstain"])
-            relation_negative += int(
+            reason_matched_negative += int(
                 result["abstain"] and result["reason"] == label["expected_abstain_reason"]
+            )
+            pair_grounded_relation_negative += int(
+                result["abstain"]
+                and result["reason"] == label["expected_abstain_reason"]
+                and pair_match["pair_padded"]
             )
             current_correct = False
         reason = str(result["reason"]) if result["reason"] is not None else "answered"
@@ -351,6 +397,13 @@ def evaluate_clio_relation_prediction(
             "reference_task": label["reference_task"],
             "relation": query["relation"],
             "predicted_object_id": predicted_id,
+            "predicted_reference_object_id": predicted_reference_id,
+            "target_strict_gt_match": pair_match["target_strict"],
+            "target_alignment_rmse_padded_gt_match": pair_match["target_padded"],
+            "reference_strict_gt_match": pair_match["reference_strict"],
+            "reference_alignment_rmse_padded_gt_match": pair_match["reference_padded"],
+            "pair_strict_gt_match": pair_match["pair_strict"],
+            "pair_alignment_rmse_padded_gt_match": pair_match["pair_padded"],
             "abstain": result["abstain"],
             "reason": result["reason"],
             "confidence": confidence,
@@ -358,6 +411,12 @@ def evaluate_clio_relation_prediction(
             "alignment_rmse_padded_correct": padded_correct,
             "negative_rejection_correct": bool(not label["answerable"] and result["abstain"]),
             "relation_aware_negative_correct": bool(
+                not label["answerable"]
+                and result["abstain"]
+                and result["reason"] == label["expected_abstain_reason"]
+                and pair_match["pair_padded"]
+            ),
+            "reason_matched_negative_rejection": bool(
                 not label["answerable"]
                 and result["abstain"]
                 and result["reason"] == label["expected_abstain_reason"]
@@ -369,11 +428,15 @@ def evaluate_clio_relation_prediction(
         "query_count": total,
         "positive_count": positive_count,
         "negative_count": negative_count,
-        "positive_grounding_acc_at_1_strict": positive_strict / positive_count if positive_count else 0.0,
-        "positive_grounding_acc_at_1_alignment_rmse_padded": positive_padded / positive_count if positive_count else 0.0,
+        "positive_pair_grounding_acc_at_1_strict": positive_strict / positive_count if positive_count else 0.0,
+        "positive_pair_grounding_acc_at_1_alignment_rmse_padded": positive_padded / positive_count if positive_count else 0.0,
         "negative_rejection_accuracy": negative_rejected / negative_count if negative_count else 0.0,
-        "relation_aware_negative_rejection_accuracy": relation_negative / negative_count if negative_count else 0.0,
-        "task_accuracy_alignment_rmse_padded": (positive_padded + negative_rejected) / total if total else 0.0,
+        "reason_matched_negative_rejection_accuracy": reason_matched_negative / negative_count if negative_count else 0.0,
+        "relation_aware_negative_rejection_accuracy": pair_grounded_relation_negative / negative_count if negative_count else 0.0,
+        "end_to_end_task_accuracy_alignment_rmse_padded": (positive_padded + negative_rejected) / total if total else 0.0,
+        "pair_grounded_task_accuracy_alignment_rmse_padded": (
+            (positive_padded + pair_grounded_relation_negative) / total if total else 0.0
+        ),
         "answer_coverage": sum(answered_flags) / total if total else 0.0,
         "answer_aurc_discrete": area_under_risk_coverage(curve) if curve else None,
         "answerability_proxy_brier": brier_score(confidences, answerability),
@@ -388,6 +451,8 @@ def evaluate_clio_relation_prediction(
         "contract": {
             "prediction_is_label_free": True,
             "gt_and_alignment_are_evaluator_only": True,
+            "positive_correctness_requires_target_and_reference_gt": True,
+            "relation_aware_negative_requires_grounded_pair": True,
             "correct_rejections_excluded_from_answer_coverage": True,
             "answer_coverage_denominator": "all frozen positive and negative queries",
             "background_or_missing_detection_not_removed": True,
