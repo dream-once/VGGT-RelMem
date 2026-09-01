@@ -1,4 +1,4 @@
-"""Run the test set that a tracked-files-only public clone can reproduce."""
+"""Run the curated core tests that a tracked-files-only clone can reproduce."""
 
 from __future__ import annotations
 
@@ -9,51 +9,15 @@ import sys
 import unittest
 
 
-EXCLUDED_MODULES = {
-    "test_q0_protocol": (
-        "requires the pinned, Git-ignored third_party/VGGT-SLAM source tree; "
-        "run the full suite after bootstrapping upstream sources"
-    ),
-}
-
-
-def _iter_tests(suite: unittest.TestSuite):
-    for item in suite:
-        if isinstance(item, unittest.TestSuite):
-            yield from _iter_tests(item)
-        else:
-            yield item
-
-
-def _module_name(test: unittest.TestCase) -> str:
-    parts = test.id().split(".")
-    return next(
-        (part for part in parts if part.startswith("test_")),
-        parts[0],
-    )
-
 
 def run(*, project_root: str | Path, verbosity: int = 1) -> dict[str, object]:
     root = Path(project_root).resolve()
     discovered = unittest.defaultTestLoader.discover(str(root / "tests"))
-    selected = unittest.TestSuite()
-    skipped: dict[str, dict[str, object]] = {}
-    selected_count = 0
-    for test in _iter_tests(discovered):
-        module = _module_name(test)
-        if module in EXCLUDED_MODULES:
-            row = skipped.setdefault(module, {
-                "reason": EXCLUDED_MODULES[module],
-                "test_count": 0,
-            })
-            row["test_count"] = int(row["test_count"]) + 1
-            continue
-        selected.addTest(test)
-        selected_count += 1
+    selected_count = discovered.countTestCases()
     result = unittest.TextTestRunner(
         stream=sys.stderr,
         verbosity=verbosity,
-    ).run(selected)
+    ).run(discovered)
     report = {
         "schema_version": "0.1",
         "status": "PASS" if result.wasSuccessful() else "FAIL",
@@ -61,7 +25,7 @@ def run(*, project_root: str | Path, verbosity: int = 1) -> dict[str, object]:
         "selected_test_count": selected_count,
         "failures": len(result.failures),
         "errors": len(result.errors),
-        "excluded_modules": skipped,
+        "excluded_modules": {},
         "scope": "tracked_files_only_cpu_validation",
         "full_suite_command": "python -m unittest discover -s tests -v",
     }

@@ -8,8 +8,9 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 - Public repository: `dream-once/VGGT-RelMem`
 - Publication target and pre-publication HEAD: `main` at `22daa3f2e7f6839d9d775b26856348cba6c7f98a`
 - Current milestone: the full Apartment development and Cubicle fixed-confirmatory GPU pipeline is complete on 192/172 geometry frames. The frozen Cubicle 18-task Q1F result is Q0 `27.78%` versus Top-5+A2 with deterministic Q0 fallback `38.89%` strict Acc@1 (`+11.11pp`). Strict association and relation evaluators now score final A1 components and require both target and reference to hit their GT objects.
-- Next milestone: publish a research-complete snapshot, curate the internship-facing main branch, archive superseded tests outside the working tree, and record a five-minute demonstration. FOUND-IT is outside project scope and is not a future task. Dataset redistribution remains disallowed until its licence is verified.
-- Publication state: all 262 local CPU tests and the 254-test public-clone subset pass. Apartment/Cubicle query-manifest, grounding, association and relation validators, D20/D21, and the lightweight final Clio summary all pass. Raw Clio files, task YAML, full reports, geometry, masks, point clouds and videos remain local-only.
+- Next milestone: record the five-minute demonstration and practise the clean-clone mainline reproduction. Independent calibration, labelled policy ablation and statistical intervals are optional research follow-ups rather than internship-project blockers. FOUND-IT remains outside scope.
+- Publication state: strict repair commit `21d3706` is preserved by tag `research-complete-2026-09-02`; its 262 local tests and 254-test public subset passed. The curated main keeps 17 core test modules / 72 tests, and its public-clone entry plus final Clio summary validator pass. Raw Clio files, task YAML, full reports, geometry, masks, point clouds and videos remain local-only.
+- Current-instance archive: `/root/autodl-tmp/VGGT-RelMem-research-archive-20260902` holds all 58 pre-curation Python test files and the legacy DOCX plan. It is optional local backup; the Git tag is the portable recovery point.
 
 ## Document-day progress
 
@@ -239,7 +240,8 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Publication verification
 
-- `python -m unittest discover -s tests -v`: all 262 local tests pass; `python -m scripts.verify_public_clone --verbosity 0` selects and passes 254 tracked-only tests.
+- Research tag `research-complete-2026-09-02`: all 262 local tests pass and the public-clone entry selects/passes 254 tracked-only tests.
+- Curated main: `python -m unittest discover -s tests -v` and `python -m scripts.verify_public_clone --verbosity 0` both pass all 72 core tests.
 - Apartment/Cubicle query-manifest, grounding, association and relation validators, the Clio final-summary validator, D20 and D21 all report `PASS` after the strict evaluator repair.
 - `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 206 tests passed after the Clio GPU development replay and D16–D21 corrections.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
@@ -306,9 +308,9 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. Preserve this complete research state in Git history and a named research-complete tag.
-2. Curate the internship-facing main branch around the runtime pipeline and a compact core test set; keep superseded tests in a recoverable local archive.
-3. Record the final approximately five-minute demonstration. Independent calibration, labelled policy ablation and statistical intervals are optional research follow-ups rather than blockers for the internship project. FOUND-IT remains outside scope.
+1. From a clean clone, practise the README path from installation through `scripts.verify_public_clone`, `scripts.demo` and final-summary validation.
+2. Record the final approximately five-minute demonstration using `docs/PROJECT_PRESENTATION.md`.
+3. Treat independent calibration, labelled policy ablation and statistical intervals as optional research follow-ups. FOUND-IT remains outside scope.
 
 ## Publication history
 
@@ -321,7 +323,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-30: Published tolerant D15 replay, corrected Q2 semantics and portable GPU/D15/D15.5 evidence; 190 tests and final validators pass (commit containing this entry, pre-publication parent `5dc3a59`).
 - 2026-08-30: Published corrected D17 selective risk, complete-cache D18, Clio apartment RTX 4090 development replay through D21, 206 tests and lightweight Week 4 evidence (commit containing this entry, pre-publication parent `23f8b61`).
 - 2026-09-01: Published full Apartment development and Cubicle fixed-confirmatory GPU benchmarks, labelled association and relation/rejection evaluation, lightweight final evidence, honest system-level `+11.11pp` Cubicle grounding delta, 254 CPU tests, and an explicit FOUND-IT out-of-scope boundary (commit containing this entry, pre-publication parent `ea09242`).
-- 2026-09-02: Prepared the strict evaluator repair: Q1F fallback is explicit, A1 is scored on final connected components, relation positives require both target and reference, all 262 local tests and all final Clio validators pass, and the portfolio-cleanup handoff is recorded (pre-publication HEAD `22daa3f`).
+- 2026-09-02: Published the strict evaluator repair and preserved it as `research-complete-2026-09-02`; then curated main to 17 core modules / 72 tests and archived all pre-curation tests on the current server (pre-publication HEAD `22daa3f`, research commit `21d3706`).
 
 ## Scope reminder
 

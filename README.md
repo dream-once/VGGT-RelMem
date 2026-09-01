@@ -153,14 +153,14 @@ relground/
   calibration.py      confidence 与 abstention
   schemas.py          JSON 数据协议与 RunManifest
 evaluation/           B0-B5 定义、指标与失败 taxonomy
-tests/                几何、关联、序列化、坐标系、拒答测试
+tests/                求职版核心 CPU 自测（完整研究回归见下方标签）
 scripts/              reproduce / evaluate / demo
 runs/                 manifest、日志和指标（大文件不进 Git）
 ```
 
 ## 快速验证
 
-从公开仓库 clean clone 后，可用下面的 CPU 入口安装并验证；D1–D21 的单测不要求下载权重、数据或启用 GPU：
+从公开仓库 clean clone 后，可用下面的 CPU 入口安装并验证；核心自测不要求下载权重、数据或启用 GPU：
 
 ```bash
 git clone https://github.com/dream-once/VGGT-RelMem.git
@@ -172,11 +172,11 @@ python -m scripts.verify_public_clone
 python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```
 
-`verify_public_clone` 只运行公开 clone 可获得的 tracked-only CPU 测试，并在 JSON
-报告中明确列出被排除的模块。当前仅排除 `test_q0_protocol`：它逐行审计固定的
-`third_party/VGGT-SLAM` 上游源码，而该第三方目录按政策不进入本仓库；按 D1
-说明克隆固定上游后，再运行 `python -m unittest discover -s tests -v` 验收全量。
-如果已经位于仓库根目录并装好依赖，可以直接从验证命令开始。
+`verify_public_clone` 运行求职版主分支保留的 72 项 tracked-only CPU 核心测试，覆盖
+VGGT 适配、开放词汇、Top-K/Q1F、3D lifting、对象记忆、A1/A2、关系与最终
+Clio evaluator。精简前的 262 项完整研究回归保存在 Git 标签
+`research-complete-2026-09-02`，不会因主分支整理而丢失。如果已经位于仓库
+根目录并装好依赖，可以直接从验证命令开始。
 
 真实 D4–D8 只保留轻量 JSON、manifest 与查询级 validator 报告，收录在 [evidence/week1](evidence/week1/README.md)。视频、预览、mask、点云、权重、数据集与几何 NPZ 均不进入 Git，可按文档命令在本地重新生成。
 
