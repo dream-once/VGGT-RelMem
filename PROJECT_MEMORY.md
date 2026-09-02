@@ -4,12 +4,12 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Current snapshot
 
-- Updated: 2026-09-02 strict Apartment/Cubicle evaluator repair and portfolio handoff
+- Updated: 2026-09-03 focused portfolio publication handoff
 - Public repository: `dream-once/VGGT-RelMem`
-- Publication target and pre-publication HEAD: `main` at `22daa3f2e7f6839d9d775b26856348cba6c7f98a`
-- Current milestone: the full Apartment development and Cubicle fixed-confirmatory GPU pipeline is complete on 192/172 geometry frames. The frozen Cubicle 18-task Q1F result is Q0 `27.78%` versus Top-5+A2 with deterministic Q0 fallback `38.89%` strict Acc@1 (`+11.11pp`). Strict association and relation evaluators now score final A1 components and require both target and reference to hit their GT objects.
-- Next milestone: record the five-minute demonstration and practise the clean-clone mainline reproduction. Independent calibration, labelled policy ablation and statistical intervals are optional research follow-ups rather than internship-project blockers. FOUND-IT remains outside scope.
-- Publication state: strict repair commit `21d3706` is preserved by tag `research-complete-2026-09-02`; its 262 local tests and 254-test public subset passed. The curated main keeps 17 core test modules / 72 tests, and its public-clone entry plus final Clio summary validator pass. Raw Clio files, task YAML, full reports, geometry, masks, point clouds and videos remain local-only.
+- Publication target and pre-publication HEAD: `main` at `3d312db0e547b91e2a9066128e3b1621f5556c3e`
+- Current milestone: the full Apartment development and Cubicle fixed-confirmatory GPU pipeline is complete on 192/172 geometry frames. Frozen Q1F improves Cubicle strict Acc@1 from Q0 `27.78%` to `38.89%` (`+11.11pp`); the post-D21 PE mask-crop reranking diagnostic moves Apartment from `2/18` to `3/18` and Cubicle from `7/18` to `8/18`. These are fixed-confirmatory system results, not an untouched held-out, trained-ranker, multimodal-association or SOTA claim.
+- Next milestone: record the approximately three-minute demonstration and practise the clean-clone mainline reproduction. Independent calibration, labelled policy ablation, full-scene latency/VRAM measurement and statistical intervals remain optional research follow-ups. FOUND-IT remains outside scope.
+- Publication state: the complete pre-cleanup research tree is preserved at commit `53db410` by branch `research-final-2026-09-02` and annotated tag `research-final-v1-2026-09-02`. The focused public `main` contains 137 tracked files, 19 core test modules / 80 tests, four reviewer documents, seven lightweight evidence files and the 36-task batch entry point. A real temporary clone passes the public-clone verifier, both retained summary validators and the 36-task dry run. Raw Clio files, task YAML, full reports, geometry, masks, point clouds and videos remain local-only.
 - Current-instance archive: `/root/autodl-tmp/VGGT-RelMem-research-archive-20260902` holds all 58 pre-curation Python test files and the legacy DOCX plan. It is optional local backup; the Git tag is the portable recovery point.
 
 ## Document-day progress
@@ -240,9 +240,11 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 
 ## Publication verification
 
-- Research tag `research-complete-2026-09-02`: all 262 local tests pass and the public-clone entry selects/passes 254 tracked-only tests.
-- Curated main: `python -m unittest discover -s tests -v` and `python -m scripts.verify_public_clone --verbosity 0` both pass all 72 core tests.
-- Apartment/Cubicle query-manifest, grounding, association and relation validators, the Clio final-summary validator, D20 and D21 all report `PASS` after the strict evaluator repair.
+- Research snapshot `53db410` preserves the strict multi-GT containment repair, same-definition final-cluster A1/A2 evaluation, Q1F policy consistency, reference-and-target relation validation and PE mask-crop reranking diagnostic.
+- Focused main `3d312db`: `python -m unittest discover -s tests -v` and `python -m scripts.verify_public_clone --verbosity 0` both pass all 80 core tests.
+- An actual temporary clone of focused main passes `scripts.verify_public_clone` (80/80), the final Clio and PE semantic-fusion summary validators, all retained Python compilation and the 36-task batch dry run.
+- The focused tree contains 137 tracked files (about 1.3 MiB). Week 1–4 stage evidence, old D-number builders, synthetic/diagnostic fixtures, internal agent memory and generated runs are absent from public `main` but recoverable from the research branch/tag and Git history.
+- Apartment/Cubicle query-manifest, grounding, association and relation validators and both retained aggregate-summary validators report `PASS` after the strict evaluator repair.
 - `PYTHONDONTWRITEBYTECODE=1 python -m unittest discover -v tests`: all 206 tests passed after the Clio GPU development replay and D16–D21 corrections.
 - `python -m scripts.validate_d8_memory evidence/week1/runs/office-loop-mv-d8-trash-can`: `PASS` after binary evidence removal.
 - The real D3 schema-0.2 GPU validator passed with raw confidence available and finite.
@@ -299,7 +301,7 @@ Assets currently present:
 - Full local Clio Apartment scene: `data/clio/apartment`, 1,180 files, about 2.3 GiB
 - Full local Clio Cubicle scene: `data/clio/cubicle`, 1,386 files, about 1.4 GiB
 - Cubicle archive: `data/clio/cubicle.zip`, 1,417,678,076 bytes, SHA-256 `4fea3b731d730d77f6ae13e0d7859b264ee9cc52ba9b81925fc7e5e0f0813517`
-- Final Apartment/Cubicle run trees: `runs/clio-apartment-dev-v2-lc` (1,412 files, about 498 MiB) and `runs/clio-cubicle-heldout-v1` (1,433 files, about 395 MiB)
+- Final Apartment/Cubicle run trees: `runs/clio-apartment-dev-v2-lc` (1,428 files, about 500 MiB) and `runs/clio-cubicle-heldout-v1` (1,449 files, about 397 MiB)
 - Local Clio apartment GPU run: `runs/clio-apartment-gpu`, ignored and optional
 - Local GPU completion bundle: `runs/gpu-acceptance-20260829`, about 27 MiB, ignored and optional
 - Local D15.5 long-trajectory tree: `runs/office-loop-d15_5-s5`, about 142 MiB, ignored and optional
@@ -308,13 +310,12 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Concrete next task
 
-1. From a clean clone, practise the README path from installation through `scripts.verify_public_clone`, `scripts.demo` and final-summary validation.
-2. Record the final approximately five-minute demonstration using `docs/PROJECT_PRESENTATION.md`.
-3. Treat independent calibration, labelled policy ablation and statistical intervals as optional research follow-ups. FOUND-IT remains outside scope.
+1. Practise the README path from installation through `scripts.verify_public_clone`, `scripts.demo`, the 36-task dry run and retained summary validation.
+2. Record the final approximately three-minute demonstration using `docs/PROJECT_PRESENTATION.md`.
+3. Treat independent calibration, labelled policy ablation, full-scene latency/VRAM measurement and statistical intervals as optional research follow-ups. FOUND-IT remains outside scope.
 
 ## Publication history
 
-- 2026-08-30: Published D16 fail-closed Clio data protocol without downloading data (`db44e9f`).
 - 2026-08-30: Published D17 label-free relation prediction, abstention evaluation and calibration boundaries (`5ea7b86`).
 - 2026-08-30: Published D18 frozen Q×A experiment protocol and development/synthetic replay (`79d7d12`).
 - 2026-08-30: Published D19 one-factor ablation and complete failure-accounting audit (`3ad14ad`).
@@ -324,6 +325,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-08-30: Published corrected D17 selective risk, complete-cache D18, Clio apartment RTX 4090 development replay through D21, 206 tests and lightweight Week 4 evidence (commit containing this entry, pre-publication parent `23f8b61`).
 - 2026-09-01: Published full Apartment development and Cubicle fixed-confirmatory GPU benchmarks, labelled association and relation/rejection evaluation, lightweight final evidence, honest system-level `+11.11pp` Cubicle grounding delta, 254 CPU tests, and an explicit FOUND-IT out-of-scope boundary (commit containing this entry, pre-publication parent `ea09242`).
 - 2026-09-02: Published the strict evaluator repair and preserved it as `research-complete-2026-09-02`; then curated main to 17 core modules / 72 tests and archived all pre-curation tests on the current server (pre-publication HEAD `22daa3f`, research commit `21d3706`).
+- 2026-09-03: Published the strict final repair and PE mask-crop diagnostic as research snapshot `53db410`, then focused public `main` at pre-publication HEAD `3d312db` to 137 tracked files / 80 tests while preserving the full tree on `research-final-2026-09-02` and `research-final-v1-2026-09-02`.
 
 ## Scope reminder
 
