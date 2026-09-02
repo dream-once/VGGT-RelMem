@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "status": "PASS",
   "stage": "clio-final-benchmark-summary",
   "project_positioning": "VGGT-SLAM geometry plus an auditable semantic-localization reliability layer",
@@ -9,7 +9,7 @@
       "geometry_frames": 192,
       "task_count": 18,
       "object_grounding": {
-        "metric": "predicted center inside official oriented GT OBB",
+        "metric": "predicted center inside any official oriented GT OBB; nearest GT is diagnostic only",
         "official_clio_metric_claim": false,
         "primary_policy": "Q1F frozen Top-5+A2 with deterministic Q0 fallback",
         "q0_top1": {
@@ -53,6 +53,13 @@
       "association": {
         "label_rule": "same padded target GT OBB; background/background pairs excluded as unknown",
         "frozen_tasks": 18,
+        "runtime_name": "task-internal geometry+quality complete-link association",
+        "semantic_input_audit": {
+          "observations_total": 35,
+          "observations_with_semantic_embedding": 0,
+          "tasks_with_multiple_class_texts": 0,
+          "multimodal_semantic_association_claim": false
+        },
         "associable_tasks": 8,
         "unknown_background_pairs_excluded": 5,
         "A1": {
@@ -119,7 +126,7 @@
       "geometry_frames": 172,
       "task_count": 18,
       "object_grounding": {
-        "metric": "predicted center inside official oriented GT OBB",
+        "metric": "predicted center inside any official oriented GT OBB; nearest GT is diagnostic only",
         "official_clio_metric_claim": false,
         "primary_policy": "Q1F frozen Top-5+A2 with deterministic Q0 fallback",
         "q0_top1": {
@@ -163,6 +170,13 @@
       "association": {
         "label_rule": "same padded target GT OBB; background/background pairs excluded as unknown",
         "frozen_tasks": 18,
+        "runtime_name": "task-internal geometry+quality complete-link association",
+        "semantic_input_audit": {
+          "observations_total": 181,
+          "observations_with_semantic_embedding": 0,
+          "tasks_with_multiple_class_texts": 0,
+          "multimodal_semantic_association_claim": false
+        },
         "associable_tasks": 13,
         "unknown_background_pairs_excluded": 147,
         "A1": {
@@ -236,11 +250,12 @@
   },
   "claim_boundary": {
     "cubicle_object_grounding_policy_frozen_before_data_inspection": true,
-    "cubicle_q1f_policy_semantically_validated": true,
+    "cubicle_q1f_policy_manifest_validated": true,
     "association_and_relation_reports_are_fixed_confirmatory_not_untouched_held_out": true,
     "a2_pairwise_improvement_on_cubicle": false,
     "real_calibration_complete": false,
     "official_clio_metric_reproduced": false,
+    "clio_a2_multimodal_semantic_association": false,
     "found_it_comparison_available": false,
     "found_it_comparison_scope": "OUT_OF_SCOPE_BY_PROJECT_DEFINITION",
     "closed_loop_navigation": false,
@@ -249,12 +264,12 @@
   "sources": {
     "apartment_grounding": {
       "path": "runs/clio-apartment-dev-v2-lc/grounding_benchmark.json",
-      "sha256": "ffbb1e4e52d27c352b728e95b9df8a704af82731f8968d1b3ecad56b1de7effc",
+      "sha256": "26bd6f8ba5a09de2faee29188fe8faad85f762c9cb71ebd5ee2dbbc12e984e13",
       "retention": "local_ignored_full_report"
     },
     "apartment_association": {
       "path": "runs/clio-apartment-dev-v2-lc/association_benchmark.json",
-      "sha256": "10c8f8700df493f8e9c044e0bd465cf1ea9882a62190a797936156170d2090db",
+      "sha256": "9c9210a9592029794031de30d9581b2d588ec89b3c11bf2d890d51ef8edf2f83",
       "retention": "local_ignored_full_report"
     },
     "apartment_relation": {
@@ -264,12 +279,12 @@
     },
     "cubicle_grounding": {
       "path": "runs/clio-cubicle-heldout-v1/grounding_benchmark.json",
-      "sha256": "2596cdc0ce28efa2d50469172719430ccae9db04f2d893b6f41a2f5ef6c9e5d6",
+      "sha256": "bf0b0be64e9e1b988dbc01ca069c7ef7d27cb0a861d9701e2edae48f22d4f4c0",
       "retention": "local_ignored_full_report"
     },
     "cubicle_association": {
       "path": "runs/clio-cubicle-heldout-v1/association_benchmark.json",
-      "sha256": "9708dd3e676bdc4a8992d9d74b2772113faae271fcee5f1c1f8f3656cd964360",
+      "sha256": "71a7e5cb37db9a1989eba29b74ab62facf9d582df1aaf2275ae30cd67074eaa3",
       "retention": "local_ignored_full_report"
     },
     "cubicle_relation": {
@@ -288,5 +303,5 @@
     "summary_omits": "Clio RGB/depth/bag, task YAML, masks, point clouds, videos, and pair-level rows",
     "full_report_replay": "requires locally acquired public Clio scenes"
   },
-  "created_at": "2026-09-01T16:18:12.247190+00:00"
+  "created_at": "2026-09-02T14:13:13.229185+00:00"
 }

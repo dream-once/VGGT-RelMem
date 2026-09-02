@@ -9,12 +9,12 @@
     {
       "input_id": "readme",
       "path": "README.md",
-      "sha256": "49bf96464eddb7f670a4e7f9d0d165ec1dcde4ac4d986aef9066ed4b3c3c9747"
+      "sha256": "2dbee1364efd0f02b67d2dd857aa1fc745d826d2afd8e021415014534fb6bad0"
     },
     {
       "input_id": "presentation_material",
       "path": "docs/PROJECT_PRESENTATION.md",
-      "sha256": "a728389002def68f4b4ecddd7140e9865e25c3230042bd3d22c7dbe7500b1363"
+      "sha256": "4283ce927e85d03b949f75e85b803d421d4283a727168f4eccbf8ecdfca9b2c5"
     },
     {
       "input_id": "d16_config",
@@ -74,12 +74,12 @@
     {
       "input_id": "clio_final_summary",
       "path": "evidence/final-clio/benchmark_summary.json",
-      "sha256": "3e569e64f2c68dc03631cf9985c3bc500a59763c778c153d917fba0f6bd609cb"
+      "sha256": "e569732d024306b563aacb68bea2091514dca40e17df2d3c765a5699816d1cda"
     },
     {
       "input_id": "clio_final_validation",
       "path": "evidence/final-clio/validation_report.json",
-      "sha256": "1d0a81a0b6e54a83eca711370ecef1c1d7296c739b1d6828ec00f3d77bd7ee8c"
+      "sha256": "e9473da04dd703f81e18499931c1c28a334d3ea7957c06503daafbfa5a4e2efe"
     },
     {
       "input_id": "clio_relation_protocol",
@@ -99,6 +99,7 @@
   ],
   "required_gaps": {
     "clio_download": "APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED",
+    "public_real_experiment_replay": "REQUIRES_EXTERNAL_CLIO_DATA_GEOMETRY_GPU_RUNS_BATCH_ENTRY_AVAILABLE",
     "data_license": "DATA_LICENSE_UNVERIFIED",
     "clio_held_out": "CUBICLE_Q1F_FROZEN_ASSOCIATION_RELATION_FIXED_CONFIRMATORY",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",

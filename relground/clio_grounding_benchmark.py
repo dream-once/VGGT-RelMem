@@ -1,4 +1,4 @@
-"""Compare Q0 single-view observations with Q1 Top-K A2 objects on Clio."""
+"""Compare Q0 single-view observations with Q1F Top-K A2 objects on Clio."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from .clio_retrieval_evaluation import slugify_task
 from .clio_task_evaluation import _parse_gt_boxes, _transform_object, point_in_obb
 
 
-SCHEMA_VERSION = "0.3"
+SCHEMA_VERSION = "0.4"
 STAGE = "clio-grounding-benchmark"
 
 
@@ -77,23 +77,29 @@ def _evaluate_center(
             "nearest_gt_id": None,
             "center_distance_m": None,
         }
-    comparisons: list[tuple[float, Mapping[str, Any]]] = []
+    comparisons: list[tuple[float, Mapping[str, Any], bool, bool]] = []
     for box in gt_boxes:
-        comparisons.append((float(np.linalg.norm(center_world - box["center"])), box))
-    distance, nearest = min(comparisons, key=lambda item: (item[0], item[1]["gt_id"]))
-    correct = point_in_obb(
-        center_world,
-        center=nearest["center"],
-        extent=nearest["extent"],
-        rotation=nearest["rotation"],
+        distance = float(np.linalg.norm(center_world - box["center"]))
+        strict = point_in_obb(
+            center_world,
+            center=box["center"],
+            extent=box["extent"],
+            rotation=box["rotation"],
+        )
+        padded = point_in_obb(
+            center_world,
+            center=box["center"],
+            extent=box["extent"],
+            rotation=box["rotation"],
+            padding_m=alignment_margin_m,
+        )
+        comparisons.append((distance, box, strict, padded))
+    distance, nearest, _, _ = min(
+        comparisons,
+        key=lambda item: (item[0], item[1]["gt_id"]),
     )
-    margin_correct = point_in_obb(
-        center_world,
-        center=nearest["center"],
-        extent=nearest["extent"],
-        rotation=nearest["rotation"],
-        padding_m=alignment_margin_m,
-    )
+    correct = any(item[2] for item in comparisons)
+    margin_correct = any(item[3] for item in comparisons)
     return {
         "answered": True,
         "correct": correct,
@@ -294,8 +300,8 @@ def build_clio_grounding_benchmark(
             "q0": "Top-1 frame; highest-quality robust single-view observation",
             "q1": "fixed Top-5; frozen A2 permanent object ranked by confidence",
             "q1f": "development-derived deterministic fallback: Q1 object when available, otherwise Q0 observation",
-            "strict_metric": "predicted center inside official oriented GT OBB",
-            "uncertainty_metric": "same containment with measured alignment RMSE padding",
+            "strict_metric": "predicted center inside any official oriented GT OBB; nearest GT is diagnostic only",
+            "uncertainty_metric": "any-GT containment with measured alignment RMSE padding",
             "failed_or_abstained_tasks_remain_in_denominator": True,
             "official_clio_metric_claim": False,
             "frozen_policy_metric_key": (

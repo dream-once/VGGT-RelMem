@@ -1,5 +1,5 @@
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "status": "PASS",
   "stage": "clio-final-benchmark-summary-validation",
   "checks": {
@@ -8,6 +8,7 @@
     "association_deltas_recomputed": true,
     "headline_matches_cubicle": true,
     "negative_result_not_hidden": true,
+    "a2_runtime_scope_honest": true,
     "source_paths_safe": true
   },
   "failures": []

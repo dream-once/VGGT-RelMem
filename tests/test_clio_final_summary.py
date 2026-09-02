@@ -6,7 +6,7 @@ from relground.clio_final_summary import _scene, validate_summary
 class ClioFinalSummaryTests(unittest.TestCase):
     def test_validator_rejects_hidden_a2_regression(self) -> None:
         payload = {
-            "schema_version": "0.2", "status": "PASS",
+            "schema_version": "0.3", "status": "PASS",
             "scenes": {}, "headline_result": {},
             "claim_boundary": {"a2_pairwise_improvement_on_cubicle": True},
             "sources": {},
@@ -16,7 +16,7 @@ class ClioFinalSummaryTests(unittest.TestCase):
 
     def test_validator_rejects_found_it_as_pending_work(self) -> None:
         payload = {
-            "schema_version": "0.2", "status": "PASS",
+            "schema_version": "0.3", "status": "PASS",
             "scenes": {}, "headline_result": {},
             "claim_boundary": {
                 "a2_pairwise_improvement_on_cubicle": False,
@@ -82,6 +82,13 @@ class ClioFinalSummaryTests(unittest.TestCase):
                 "metrics": relation_metrics,
                 "contract": {"calibration_status": "ENGINEERING_DEFAULT_UNCALIBRATED"},
             },
+        )
+        self.assertEqual(
+            scene["association"]["runtime_name"],
+            "task-internal geometry+quality complete-link association",
+        )
+        self.assertFalse(
+            scene["association"]["semantic_input_audit"]["multimodal_semantic_association_claim"]
         )
         self.assertEqual(scene["object_grounding"]["primary_policy"].split()[0], "Q1F")
         self.assertEqual(

@@ -1,0 +1,255 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "post-D21-PE-mask-crop-representative-center-summary",
+  "experiment_id": "post-D21-PE-mask-crop-representative-center-v1",
+  "method": {
+    "encoder": "PE-Core-L14-336",
+    "text_source": "sam_query",
+    "crop": {
+      "context_padding_fraction": 0.15,
+      "min_padding_pixels": 2,
+      "masked_background_value": 127,
+      "semantic_score": "mean(context_crop_cosine, masked_crop_cosine)"
+    },
+    "object_selection": "highest-confidence A2 permanent object unchanged",
+    "center_rule": "center of highest-semantic-score observation in selected object",
+    "fallback": "Q0 when no A2 permanent object",
+    "learned_parameters": false
+  },
+  "scenes": {
+    "apartment": {
+      "role": "development",
+      "counts": {
+        "tasks": 18,
+        "observations": 40,
+        "selected_object_observations": 28,
+        "tasks_with_d6_observations": 13,
+        "tasks_with_a2_object": 10
+      },
+      "methods": {
+        "current_q1f": {
+          "task_count": 18,
+          "answered_tasks": 13,
+          "strict_correct": 2,
+          "strict_acc_at_1": 0.111111111111,
+          "padded_correct": 12,
+          "padded_acc_at_1": 0.666666666667
+        },
+        "quality_representative": {
+          "task_count": 18,
+          "answered_tasks": 13,
+          "strict_correct": 3,
+          "strict_acc_at_1": 0.166666666667,
+          "padded_correct": 12,
+          "padded_acc_at_1": 0.666666666667
+        },
+        "medoid_representative": {
+          "task_count": 18,
+          "answered_tasks": 13,
+          "strict_correct": 2,
+          "strict_acc_at_1": 0.111111111111,
+          "padded_correct": 11,
+          "padded_acc_at_1": 0.611111111111
+        },
+        "pe_semantic_representative": {
+          "task_count": 18,
+          "answered_tasks": 13,
+          "strict_correct": 3,
+          "strict_acc_at_1": 0.166666666667,
+          "padded_correct": 12,
+          "padded_acc_at_1": 0.666666666667
+        },
+        "raw_observation_oracle": {
+          "task_count": 18,
+          "answered_tasks": 13,
+          "strict_correct": 3,
+          "strict_acc_at_1": 0.166666666667,
+          "padded_correct": 12,
+          "padded_acc_at_1": 0.666666666667
+        }
+      },
+      "comparisons": {
+        "quality_representative_minus_current_q1f": {
+          "strict_percentage_points": 5.555555555556,
+          "padded_percentage_points": 0.0,
+          "paired_strict_transitions": {
+            "both_wrong": 15,
+            "regressions": 0,
+            "wins": 1,
+            "both_correct": 2
+          }
+        },
+        "medoid_representative_minus_current_q1f": {
+          "strict_percentage_points": 0.0,
+          "padded_percentage_points": -5.555555555556,
+          "paired_strict_transitions": {
+            "both_wrong": 16,
+            "regressions": 0,
+            "wins": 0,
+            "both_correct": 2
+          }
+        },
+        "pe_semantic_representative_minus_current_q1f": {
+          "strict_percentage_points": 5.555555555556,
+          "padded_percentage_points": 0.0,
+          "paired_strict_transitions": {
+            "both_wrong": 15,
+            "regressions": 0,
+            "wins": 1,
+            "both_correct": 2
+          }
+        },
+        "pe_minus_quality_representative": {
+          "strict_percentage_points": 0.0,
+          "paired_strict_transitions": {
+            "both_wrong": 15,
+            "regressions": 0,
+            "wins": 0,
+            "both_correct": 3
+          }
+        }
+      },
+      "rescued_tasks": [
+        {
+          "task": "move pile of clothes",
+          "selected_observation_id": "d6_rgb_672_000",
+          "semantic_score": 0.318330077715
+        }
+      ]
+    },
+    "cubicle": {
+      "role": "fixed-confirmatory",
+      "counts": {
+        "tasks": 18,
+        "observations": 181,
+        "selected_object_observations": 147,
+        "tasks_with_d6_observations": 14,
+        "tasks_with_a2_object": 14
+      },
+      "methods": {
+        "current_q1f": {
+          "task_count": 18,
+          "answered_tasks": 14,
+          "strict_correct": 7,
+          "strict_acc_at_1": 0.388888888889,
+          "padded_correct": 13,
+          "padded_acc_at_1": 0.722222222222
+        },
+        "quality_representative": {
+          "task_count": 18,
+          "answered_tasks": 14,
+          "strict_correct": 7,
+          "strict_acc_at_1": 0.388888888889,
+          "padded_correct": 12,
+          "padded_acc_at_1": 0.666666666667
+        },
+        "medoid_representative": {
+          "task_count": 18,
+          "answered_tasks": 14,
+          "strict_correct": 8,
+          "strict_acc_at_1": 0.444444444444,
+          "padded_correct": 12,
+          "padded_acc_at_1": 0.666666666667
+        },
+        "pe_semantic_representative": {
+          "task_count": 18,
+          "answered_tasks": 14,
+          "strict_correct": 8,
+          "strict_acc_at_1": 0.444444444444,
+          "padded_correct": 13,
+          "padded_acc_at_1": 0.722222222222
+        },
+        "raw_observation_oracle": {
+          "task_count": 18,
+          "answered_tasks": 14,
+          "strict_correct": 8,
+          "strict_acc_at_1": 0.444444444444,
+          "padded_correct": 14,
+          "padded_acc_at_1": 0.777777777778
+        }
+      },
+      "comparisons": {
+        "quality_representative_minus_current_q1f": {
+          "strict_percentage_points": 0.0,
+          "padded_percentage_points": -5.555555555556,
+          "paired_strict_transitions": {
+            "both_wrong": 11,
+            "regressions": 0,
+            "wins": 0,
+            "both_correct": 7
+          }
+        },
+        "medoid_representative_minus_current_q1f": {
+          "strict_percentage_points": 5.555555555556,
+          "padded_percentage_points": -5.555555555556,
+          "paired_strict_transitions": {
+            "both_wrong": 10,
+            "regressions": 0,
+            "wins": 1,
+            "both_correct": 7
+          }
+        },
+        "pe_semantic_representative_minus_current_q1f": {
+          "strict_percentage_points": 5.555555555556,
+          "padded_percentage_points": 0.0,
+          "paired_strict_transitions": {
+            "both_wrong": 10,
+            "regressions": 0,
+            "wins": 1,
+            "both_correct": 7
+          }
+        },
+        "pe_minus_quality_representative": {
+          "strict_percentage_points": 5.555555555556,
+          "paired_strict_transitions": {
+            "both_wrong": 10,
+            "regressions": 0,
+            "wins": 1,
+            "both_correct": 7
+          }
+        }
+      },
+      "rescued_tasks": [
+        {
+          "task": "get tape measure",
+          "selected_observation_id": "d6_rgb_308_000",
+          "semantic_score": 0.280843406077
+        }
+      ]
+    }
+  },
+  "claim_boundary": {
+    "development_pe_specific_gain_over_quality_baseline": false,
+    "cubicle_incremental_strict_gain_over_q1f": true,
+    "cubicle_incremental_strict_gain_over_quality_baseline": true,
+    "cubicle_padded_gain_over_q1f": false,
+    "learned_reranker": false,
+    "siglip2_used": false,
+    "untouched_held_out_claim": false,
+    "statistical_significance_claim": false,
+    "d21_headline_replaced": false
+  },
+  "sources": {
+    "config": {
+      "path": "configs/clio_pe_semantic_fusion.json",
+      "sha256": "82f1d89448ad0f6498f2ce21dc4eabec162238bcdb253f34fc664e3278e52c6e"
+    },
+    "apartment_prediction": {
+      "path": "runs/clio-pe-semantic-fusion-v1/apartment/prediction.json",
+      "sha256": "6d67bc53df5aefde153292e87ec6392f602ceebaf8a1169f2d61cb3aa74f7357"
+    },
+    "apartment_evaluation": {
+      "path": "runs/clio-pe-semantic-fusion-v1/apartment/evaluation.json",
+      "sha256": "f77fc9d10c9945a603d0ed93ed78883e58614f7a20b7ea6d925407005d7fbc5d"
+    },
+    "cubicle_prediction": {
+      "path": "runs/clio-pe-semantic-fusion-v1/cubicle/prediction.json",
+      "sha256": "c55cc1309ac8ff590f046b38c9ab1278e8c1d44bdb08993321969acf2673e536"
+    },
+    "cubicle_evaluation": {
+      "path": "runs/clio-pe-semantic-fusion-v1/cubicle/evaluation.json",
+      "sha256": "f39e8ee13ee7d5a366e0171035ee7bc616ef4eb2767db44eeed050c305a3a3a6"
+    }
+  }
+}

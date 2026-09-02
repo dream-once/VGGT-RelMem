@@ -1,10 +1,14 @@
 # D16 Clio feasibility and data protocol
 
-## Decision
+> **历史快照（D16，2026-08-29）**：本文件记录下载前的 fail-closed 可行性门槛，
+> 不代表当前运行状态。Apartment/Cubicle 后续已完成本地获取、192/172 帧几何、
+> 18+18 task 物化与评测；当前状态以 README 和 `evidence/final-clio/` 为准。
 
-D16 is complete at CPU/source scope without downloading data or installing
-Clio. The current download decision is
-`DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN`; the dataset licence is separately
+## D16 historical decision
+
+At the D16 gate, CPU/source work completed before downloading or installing
+Clio. The decision at that historical point was
+`DATA_DOWNLOAD_BLOCKED_SIZE_UNKNOWN`; dataset redistribution licensing remains
 `DATA_LICENSE_UNVERIFIED`.
 
 The official Clio README confirms that the custom Office, Apartment, Cubicle
@@ -22,14 +26,14 @@ Sources:
 ## Frozen roles and GT boundary
 
 - `apartment`: development scene;
-- `cubicle`: held-out scene;
-- query status: `PENDING_DATA_METADATA`;
+- `cubicle`: historically named held-out, now reported as fixed-confirmatory;
+- historical query status: `PENDING_DATA_METADATA` (later resolved locally);
 - Clio task labels, OBBs, poses used for alignment, and answers are
   evaluator-only and cannot enter prediction, candidate caches, ObjectMemory
   or policy traces.
 
-Only scene roles are frozen. Query IDs are deliberately empty until the
-official task YAML and metadata are legally and safely available.
+The scene roles were frozen at D16. Tracked query manifests were added after
+the official task YAML and metadata became locally available.
 
 ## Disk gate
 

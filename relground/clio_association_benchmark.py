@@ -35,7 +35,7 @@ from .d9_association import (
 )
 
 
-SCHEMA_VERSION = "0.2"
+SCHEMA_VERSION = "0.3"
 STAGE = "clio-instance-association-benchmark"
 POLICY_IDS = ("A1", "A2", "A2.1-development")
 
@@ -288,6 +288,8 @@ def build_clio_association_benchmark(
                 "status": "PIPELINE_NO_D8_MEMORY",
                 "observation_count": 0,
                 "matched_target_observations": 0,
+                "semantic_embedding_observation_count": 0,
+                "distinct_class_text_count": 0,
                 "unknown_background_pairs": 0,
                 "evaluable_pairs": 0,
                 "associable_target": False,
@@ -302,6 +304,13 @@ def build_clio_association_benchmark(
         observations = sorted(memory.pending_observations.values(), key=lambda item: item.obs_id)
         predictions = _prediction_maps(observations, policy_ids)
         # GT is intentionally opened only after every policy prediction exists.
+        semantic_embedding_observation_count = sum(
+            item.semantic_embedding is not None for item in observations
+        )
+        distinct_class_text_count = len({
+            str(item.class_text).strip().casefold()
+            for item in observations
+        })
         gt_boxes = _parse_gt_boxes(task_yaml_path, task)
         assignments = assign_observations_to_gt(observations, gt_boxes, alignment)
         assignment_by_id = {item["observation_id"]: item for item in assignments}
@@ -343,6 +352,8 @@ def build_clio_association_benchmark(
             "matched_target_observations": sum(item["assigned_gt_id"] is not None for item in assignments),
             "unknown_background_pairs": unknown,
             "evaluable_pairs": len(pairs) - unknown,
+            "semantic_embedding_observation_count": semantic_embedding_observation_count,
+            "distinct_class_text_count": distinct_class_text_count,
             "associable_target": associable,
             "assignments": assignments,
             "pairs": pairs,
@@ -382,6 +393,10 @@ def build_clio_association_benchmark(
             "prediction_runs_before_gt_read": True,
             "gt_and_world_alignment_are_evaluator_only": True,
             "target_assignment": "nearest official GT OBB containing center after alignment-RMSE padding",
+            "a2_clio_runtime_name": "task-internal geometry+quality complete-link association",
+            "a2_semantic_input_boundary": (
+                "semantic embeddings absent; exact-class compatibility constant within each task"
+            ),
             "background_background_pair_label": "UNKNOWN_EXCLUDED",
             "failed_tasks_remain_in_full_pipeline_denominator": True,
             "official_clio_metric_claim": False,
@@ -411,6 +426,13 @@ def build_clio_association_benchmark(
             "tasks_with_any_matched_target_observation": sum(row["matched_target_observations"] > 0 for row in task_rows),
             "associable_tasks": associable_tasks,
             "unknown_background_pairs_excluded": sum(row["unknown_background_pairs"] for row in task_rows),
+            "observations_total": sum(row["observation_count"] for row in task_rows),
+            "observations_with_semantic_embedding": sum(
+                row["semantic_embedding_observation_count"] for row in task_rows
+            ),
+            "tasks_with_multiple_class_texts": sum(
+                row["distinct_class_text_count"] > 1 for row in task_rows
+            ),
         },
         "metrics": metrics,
         "tasks": task_rows,

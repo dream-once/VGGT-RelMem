@@ -1,4 +1,4 @@
-# 项目对外表述、5 分钟演示讲稿与面试问答
+# 项目对外表述、约 3 分钟演示讲稿与面试问答
 
 ## 一句话定位
 
@@ -13,6 +13,9 @@ VGGT-RelMem 是 **VGGT-SLAM 几何之上的可审计语义定位可靠性层**�
   `27.78% → 38.89%`（`+11.11pp`）；这是系统差值，不归因于 A2 单项。
 - A1/A2 统一按最终同簇关系计分。Cubicle F1 为 `93.47% / 91.56%`，A2 是负结果；
   Apartment 为 `85.29% / 88.14%`。
+- Clio A2 的 `semantic_embedding` 覆盖为 Apartment `0/35`、Cubicle `0/181`，且同 task class text 恒定；因此只称任务内几何＋质量 complete-link，不称多模态语义关联。
+- 多实例 grounding 对全部官方 GT OBB 取 `any(containment)`；nearest GT 只作诊断。修复后 36 个最终判定与聚合数字未变化。
+- Post-D21 训练自由 PE mask-crop 代表中心扩展在 Apartment 为 `2/18→3/18`、Cubicle 为 `7/18→8/18`，均为 1 win/0 regression；Apartment 与最高质量基线打平，Cubicle 仅作 fixed-confirmatory 观察，不替换 D21 headline。
 - 关系正例同时要求 target 与 reference 命中各自 GT。Apartment/Cubicle 的严格／
   RMSE-padded Acc@1 为 `0%/11.76%` 与 `11.41%/48.32%`；旧 target-only 数字作废。
 - 负例端到端拒答为 `100% / 98.66%`，但双端定位后关系拒答只有
@@ -24,11 +27,11 @@ VGGT-RelMem 是 **VGGT-SLAM 几何之上的可审计语义定位可靠性层**�
 
 1. 在 VGGT-SLAM 2.0 几何之上实现开放词汇 Top-1／固定 Top-5 检索、SAM 3 分割、稳健 3D lifting、可追溯 ObjectMemory 与显式关系定位流水线，并以缓存和 JSON 契约隔离无标签预测、GT evaluator 与确定性重放。
 
-2. 在 Clio Apartment/Cubicle 的 18+18 task 上完成 192/172 帧 GPU 物化与固定确认：冻结 Q1F 的 Cubicle 严格中心 Acc@1 为 `27.78%→38.89%`，同时公开 A2 关联回退和 target/reference 双端关系评测下降；拒答阈值明确未校准，不宣称 SOTA、严格 held-out 或完整导航。
+2. 在 Clio Apartment/Cubicle 的 18+18 task 上完成 192/172 帧 GPU 物化与固定确认：冻结 Q1F 的 Cubicle 严格中心 Acc@1 为 `27.78%→38.89%`；多 GT any-containment 重算不改变该结果，A2 仅按任务内几何＋质量 complete-link 表述，并公开 target/reference 双端关系评测下降与未校准拒答边界。
 
-## 5 分钟演示讲稿
+## 约 3 分钟演示讲稿
 
-### 0:00–0:40：问题与范围
+### 0:00–0:25：问题与范围
 
 “VGGT-SLAM 提供场景几何，但开放词汇目标查询、跨帧对象身份、关系定位和什么时候
 拒答是另一层问题。我在固定几何之上实现了一个可审计的语义定位层。展示范围止于
@@ -36,15 +39,15 @@ VGGT-RelMem 是 **VGGT-SLAM 几何之上的可审计语义定位可靠性层**�
 
 画面：README 顶部定位与范围声明。
 
-### 0:40–1:25：方法结构
+### 0:25–0:55：方法结构
 
 展示 Q×A 分离：Q0 是 Top-1；正式主策略 Q1F 是固定 Top-5＋A2，没有永久对象时
-回退 Q0；A1 是 gate 后连通分量，A2 是证据约束 complete-link。GT、OBB 和对齐只在
-evaluator 打开。Q2 只作为停止策略诊断，不进入主贡献。
+回退 Q0；A1 是 gate 后连通分量。Clio A2 是任务内几何＋质量 complete-link，
+embedding 覆盖为 0。GT、OBB 和对齐只在 evaluator 打开；Q2 只作诊断。
 
 画面：模块目录、query manifest、frozen Q1F policy 和 ObjectMemory JSON。
 
-### 1:25–2:05：复现与审计
+### 0:55–1:20：复现与审计
 
 执行：
 
@@ -56,17 +59,18 @@ python -m scripts.validate_clio_final_summary \
 
 说明 clean clone 测试不读取 Clio 数据；官方 task YAML 的覆盖检查是显式 integration
 命令。每份本地报告记录输入路径和 SHA-256，公开摘要只保留聚合数字与边界。
+原始 Clio/run 报告不进 Git；36-task 批处理入口可 dry-run，但真实重算仍需合法取得数据、几何与 GPU 环境。
 
-### 2:05–3:05：对象定位与关联结果
+### 1:20–2:00：对象定位与关联结果
 
-展示最终表：“Apartment 是 development，Cubicle 是 fixed-confirmatory。冻结 Q1F 在
-Cubicle 的严格中心 Acc@1 从 27.78% 到 38.89%，差 11.11pp。这个数字属于完整系统，
-不能归因于 A2，因为 A2 的最终同簇 F1 是 91.56%，低于 A1 的 93.47%。Apartment 上
-Q1F 严格差值为 0pp，也一起保留。”
+展示最终表：“对象中心对 task 的全部 GT OBB 取 any-containment，nearest 只作诊断。
+修复后 Apartment 严格差值仍是 0pp，Cubicle 仍为 27.78%→38.89%。这属于完整系统；
+A2 的 Cubicle 最终同簇 F1 91.56%，低于 A1 的 93.47%，而且 A2 没有 informative
+semantic input，因此不能归因成语义关联增益。”
 
 补充：A1 必须按连通分量闭包计分；只统计原始 gate 会漏掉链式误合并。
 
-### 3:05–4:00：关系定位与拒答
+### 2:00–2:35：关系定位与拒答
 
 展示一条 `mudstone rock` reference 案例：“旧 evaluator 只验证 target，会把使用
 `quartz rock` 参考物的答案算对。现在 target 和 reference 都必须命中各自 GT。严格
@@ -75,13 +79,13 @@ Q1F 严格差值为 0pp，也一起保留。”
 再展示负例：“端到端拒答是 98.66%，但双端定位后、理由也正确的关系拒答只有
 44.97%。这说明拒答率高不等于关系推理可靠。0.60 是工程默认值，未做真实校准。”
 
-### 4:00–4:40：失败与取舍
+### 2:35–2:50：失败与取舍
 
 打开 `docs/CLIO_FINAL_FAILURE_CASES.md`：展示 A1 链式误合并、reference 语义碰撞和
 Q1F 严格 OBB 边界失败。明确 Q2 的 gain 不是 instance coverage，因此把 Q2 降级为
 诊断；Instance Recall、Duplicate Rate、Count Error、置信区间和完整成本表仍未测。
 
-### 4:40–5:00：结论
+### 2:50–3:00：结论
 
 “项目交付的是标签隔离、确定性重放、失败可追踪的语义定位基准。最有价值的不只是
 一个正差值，而是能指出这个差值来自哪条冻结策略、哪些指标回退，以及错误发生在
@@ -89,7 +93,7 @@ target、reference、关联还是拒答层。”
 
 ## 录制状态
 
-5 分钟讲稿和命令入口已更新；公开仓库有静态材料，本地有约 10 秒环绕视频。完整
+约 3 分钟讲稿和命令入口已更新；公开仓库有静态材料，本地有约 10 秒环绕视频。完整
 配音屏幕录制仍为 `DEMO_RECORDING_PENDING`，不能把短视频写成最终演示。
 
 ## 面试追问与答案
@@ -107,7 +111,9 @@ target、reference、关联还是拒答层。”
 ### 3. 为什么不能把增益归因于 A2？
 
 A2 的 Cubicle 最终聚类 F1 为 91.56%，低于 A1 的 93.47%。对象定位 headline 是系统
-级结果，不是 association 单因素消融。
+级结果，不是 association 单因素消融。更重要的是，Clio D8 的 semantic embedding
+覆盖为 0，同 task 的 exact-class gate 又恒定，因此这里只能称任务内几何＋质量
+complete-link，不能称多模态语义关联。
 
 ### 4. A1 评测为什么需要重算？
 

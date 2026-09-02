@@ -9,14 +9,14 @@ by hand.
 Files:
 
 - `result_card.json`: tracked evidence/config hashes, sample sizes, budgets,
-  validation status, scope, and explicit external gaps for all seven retained
+  validation status, scope, and explicit external gaps for all nine retained
   results, including Clio apartment GPU development acceptance;
 - `result_card.md`: human-readable table generated from the JSON card;
 - `claim_audit.json`: line-level README audit for official/reproduction/
   improvement/navigation/superiority/SOTA terminology;
 - `validation.json`: independent rebuild and source-reference validation;
 - `docs/PROJECT_PRESENTATION.md`: hash-pinned current resume wording, result
-  boundaries, two resume bullets, a 5-minute demo script and 10 interview Q&As.
+  boundaries, two resume bullets, an approximately 3-minute demo script and 10 interview Q&As.
   The actual narrated recording remains `DEMO_RECORDING_PENDING`; a release tag
   remains pending until the corrected files are explicitly committed.
 

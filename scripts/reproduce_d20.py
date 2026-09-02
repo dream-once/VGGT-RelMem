@@ -94,8 +94,14 @@ def execute(
     results = build_result_tables(project_root, manifest)
     output_hashes = write_derived_outputs(output_dir, results)
     validators = validation_suite(project_root)
-    readme_checks = readme_numeric_checks(
+    documentation_corpus = "\n".join([
         (project_root / "README.md").read_text(encoding="utf-8"),
+        (project_root / "docs" / "DEVELOPMENT_HISTORY.md").read_text(
+            encoding="utf-8"
+        ),
+    ])
+    readme_checks = readme_numeric_checks(
+        documentation_corpus,
         results,
     )
     retained_checks = (

@@ -19,7 +19,7 @@ FINAL_CONCLUSION = (
 LIMITED_PERFORMANCE_CLAIM = {
     "scope": "Cubicle 18-task fixed-confirmatory frozen-Q1F object-grounding benchmark",
     "policy_id": "Q1F",
-    "metric": "strict predicted-center-in-oriented-GT-OBB Acc@1",
+    "metric": "strict predicted-center-in-any-official-oriented-GT-OBB Acc@1",
     "q0": 0.277777777778,
     "q1f": 0.388888888889,
     "delta_percentage_points": 11.1111111111,
@@ -62,6 +62,7 @@ RESULT_IDS = (
 )
 REQUIRED_GAPS = {
     "clio_download": "APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED",
+    "public_real_experiment_replay": "REQUIRES_EXTERNAL_CLIO_DATA_GEOMETRY_GPU_RUNS_BATCH_ENTRY_AVAILABLE",
     "data_license": "DATA_LICENSE_UNVERIFIED",
     "clio_held_out": "CUBICLE_Q1F_FROZEN_ASSOCIATION_RELATION_FIXED_CONFIRMATORY",
     "real_calibration": "REAL_DATA_CALIBRATION_PENDING",
@@ -414,7 +415,8 @@ def build_result_card(
             "result_id": "Clio-final-object-grounding-association",
             "description": (
                 "Apartment development and Cubicle fixed-confirmatory "
-                "object grounding plus A1/A2 association"
+                "object grounding plus final-cluster A1 and task-internal "
+                "geometry+quality A2 association"
             ),
             "evidence": _source(
                 inputs["clio_final_summary"][0],
@@ -431,6 +433,8 @@ def build_result_card(
                 "cubicle_tasks": clio_final["scenes"]["cubicle"]["task_count"],
                 "apartment_geometry_frames": clio_final["scenes"]["apartment"]["geometry_frames"],
                 "cubicle_geometry_frames": clio_final["scenes"]["cubicle"]["geometry_frames"],
+                "apartment_a2_semantic_embeddings": clio_final["scenes"]["apartment"]["association"]["semantic_input_audit"]["observations_with_semantic_embedding"],
+                "cubicle_a2_semantic_embeddings": clio_final["scenes"]["cubicle"]["association"]["semantic_input_audit"]["observations_with_semantic_embedding"],
             },
             "budget": {"Q0_sam_calls": 1, "Q1F_sam_calls": 5},
             "validation_status": clio_final_validation["status"],

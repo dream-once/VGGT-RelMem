@@ -2,8 +2,11 @@ import json
 from pathlib import Path
 import unittest
 
+import numpy as np
+
 from relground.clio_grounding_benchmark import (
     _aggregate,
+    _evaluate_center,
     _quality,
     _validate_frozen_policy,
 )
@@ -21,6 +24,32 @@ class ClioGroundingBenchmarkTests(unittest.TestCase):
         self.assertEqual(metrics["coverage"], 0.5)
         self.assertEqual(metrics["grounding_acc_at_1"], 0.5)
         self.assertEqual(metrics["conditional_acc_at_1"], 1.0)
+
+    def test_any_gt_containment_wins_over_nearest_center_diagnostic(self) -> None:
+        identity = np.eye(3, dtype=np.float64)
+        boxes = [
+            {
+                "gt_id": "nearest_but_not_containing",
+                "center": np.asarray([0.20, 0.0, 0.0]),
+                "extent": np.asarray([0.02, 0.02, 0.02]),
+                "rotation": identity,
+            },
+            {
+                "gt_id": "farther_and_containing",
+                "center": np.asarray([1.0, 0.0, 0.0]),
+                "extent": np.asarray([2.0, 1.0, 1.0]),
+                "rotation": identity,
+            },
+        ]
+        result = _evaluate_center(
+            np.asarray([0.25, 0.0, 0.0]),
+            boxes,
+            alignment_margin_m=0.0,
+        )
+        self.assertEqual(result["nearest_gt_id"], "nearest_but_not_containing")
+        self.assertAlmostEqual(result["center_distance_m"], 0.05)
+        self.assertTrue(result["correct"])
+        self.assertTrue(result["correct_with_alignment_rmse_margin"])
 
     def test_observation_quality_is_conservative_geometric_mean(self) -> None:
         value = _quality({

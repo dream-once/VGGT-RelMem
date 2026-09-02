@@ -15,12 +15,13 @@
 | D18-QxA-protocol | {"clio_development_matrix_rows": 6, "frozen_queries": 1, "office_complete_cache_matrix_rows": 6, "synthetic_matrix_rows": 6} | {"Q0": 1, "Q1": [1, 3, 5], "Q2": 5} | PASS | office_and_clio_apartment_complete_cache_development_replay_plus_synthetic_correctness_not_performance |
 | D19-ablation-audit | {"a2_variants": 5, "clio_a2_variants": 5, "clio_q2_variants": 3, "frozen_queries": 1, "q2_variants": 3} | {"association_input_q1_k": 5} | PASS | synthetic_correctness_plus_clio_unlabelled_engineering_ablation_real_metrics_pending |
 | D20-reproduction-package | {"canonical_inputs": 10, "derived_tables": 3, "stage_validators": 4} | {"cpu_only": true} | PASS | tracked_json_markdown_reproduction |
-| Clio-final-object-grounding-association | {"apartment_geometry_frames": 192, "apartment_tasks": 18, "cubicle_geometry_frames": 172, "cubicle_tasks": 18} | {"Q0_sam_calls": 1, "Q1F_sam_calls": 5} | PASS | metric_specific_frozen_cubicle_object_grounding_not_general_superiority |
+| Clio-final-object-grounding-association | {"apartment_a2_semantic_embeddings": 0, "apartment_geometry_frames": 192, "apartment_tasks": 18, "cubicle_a2_semantic_embeddings": 0, "cubicle_geometry_frames": 172, "cubicle_tasks": 18} | {"Q0_sam_calls": 1, "Q1F_sam_calls": 5} | PASS | metric_specific_frozen_cubicle_object_grounding_not_general_superiority |
 | Clio-final-relation-abstention | {"apartment_queries": 272, "cubicle_negative": 149, "cubicle_positive": 149, "cubicle_queries": 298} | {"uncalibrated_answer_threshold": 0.6} | PASS | fixed_confirmatory_target_reference_pair_relations_calibration_pending |
 
 ## Explicit gaps
 
 - clio_download: APARTMENT_AND_CUBICLE_LOCAL_COMPLETE_RAW_NOT_REDISTRIBUTED
+- public_real_experiment_replay: REQUIRES_EXTERNAL_CLIO_DATA_GEOMETRY_GPU_RUNS_BATCH_ENTRY_AVAILABLE
 - data_license: DATA_LICENSE_UNVERIFIED
 - clio_held_out: CUBICLE_Q1F_FROZEN_ASSOCIATION_RELATION_FIXED_CONFIRMATORY
 - real_calibration: REAL_DATA_CALIBRATION_PENDING

@@ -1,0 +1,40 @@
+{
+  "schema_version": "0.1",
+  "experiment_id": "post-D21-PE-mask-crop-representative-center-v1",
+  "stage": "post-D21-semantic-fusion-protocol",
+  "status": "APARTMENT_DEVELOPMENT_SELECTED_CUBICLE_FIXED_CONFIRMATORY_READY",
+  "encoder": "PE-Core-L14-336",
+  "pe_source_commit": "3e352cca660658d4b5c90f42a7808b11469e4c66",
+  "pe_checkpoint_sha256": "0cdab5b338cbaa1e7a5dcd1b2fb4c9f4d5df1abd289564658edbab64a650e7e8",
+  "text_source": "sam_query",
+  "context_padding_fraction": 0.15,
+  "min_padding_pixels": 2,
+  "masked_background_value": 127,
+  "semantic_score": "mean(context_crop_cosine, masked_crop_cosine)",
+  "object_selection": "highest-confidence A2 permanent object unchanged",
+  "center_rule": "center of highest-semantic-score observation in selected object",
+  "fallback": "Q0 when no A2 permanent object",
+  "learned_parameters": false,
+  "development_scene": "apartment",
+  "development_selection": {
+    "task_count": 18,
+    "scored_d6_observation_count": 40,
+    "selected_object_observation_count": 28,
+    "current_q1f_strict_correct": 2,
+    "pe_semantic_representative_strict_correct": 3,
+    "quality_representative_strict_correct": 3,
+    "paired_pe_wins": 1,
+    "paired_pe_regressions": 0,
+    "semantic_specific_gain_over_quality_baseline": false,
+    "decision": "PROCEED_TO_FIXED_CONFIRMATORY_DIAGNOSTIC"
+  },
+  "confirmatory_scene": "cubicle",
+  "confirmatory_scope": "FIXED_CONFIRMATORY_NOT_UNTOUCHED_HELD_OUT",
+  "claim_boundary": {
+    "learned_reranker": false,
+    "siglip2_used": false,
+    "pe_specific_development_gain": false,
+    "main_d21_headline_replaced": false
+  },
+  "frozen_at": "2026-09-02T00:00:00+00:00"
+}

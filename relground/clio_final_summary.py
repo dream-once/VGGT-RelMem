@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 
-SCHEMA_VERSION = "0.2"
+SCHEMA_VERSION = "0.3"
 STAGE = "clio-final-benchmark-summary"
 
 
@@ -47,12 +47,19 @@ def _scene(
     assoc_a1 = association["metrics"]["A1"]
     assoc_a2 = association["metrics"]["A2"]
     rel = relation["metrics"]
+    association_counts = association["counts"]
+    semantic_embedding_count = int(
+        association_counts.get("observations_with_semantic_embedding", 0)
+    )
+    mixed_class_task_count = int(
+        association_counts.get("tasks_with_multiple_class_texts", 0)
+    )
     return {
         "role": role,
         "geometry_frames": geometry_frames,
         "task_count": int(q0["task_count"]),
         "object_grounding": {
-            "metric": "predicted center inside official oriented GT OBB",
+            "metric": "predicted center inside any official oriented GT OBB; nearest GT is diagnostic only",
             "official_clio_metric_claim": False,
             "primary_policy": "Q1F frozen Top-5+A2 with deterministic Q0 fallback",
             "q0_top1": q0,
@@ -64,6 +71,13 @@ def _scene(
         "association": {
             "label_rule": "same padded target GT OBB; background/background pairs excluded as unknown",
             "frozen_tasks": association["counts"]["frozen_tasks"],
+            "runtime_name": "task-internal geometry+quality complete-link association",
+            "semantic_input_audit": {
+                "observations_total": int(association_counts.get("observations_total", 0)),
+                "observations_with_semantic_embedding": semantic_embedding_count,
+                "tasks_with_multiple_class_texts": mixed_class_task_count,
+                "multimodal_semantic_association_claim": False,
+            },
             "associable_tasks": association["counts"]["associable_tasks"],
             "unknown_background_pairs_excluded": association["counts"]["unknown_background_pairs_excluded"],
             "A1": assoc_a1,
@@ -153,11 +167,12 @@ def build_summary(
         },
         "claim_boundary": {
             "cubicle_object_grounding_policy_frozen_before_data_inspection": True,
-            "cubicle_q1f_policy_semantically_validated": True,
+            "cubicle_q1f_policy_manifest_validated": True,
             "association_and_relation_reports_are_fixed_confirmatory_not_untouched_held_out": True,
             "a2_pairwise_improvement_on_cubicle": False,
             "real_calibration_complete": False,
             "official_clio_metric_reproduced": False,
+            "clio_a2_multimodal_semantic_association": False,
             "found_it_comparison_available": False,
             "found_it_comparison_scope": "OUT_OF_SCOPE_BY_PROJECT_DEFINITION",
             "closed_loop_navigation": False,
@@ -199,6 +214,18 @@ def validate_summary(payload: Mapping[str, Any]) -> dict[str, Any]:
             a1 = scene["association"]["A1"]
             a2 = scene["association"]["A2"]
             assoc_delta = scene["association"]["delta_A2_minus_A1"]
+            semantic_audit = scene["association"]["semantic_input_audit"]
+            if (
+                scene["association"]["runtime_name"]
+                != "task-internal geometry+quality complete-link association"
+                or int(semantic_audit["observations_with_semantic_embedding"]) != 0
+                or int(semantic_audit["tasks_with_multiple_class_texts"]) != 0
+                or semantic_audit["multimodal_semantic_association_claim"] is not False
+            ):
+                raise ValueError(
+                    "Clio A2 runtime must remain geometry+quality complete-link "
+                    "without a multimodal semantic claim"
+                )
             for key in ("precision", "recall", "f1", "accuracy"):
                 if abs(float(assoc_delta[key]) - (float(a2[key]) - float(a1[key]))) > 1e-11:
                     raise ValueError(f"association delta mismatch: {key}")
@@ -210,8 +237,10 @@ def validate_summary(payload: Mapping[str, Any]) -> dict[str, Any]:
             - 100.0 * float(cubicle["object_grounding"]["delta_q1f_minus_q0"]["grounding_acc_at_1"])
         ) > 1e-9:
             raise ValueError("headline strict delta does not match Cubicle metrics")
-        if payload["claim_boundary"].get("cubicle_q1f_policy_semantically_validated") is not True:
-            raise ValueError("Cubicle frozen Q1F semantic validation was removed")
+        if payload["claim_boundary"].get("cubicle_q1f_policy_manifest_validated") is not True:
+            raise ValueError("Cubicle frozen Q1F manifest validation was removed")
+        if payload["claim_boundary"].get("clio_a2_multimodal_semantic_association") is not False:
+            raise ValueError("Clio A2 cannot be described as multimodal semantic association")
 
         if payload["claim_boundary"]["a2_pairwise_improvement_on_cubicle"] is not False:
             raise ValueError("A2 Cubicle association regression was hidden")
@@ -230,6 +259,7 @@ def validate_summary(payload: Mapping[str, Any]) -> dict[str, Any]:
             "association_deltas_recomputed": not failures,
             "headline_matches_cubicle": not failures,
             "negative_result_not_hidden": not failures,
+            "a2_runtime_scope_honest": not failures,
             "source_paths_safe": not failures,
         },
         "failures": failures,

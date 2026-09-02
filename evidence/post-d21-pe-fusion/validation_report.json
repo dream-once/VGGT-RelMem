@@ -1,0 +1,14 @@
+{
+  "schema_version": "0.1",
+  "status": "PASS",
+  "stage": "post-D21-PE-mask-crop-representative-center-summary-validation",
+  "checks": {
+    "arithmetic_recomputed": true,
+    "denominators_frozen": true,
+    "development_baselines_visible": true,
+    "cubicle_scope_honest": true,
+    "claim_boundary_honest": true,
+    "tracked_config_hash_matches": true
+  },
+  "failures": []
+}

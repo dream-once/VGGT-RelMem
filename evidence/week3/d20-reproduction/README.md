@@ -1,5 +1,9 @@
 # D20 reproducibility package
 
+> Historical D20 snapshot: this package intentionally reconstructs the pre-Cubicle
+> D16–D19 state. Its `clio_held_out=PENDING` field is not current project status;
+> post-D21 Apartment/Cubicle results live in `evidence/final-clio/`.
+
 规范输入全部是 tracked JSON；`result_tables.json` 与三张 Markdown 表由源码自动
 生成，没有手填结果。`sources/` 中只保存 D15.5 的轻量 manifest/audit 快照，
 PLY、PNG、MP4、权重和数据仍不进入 Git。
@@ -20,9 +24,9 @@ PYTHONDONTWRITEBYTECODE=1 python -m scripts.reproduce_d20 \
 PYTHONDONTWRITEBYTECODE=1 python -m scripts.validate_d20
 ```
 
-结果范围是 synthetic correctness、office-loop complete-cache 与 Clio apartment
-development engineering replay；Clio 的 Q0/Q1/Q2 observation 为 0/1/1，不是性能
-提升。cubicle held-out、真实 calibration、带标签真实 ablation 和可选二进制
-Release 均未完成。
+D20 本身的结果范围是 synthetic correctness、office-loop complete-cache 与 Clio
+apartment development engineering replay；其 Cubicle pending 字段必须按历史快照
+解读。后续 Cubicle fixed-confirmatory 已完成；真实 calibration、带标签查询策略
+ablation 和可选二进制 Release 仍未完成。
 README 的 clean-clone 入口包含创建虚拟环境、安装 `.[dev]`、运行全量单测与 CPU demo；
 `Pillow` 已列入 dev 依赖，避免新环境在图像相关单测处缺包。
