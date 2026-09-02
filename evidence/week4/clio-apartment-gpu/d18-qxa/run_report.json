@@ -1,7 +1,0 @@
-{
-  "status": "PASS",
-  "source_id": "clio-apartment-development",
-  "prediction_status": "PASS",
-  "evaluation_status": null,
-  "held_out_status": "CLIO_HELD_OUT_PENDING"
-}

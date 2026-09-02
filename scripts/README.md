@@ -1,6 +1,6 @@
 # CLI 索引
 
-日常复习只需要下面的主线入口。其余以 D 编号命名的脚本是研究阶段构建器或 validator，为历史 evidence 的可审计重放保留。
+本目录只保留完整主流程、最终 evaluator 和相应 validator。逐日实验构建器与诊断脚本保存在 Git tag `research-final-v1-2026-09-02`。
 
 ## 最常用
 
@@ -8,8 +8,6 @@
 |---|---|---:|
 | `python -m scripts.verify_public_clone` | 公开 clone 全部 CPU 回归 | 否 |
 | `python -m scripts.demo` | 最小合成 ObjectMemory 示例 | 否 |
-| `python -m scripts.reproduce_d20` | 重建 D20 派生表与 validator 集 | 否 |
-| `python -m scripts.validate_d21` | 校验最终结果卡与声明边界 | 否 |
 
 ## 主推理链路
 
@@ -20,7 +18,7 @@
 | SAM + 3D lifting | `run_sam_topk_lifting.py` |
 | Observation cache | `cache_scene_observations.py` |
 | ObjectMemory | `prepare_object_memory.py` |
-| A2 关联 | `run_a2_association.py`, `evaluate_a2_association.py` |
+| A2 关联 | `run_a2_association.py`, `validate_a2_association.py` |
 | 关系查询 | `run_relation_protocol.py`, `evaluate_relation_protocol.py` |
 | 结构化查询 | `evaluate.py` |
 | 可视化 | `visualize_geometry.py`, `visualize_scene_memory.py` |
@@ -47,6 +45,6 @@
 | `build_clio_pe_semantic_fusion_summary.py` | 构建 tracked 聚合摘要 |
 | `validate_clio_pe_semantic_fusion_summary.py` | clean clone 声明边界校验 |
 
-## 历史脚本
+## 兼容辅助
 
-`build_d*`、`run_d*`、`validate_d*` 以及旧的单阶段审计脚本继续保留，因为 week1–week4 evidence 的 manifest 绑定了路径和 SHA-256。它们不是新读者的推荐入口，也不应在没有对应冻结配置时随意重跑。
+少量 `run_d9_*`、`validate_d*` 文件仍被 A1/A2、Q1 和 lifting 的核心 CLI 或测试直接复用；它们属于主流程依赖，不是 retained evidence。

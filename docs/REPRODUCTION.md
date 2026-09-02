@@ -1,6 +1,6 @@
 # 复现手册
 
-本手册把常用命令从开发历史中抽离出来。公开 CPU 验证与真实 Clio GPU 重放是两个不同层级。
+本手册覆盖从公开 CPU 验证、Clio 几何与对齐，到 36-task 推理和最终 evaluator。公开 CPU 验证与真实 Clio GPU 重放是两个不同层级。
 
 ## CPU clean clone
 
@@ -21,8 +21,6 @@ python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```bash
 python -m scripts.validate_clio_final_summary
 python -m scripts.validate_clio_pe_semantic_fusion_summary
-python -m scripts.validate_d20
-python -m scripts.validate_d21
 ```
 
 ## 本地依赖
@@ -40,12 +38,58 @@ python -m scripts.validate_d21
 - 两套场景 geometry NPZ 与 anchor poses；
 - 足够空间保存不进入 Git 的 `runs/` 产物。
 
-环境和本机状态可用下面的只读命令核对：
+环境和 GPU 可用下面的命令核对：
 
 ```bash
-python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py
+nvidia-smi
 bash scripts/bootstrap_vggt_geom.sh
 bash scripts/bootstrap_open_vocab.sh
+```
+
+## Clio 几何与 evaluator-only 对齐
+
+先审计本地数据，再分别按照最终实验使用的 stride 生成 192/172 帧几何：
+
+```bash
+python -m scripts.audit_clio_feasibility \
+  --filesystem data/clio \
+  --output runs/clio-feasibility.json
+
+TORCH_HOME=/root/autodl-tmp/cache/torch \
+conda run -p /root/autodl-tmp/envs/vggt_geom \
+  python -m scripts.run_vggt_geometry \
+  --image-folder data/clio/apartment/images \
+  --output runs/clio-apartment-dev-v2-lc/geometry.npz \
+  --max-frames 192 --frame-stride 6 --max-loops 0
+
+TORCH_HOME=/root/autodl-tmp/cache/torch \
+conda run -p /root/autodl-tmp/envs/vggt_geom \
+  python -m scripts.run_vggt_geometry \
+  --image-folder data/clio/cubicle/images \
+  --output runs/clio-cubicle-heldout-v1/geometry.npz \
+  --max-frames 172 --frame-stride 4 --max-loops 0
+```
+
+使用本地 COLMAP reconstruction 建立仅供 evaluator 使用的 Sim(3)。主推理不得读取下面两个 world-alignment 输出：
+
+```bash
+python -m scripts.align_clio_colmap_poses \
+  --anchor-poses runs/clio-apartment-dev-v2-lc/geometry.anchor_poses.json \
+  --colmap-images data/clio/apartment/sparse/0/images.bin \
+  --output runs/clio-apartment-dev-v2-lc/vggt_to_colmap_alignment.json \
+  --scene-transform configs/clio_scene_transforms.json \
+  --scene-id apartment \
+  --world-output runs/clio-apartment-dev-v2-lc/vggt_to_clio_world_alignment.json \
+  --max-rmse-m 0.15
+
+python -m scripts.align_clio_colmap_poses \
+  --anchor-poses runs/clio-cubicle-heldout-v1/geometry.anchor_poses.json \
+  --colmap-images data/clio/cubicle/sparse/1/images.bin \
+  --output runs/clio-cubicle-heldout-v1/vggt_to_colmap_alignment.json \
+  --scene-transform configs/clio_cubicle_scene_transform.json \
+  --scene-id cubicle \
+  --world-output runs/clio-cubicle-heldout-v1/vggt_to_clio_world_alignment.json \
+  --max-rmse-m 0.15
 ```
 
 ## 真实 Clio 36-task 重放

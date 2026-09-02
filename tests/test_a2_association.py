@@ -1,6 +1,4 @@
-import hashlib
 import unittest
-from pathlib import Path
 
 import numpy as np
 
@@ -13,8 +11,6 @@ from relground.a2_association import (
 )
 from relground.association import ObjectMemory
 from relground.schemas import ObjectObservation, OrientedBoundingBox
-from scripts.validate_d9_association import validate_output as validate_a1
-from scripts.validate_d9_evaluation import validate_output as validate_a1_eval
 
 
 def make_observation(
@@ -193,28 +189,6 @@ class A2AssociationTests(unittest.TestCase):
         self.assertFalse(associated & set(memory.pending_observations))
         self.assertEqual(associated | set(memory.pending_observations), source_ids)
         self.assertEqual(len(memory.objects), 1)
-
-    def test_published_a1_hash_and_validators_remain_frozen(self) -> None:
-        root = Path(__file__).resolve().parents[1]
-        bundle = root / "evidence/week2/d9-office-loop-trash-can"
-        result = bundle / "prediction/d9_result.json"
-        memory = bundle / "prediction/object_memory.json"
-
-        self.assertEqual(
-            hashlib.sha256(result.read_bytes()).hexdigest(),
-            "6aabd27144ab57e77f00e3b3dab499b22fd0a386feb21df9a3adb4c86a8b0362",
-        )
-        self.assertEqual(
-            hashlib.sha256(memory.read_bytes()).hexdigest(),
-            "1d8029e819db70d15877797de7618635730731fca510056e452264d895cce9f3",
-        )
-        self.assertEqual(
-            validate_a1(bundle / "prediction")["status"], "PASS"
-        )
-        self.assertEqual(
-            validate_a1_eval(bundle / "evaluation")["status"], "PASS"
-        )
-
 
 if __name__ == "__main__":
     unittest.main()

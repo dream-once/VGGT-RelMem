@@ -200,10 +200,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--memory",
-        default=(
-            "evidence/week1/runs/office-loop-mv-d8-trash-can/"
-            "object_memory.json"
-        ),
+        default="runs/office-loop-mv-d8-trash-can/object_memory.json",
     )
     parser.add_argument(
         "--output-dir",

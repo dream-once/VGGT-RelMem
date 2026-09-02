@@ -74,8 +74,8 @@
   frame-scoped observation 计数，`coverage_aware=false`。
 - 根因：当前 trace 没有实例级覆盖状态，也没有带标签查询策略消融。因此 Q2 只保留为
   诊断，不进入最终 Clio 主表或简历贡献。
-- 证据：`evidence/week4/clio-apartment-gpu/gpu_acceptance_report.json` 与
-  `evidence/week3/d19-ablations/`。
+- 证据：完整 trace 保存在 Git tag `research-final-v1-2026-09-02`；求职版主树
+  仅保留该失败边界，不保留 Q2 阶段产物。
 
 ## 汇总边界
 

@@ -89,7 +89,7 @@ python -m scripts.validate_clio_final_summary
 python -m scripts.validate_clio_pe_semantic_fusion_summary
 ```
 
-当前公开回归包含 82 项 CPU 测试。完整真实 Clio 的复现命令需要合法取得数据、两个 Python 环境、模型权重、GPU 几何和本地 run 产物，参见 [验证与复现手册](docs/REPRODUCTION.md)。
+当前公开回归包含 80 项 CPU 测试。完整真实 Clio 的复现命令需要合法取得数据、两个 Python 环境、模型权重、GPU 几何和本地 run 产物，参见 [验证与复现手册](docs/REPRODUCTION.md)。
 
 ## 仓库地图
 
@@ -101,8 +101,8 @@ python -m scripts.validate_clio_pe_semantic_fusion_summary
 | `configs/` | 冻结协议、查询清单和实验 manifest |
 | `scripts/` | CLI；先看 [脚本索引](scripts/README.md) |
 | `tests/` | 无数据 CPU 核心回归 |
-| `evidence/` | 轻量结果与历史证据；先看 [证据索引](evidence/README.md) |
-| `docs/` | 复习、复现、演示、失败案例和开发历史 |
+| `evidence/` | 仅保留最终轻量结果；先看 [证据索引](evidence/README.md) |
+| `docs/` | 复习、复现、演示和真实失败案例 |
 | `runs/` | 本地运行产物，默认不进入 Git |
 | `third_party/` | 本地上游源码，默认不进入 Git |
 
@@ -114,7 +114,7 @@ python -m scripts.validate_clio_pe_semantic_fusion_summary
 4. 运行 `verify_public_clone` 和合成 demo。
 5. 最后查看 [对外表述与讲稿](docs/PROJECT_PRESENTATION.md) 和 [真实失败案例](docs/CLIO_FINAL_FAILURE_CASES.md)。
 
-D1–D21 的逐日命令、历史数值和修正过程已从根 README 移到 [完整开发历史](docs/DEVELOPMENT_HISTORY.md)。日常复习不需要从头阅读历史日志。
+D1–D21 的逐日命令、阶段 evidence 和诊断脚本保存在 Git tag `research-final-v1-2026-09-02`，不进入求职版主树。
 
 ## 可复现与验证入口
 
@@ -129,7 +129,7 @@ D1–D21 的逐日命令、历史数值和修正过程已从根 README 移到 [�
 ## 当前边界
 
 - Q1F 每个 task 最多仍运行 5 次 SAM；尚未完成整条 36-task 延迟和峰值显存统计。
-- Q2 仍是 `coverage_aware=false` 的诊断策略，不进入求职版主贡献。
+- Q2 的 `coverage_aware=false` 诊断仅保存在 research tag，不进入求职版代码或主贡献。
 - 关系置信度使用未校准的 0.60 工程阈值；真实独立 calibration 仍待完成。
 - 尚未提供 Instance Recall、Duplicate Rate、Count Error、带标签查询策略消融和统计置信区间。
 - 正式约 3 分钟录屏和 release tag 尚未完成。

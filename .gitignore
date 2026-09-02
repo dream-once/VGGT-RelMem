@@ -9,20 +9,19 @@ data/
 weights/
 checkpoints/
 AI_Navigation_Project_Recommendation.docx
+
+# Local Codex/agent state is not part of the portfolio project.
+.agents/
+AGENTS.md
+PROJECT_MEMORY.md
+
 third_party/*
 !third_party/README.md
 runs/*
 !runs/.gitkeep
-!runs/office-loop/
-runs/office-loop/*
-!runs/office-loop/geometry.manifest.json
-!runs/office-loop/geometry.anchor_poses.json
-!runs/office-loop/run_manifest.json
 
-# Keep binary evidence ignored except the single bounded public thumbnail
-# frozen by configs/evidence_policy.json.
+# Keep binary evidence outside the portfolio repository.
 evidence/**/*.png
-!evidence/week3/d15-gpu-public/overview.png
 evidence/**/*.mp4
 evidence/**/*.npy
 evidence/**/*.npz
