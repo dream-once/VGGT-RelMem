@@ -3,7 +3,7 @@ import unittest
 import numpy as np
 
 from relground.association import ObjectMemory
-from relground.relations import RelationGrounder
+from relground.relations import RelationConfig, RelationGrounder
 from relground.schemas import GroundingQuery, ObjectObservation, OrientedBoundingBox
 
 
@@ -66,6 +66,26 @@ class RelationTests(unittest.TestCase):
         result = RelationGrounder(memory, {"anchor": np.eye(4)}).ground(query())
         self.assertTrue(result.abstain)
         self.assertEqual(result.reason, "relation_conflict_or_boundary")
+
+    def test_reference_semantic_ablation_penalizes_partial_class_match(self) -> None:
+        memory = ObjectMemory()
+        decisions = memory.add_many([
+            observation("target", "chair", [-2, 0, 0]),
+            observation("reference", "silver bottle", [0, 0, 0]),
+            observation("distractor", "red bottle", [4, 0, 0]),
+        ])
+        memory.get(decisions[1].object_id).confidence = 0.8
+        memory.get(decisions[2].object_id).confidence = 0.99
+        request = GroundingQuery("q", "chair", "left_of", "silver bottle", "anchor")
+        frozen = RelationGrounder(memory, {"anchor": np.eye(4)}).ground(request)
+        weighted = RelationGrounder(
+            memory, {"anchor": np.eye(4)},
+            RelationConfig(score_reference_semantics=True),
+        ).ground(request)
+        self.assertEqual(frozen.explanation["reference_id"], decisions[2].object_id)
+        self.assertEqual(weighted.explanation["reference_id"], decisions[1].object_id)
+        self.assertEqual(weighted.ranked_ids[0], frozen.ranked_ids[0])
+        self.assertFalse(weighted.abstain)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "project": "VGGT-RelMem",
+  "repository": {
+    "remote": "https://github.com/dream-once/VGGT-RelMem.git",
+    "default_branch": "main",
+    "visibility": "public"
+  },
+  "tracked_required": [
+    "AGENTS.md",
+    "PROJECT_MEMORY.md",
+    ".agents/vggt-instance-baseline.json",
+    ".agents/skills/vggt-instance-handoff/SKILL.md",
+    ".agents/skills/vggt-instance-handoff/scripts/audit_instance.py",
+    ".gitignore",
+    "README.md",
+    "pyproject.toml",
+    "third_party/README.md",
+    "adapters/geometry.py",
+    "adapters/open_vocab.py",
+    "adapters/vggt_slam.py",
+    "evaluation/metrics.py",
+    "relground/association.py",
+    "relground/a2_association.py",
+    "relground/candidate_cache.py",
+    "relground/clio_association_benchmark.py",
+    "relground/clio_final_summary.py",
+    "relground/clio_grounding_benchmark.py",
+    "relground/clio_relation_benchmark.py",
+    "relground/pe_semantic_fusion.py",
+    "relground/pe_semantic_fusion_summary.py",
+    "relground/relation_protocol.py",
+    "scripts/run_vggt_geometry.py",
+    "scripts/run_pe_topk.py",
+    "scripts/run_sam_topk_lifting.py",
+    "scripts/cache_scene_observations.py",
+    "scripts/prepare_object_memory.py",
+    "scripts/run_a2_association.py",
+    "scripts/run_clio_36_task_batch.py",
+    "scripts/run_clio_relation_benchmark.py",
+    "scripts/run_clio_pe_semantic_fusion.py",
+    "scripts/evaluate_clio_association.py",
+    "scripts/evaluate_clio_grounding_benchmark.py",
+    "scripts/evaluate_clio_pe_semantic_fusion.py",
+    "scripts/validate_clio_association.py",
+    "scripts/validate_clio_final_summary.py",
+    "scripts/validate_clio_grounding_benchmark.py",
+    "scripts/validate_clio_relation_benchmark.py",
+    "scripts/validate_clio_pe_semantic_fusion_summary.py",
+    "scripts/verify_public_clone.py",
+    "configs/clio_apartment_queries.json",
+    "configs/clio_cubicle_frozen_policy.json",
+    "configs/clio_cubicle_queries.json",
+    "configs/clio_pe_semantic_fusion.json",
+    "configs/clio_relation_confirmatory_protocol.json",
+    "docs/CLIO_FINAL_FAILURE_CASES.md",
+    "docs/PROJECT_PRESENTATION.md",
+    "docs/REPRODUCTION.md",
+    "docs/REVIEW_GUIDE.md",
+    "evidence/final-clio/README.md",
+    "evidence/final-clio/benchmark_summary.json",
+    "evidence/final-clio/validation_report.json",
+    "evidence/post-d21-pe-fusion/README.md",
+    "evidence/post-d21-pe-fusion/benchmark_summary.json",
+    "evidence/post-d21-pe-fusion/validation_report.json",
+    "tests/test_a2_association.py",
+    "tests/test_clio_association_benchmark.py",
+    "tests/test_clio_final_summary.py",
+    "tests/test_clio_grounding_benchmark.py",
+    "tests/test_clio_relation_benchmark.py",
+    "tests/test_pe_semantic_fusion.py",
+    "relground/relation_reasoning.py",
+    "relground/clio_relation_improvement.py",
+    "configs/clio_relation_improvement_v1.json",
+    "configs/clio_relation_improvement_v2.json",
+    "scripts/run_clio_relation_improvement.py",
+    "scripts/validate_clio_relation_improvement.py",
+    "scripts/analyze_relation_improvement.py",
+    "scripts/audit_relation_candidate_ceiling.py",
+    "scripts/query_relation.py",
+    "scripts/audit_relation_abstention.py",
+    "tests/test_relation_reasoning.py",
+    "docs/INTERVIEW_AUDIT_20260909.md",
+    "docs/RELATION_MODULES.md",
+    "evidence/relation-improvement/README.md",
+    "evidence/relation-improvement/benchmark_summary.json",
+    "evidence/relation-improvement/validation_report.json",
+    "evidence/relation-improvement/diagnostics.json",
+    "evidence/relation-improvement/candidate_ceiling.json"
+  ],
+  "upstream_repositories": [
+    {
+      "path": "third_party/VGGT-SLAM",
+      "commit": "35327ac28b7d193df9ccc39ba6346052bb6f1207",
+      "role": "VGGT-SLAM 2.0 geometry"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/salad",
+      "commit": "33ca9c0ca1e10cbb21efc0d6a5fcb6d45688e42d",
+      "role": "SALAD loop closure"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/vggt",
+      "commit": "6e6e16107b88e8e76c751826af10d4295d87ecd2",
+      "role": "VGGT_SPARK geometry model"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/perception_models",
+      "commit": "3e352cca660658d4b5c90f42a7808b11469e4c66",
+      "role": "Perception Encoder top-1 retrieval"
+    },
+    {
+      "path": "third_party/VGGT-SLAM/third_party/sam3",
+      "commit": "8f0b7f4d4e7eda2ed606ebde6702c93359ad01da",
+      "role": "SAM 3 open-vocabulary segmentation"
+    }
+  ],
+  "local_assets": [
+    {
+      "path": "/root/autodl-tmp/envs/vggt_geom/bin/python",
+      "kind": "file",
+      "min_size": 1,
+      "purpose": "D3 geometry environment"
+    },
+    {
+      "path": "/root/autodl-tmp/cache/torch/hub/checkpoints/model.pt",
+      "kind": "file",
+      "min_size": 5000000000,
+      "purpose": "VGGT-1B model weight"
+    },
+    {
+      "path": "/root/autodl-tmp/envs/open_vocab/bin/python",
+      "kind": "file",
+      "min_size": 1,
+      "purpose": "D4 Python 3.12 PE/SAM 3 environment"
+    },
+    {
+      "path": "/root/autodl-tmp/cache/huggingface/hub/models--facebook--PE-Core-L14-336/snapshots/bafb0f76541d399057e980a25947f67acec76575/PE-Core-L14-336.pt",
+      "kind": "file",
+      "min_size": 2600000000,
+      "purpose": "D4 PE-Core-L14-336 checkpoint"
+    },
+    {
+      "path": "/root/autodl-tmp/cache/modelscope/facebook-sam3/sam3.pt",
+      "kind": "file",
+      "min_size": 3400000000,
+      "sha256": "9999e2341ceef5e136daa386eecb55cb414446a00ac2b55eb2dfd2f7c3cf8c9e",
+      "purpose": "D4 SAM 3 checkpoint from ModelScope facebook/sam3"
+    },
+    {
+      "path": "data/office_loop",
+      "kind": "directory",
+      "min_files": 473,
+      "purpose": "official office_loop sample"
+    },
+    {
+      "path": "data/clio/downloads/clio-apartment-rgb-task-subset.zip",
+      "kind": "file",
+      "min_size": 2355938,
+      "sha256": "6290980fba2cb89a7fe76030ec4511afeab886da065efb2d662fa8f3e6142d98",
+      "purpose": "Clio apartment 24-frame RGB plus task-metadata development subset archive; local use only"
+    },
+    {
+      "path": "data/clio/apartment_gpu_bundle/apartment",
+      "kind": "directory",
+      "min_files": 28,
+      "purpose": "Historical 24-frame Clio apartment development subset"
+    },
+    {
+      "path": "data/clio/apartment",
+      "kind": "directory",
+      "min_files": 1180,
+      "purpose": "Full Clio apartment development scene; raw local use only"
+    },
+    {
+      "path": "data/clio/cubicle",
+      "kind": "directory",
+      "min_files": 1386,
+      "purpose": "Full Clio cubicle fixed-confirmatory scene; raw local use only"
+    },
+    {
+      "path": "data/clio/cubicle.zip",
+      "kind": "file",
+      "min_size": 1417678076,
+      "sha256": "4fea3b731d730d77f6ae13e0d7859b264ee9cc52ba9b81925fc7e5e0f0813517",
+      "purpose": "Clio cubicle source archive; raw local use only"
+    },
+    {
+      "path": "runs/clio-apartment-dev-v2-lc",
+      "kind": "directory",
+      "min_files": 1428,
+      "purpose": "Full local Apartment final benchmark and review artifacts"
+    },
+    {
+      "path": "runs/clio-cubicle-heldout-v1",
+      "kind": "directory",
+      "min_files": 1449,
+      "purpose": "Full local Cubicle fixed-confirmatory benchmark and review artifacts"
+    },
+    {
+      "path": "runs/clio-relation-improvement-v2",
+      "kind": "directory",
+      "min_files": 1,
+      "purpose": "2026-09-10 full local relation candidate/prediction/evaluation replay"
+    },
+    {
+      "path": "runs/clio-pe-semantic-fusion-v1",
+      "kind": "directory",
+      "min_files": 1,
+      "purpose": "Existing PE crop-score cache required for relation representative centers"
+    }
+  ],
+  "disk": {
+    "path": "/root/autodl-tmp",
+    "min_free_gib": 10
+  },
+  "updated": "2026-09-10"
+}

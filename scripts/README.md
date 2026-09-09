@@ -48,3 +48,14 @@
 ## 兼容辅助
 
 少量 `run_d9_*`、`validate_d*` 文件仍被 A1/A2、Q1 和 lifting 的核心 CLI 或测试直接复用；它们属于主流程依赖，不是 retained evidence。
+
+## 2026-09-10 关系定位改进
+
+- `run_clio_relation_improvement`：六种候选池与五种关系/拒答模式的完整本地缓存实验。
+- `validate_clio_relation_improvement`：来源重建与预测重放；`--summary-only evidence/relation-improvement` 可只校验公开轻量证据。
+- `analyze_relation_improvement`：方向、双端定位错误和跨视角方向一致性诊断。
+- `query_relation`：不读取 GT 的结构化单条关系查询。
+
+完整参数、基线边界和解释见 [关系模块文档](../docs/RELATION_MODULES.md)。
+
+- `audit_relation_candidate_ceiling`：仅评估路径读取 GT，计算固定候选定位点的上限，不更改正式预测。

@@ -44,11 +44,13 @@ object grounding / spatial relation / abstention
 | A1 最终连通分量 pair F1 | 85.29% | **93.47%** |
 | A2 几何+质量 complete-link pair F1 | **88.14%** | 91.56% |
 | 关系 target+reference 严格 / `±RMSE` Acc@1 | 0.00% / 11.76% | 11.41% / 48.32% |
-| 负例拒答 / 原因命中 / 双端定位后关系拒答 | 100.00% / 31.62% / 10.29% | 98.66% / 67.79% / 44.97% |
+| 负例拒答 / 原因命中 / 双端定位且关系拒答（均除以全部负例） | 100.00% / 31.62% / 10.29% | 98.66% / 67.79% / 44.97% |
 
 Cubicle 的 `+11.11pp` 是限定于冻结 Q1F 协议的系统差值，不归因于某一个组件，也不包装成完全未接触的 held-out 涨点。最终 Clio run 没有保存 `semantic_embedding`，所以 A2 只能称为“任务内几何+质量 complete-link 关联”，不能称为多模态语义关联。
 
 轻量结果、逐项边界和哈希见 [最终 Clio 证据](evidence/final-clio/README.md)。
+
+2026-09-09 的 [简历与面试审计](docs/INTERVIEW_AUDIT_20260909.md) 补充了指标口径、仅跨帧 F1、关系拒答消融和参考物匹配分数实验；新增实验为事后诊断，不替换上述冻结结果。
 
 ### Post-D21 PE 代表中心扩展
 
@@ -62,6 +64,12 @@ Cubicle 的 `+11.11pp` 是限定于冻结 Q1F 协议的系统差值，不归因�
 | 当前观测 oracle | 3/18 | 8/18 |
 
 PE 在两个场景各带来 1 个严格正确任务、0 个严格回退，但 Apartment 与无模型质量基线打平；Cubicle 也已有历史暴露。这里只报告 fixed-confirmatory 系统观察，不声称统计显著、严格 held-out、已训练 ranker 或 SigLIP2 结果。详见 [PE 扩展证据](evidence/post-d21-pe-fusion/README.md)。
+
+### 关系定位与拒答改进（2026-09-10）
+
+新增独立的关系适配器和完整消融，历史冻结表保留。相同适配器下，Cubicle 的严格双端定位从上游式 Top-1 PCA 候选 **10/149→A2 代表中心 28/149**，负例误答 **0/149→1/149**；Apartment 严格为 **1/136→1/136**，容差结果退步。这是暴露场景上的事后系统比较。
+
+固定 A2 融合候选的同类消歧补充实验中，关系先过滤使 Cubicle 严格成功 **0/10→3/10**，负例误答均为 **0/36**；三题共享 textbooks。实体证据拒答能减少错误输出，但降低覆盖率；分差拒答过度保守，保留为负结果。详见 [关键模块文档](docs/RELATION_MODULES.md) 和 [完整消融证据](evidence/relation-improvement/README.md)。
 
 ## 快速开始
 
@@ -89,7 +97,7 @@ python -m scripts.validate_clio_final_summary
 python -m scripts.validate_clio_pe_semantic_fusion_summary
 ```
 
-当前公开回归包含 80 项 CPU 测试。完整真实 Clio 的复现命令需要合法取得数据、两个 Python 环境、模型权重、GPU 几何和本地 run 产物，参见 [验证与复现手册](docs/REPRODUCTION.md)。
+当前工作区回归包含 92 项 CPU 测试。完整真实 Clio 的复现命令需要合法取得数据、两个 Python 环境、模型权重、GPU 几何和本地 run 产物，参见 [验证与复现手册](docs/REPRODUCTION.md)。
 
 ## 仓库地图
 
@@ -130,7 +138,7 @@ D1–D21 的逐日命令、阶段 evidence 和诊断脚本保存在 Git tag `res
 
 - Q1F 每个 task 最多仍运行 5 次 SAM；尚未完成整条 36-task 延迟和峰值显存统计。
 - Q2 的 `coverage_aware=false` 诊断仅保存在 research tag，不进入求职版代码或主贡献。
-- 关系置信度使用未校准的 0.60 工程阈值；真实独立 calibration 仍待完成。
+- 历史关系协议使用未校准的 0.60 阈值；新增适配器使用 0.25 实体证据下限，二者都不是已校准概率。
 - 尚未提供 Instance Recall、Duplicate Rate、Count Error、带标签查询策略消融和统计置信区间。
 - 正式约 3 分钟录屏和 release tag 尚未完成。
 - FOUND-IT 不属于本项目范围；本项目不接入、不复现，也不做同条件优劣宣称。

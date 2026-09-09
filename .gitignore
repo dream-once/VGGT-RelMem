@@ -10,7 +10,7 @@ weights/
 checkpoints/
 AI_Navigation_Project_Recommendation.docx
 
-# Local Codex/agent state is not part of the portfolio project.
+# Ignore local agent scratch files; continuity files are explicitly tracked by the handoff workflow.
 .agents/
 AGENTS.md
 PROJECT_MEMORY.md

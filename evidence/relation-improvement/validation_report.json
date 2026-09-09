@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "candidate_rebuild": true,
+  "gpu_required": false,
+  "scope": "local source replay, upstream PCA numerical cross-check, query authoring replay, per-query score replay and direct recount",
+  "summary_sha256": "097cb62128cb6b2b482a13fab27f8854b06874e7216a709de8a24d99102d789f",
+  "scenes": {
+    "apartment": {
+      "upstream_pca_numeric_check": "PASS",
+      "methods_per_suite": 30,
+      "main_queries": 272,
+      "supplement_queries": 71,
+      "predictions_replayed": 10290,
+      "source_files_checked": 104
+    },
+    "cubicle": {
+      "upstream_pca_numeric_check": "PASS",
+      "methods_per_suite": 30,
+      "main_queries": 298,
+      "supplement_queries": 46,
+      "predictions_replayed": 10320,
+      "source_files_checked": 132
+    }
+  },
+  "evidence_sha256": "58473d7d82cb386ea279d9e67505d6cbaaf8e6647db4e3414d99306cd9f693d8"
+}

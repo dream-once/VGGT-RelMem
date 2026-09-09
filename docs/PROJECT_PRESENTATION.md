@@ -18,7 +18,7 @@ VGGT-RelMem 是 **VGGT-SLAM 几何之上的可审计语义定位可靠性层**�
 - Post-D21 训练自由 PE mask-crop 代表中心扩展在 Apartment 为 `2/18→3/18`、Cubicle 为 `7/18→8/18`，均为 1 win/0 regression；Apartment 与最高质量基线打平，Cubicle 仅作 fixed-confirmatory 观察，不替换 D21 headline。
 - 关系正例同时要求 target 与 reference 命中各自 GT。Apartment/Cubicle 的严格／
   RMSE-padded Acc@1 为 `0%/11.76%` 与 `11.41%/48.32%`；旧 target-only 数字作废。
-- 负例端到端拒答为 `100% / 98.66%`，但双端定位后关系拒答只有
+- 负例端到端拒答为 `100% / 98.66%`，但双端定位正确且关系拒答占全部负例的比例只有
   `10.29% / 44.97%`。0.60 仍是未校准工程阈值。
 - Q2 是 `coverage_aware=false` 的诊断实现，不进入主贡献。没有真实 calibration、
   带标签查询策略消融、统计置信区间或完整导航结论。
@@ -41,7 +41,7 @@ VGGT-RelMem 是 **VGGT-SLAM 几何之上的可审计语义定位可靠性层**�
 
 ### 0:25–0:55：方法结构
 
-展示 Q×A 分离：Q0 是 Top-1；正式主策略 Q1F 是固定 Top-5＋A2，没有永久对象时
+展示 Q×A 分离：最终 Clio 表中的 Q0 是 Top-1 帧最高质量 robust observation；正式主策略 Q1F 是固定 Top-5＋A2，没有永久对象时
 回退 Q0；A1 是 gate 后连通分量。Clio A2 是任务内几何＋质量 complete-link，
 embedding 覆盖为 0。GT、OBB 和对齐只在 evaluator 打开；Q2 只作诊断。
 
@@ -76,7 +76,7 @@ semantic input，因此不能归因成语义关联增益。”
 `quartz rock` 参考物的答案算对。现在 target 和 reference 都必须命中各自 GT。严格
 修正后，Cubicle 正例 strict/padded 为 11.41%/48.32%。”
 
-再展示负例：“端到端拒答是 98.66%，但双端定位后、理由也正确的关系拒答只有
+再展示负例：“端到端拒答是 98.66%，但双端定位正确且理由也正确的关系拒答占全部负例的比例只有
 44.97%。这说明拒答率高不等于关系推理可靠。0.60 是工程默认值，未做真实校准。”
 
 ### 2:35–2:50：失败与取舍
@@ -128,7 +128,7 @@ complete-link，不能称多模态语义关联。
 ### 6. 为什么拒答率高仍不叫可靠？
 
 缺目标或缺 reference 也会带来拒答。Cubicle 总拒答准确率 98.66%，但双端定位且原因
-正确的关系拒答只有 44.97%，二者回答的是不同问题。
+正确的关系拒答占全部负例的比例只有 44.97%，二者回答的是不同问题。
 
 ### 7. 置信度校准完成了吗？
 
@@ -149,3 +149,7 @@ IoU matching。README 和报告均显式设置 `official_clio_metric_claim=false
 
 先做独立 calibration split 和带标签查询策略消融，再补 Instance Recall、Duplicate
 Rate、Count Error、完整时延／显存与 bootstrap 区间；之后才讨论扩大场景或导航闭环。
+
+2026-09-09 补充：上述 F1 包含同帧配对；精确简历文本、拒答分母与参考物匹配分数消融见 [面试审计](INTERVIEW_AUDIT_20260909.md)。
+
+2026-09-10 的关系改进、消融及固定候选上限见 [关系模块文档](RELATION_MODULES.md)。

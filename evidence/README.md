@@ -8,8 +8,9 @@
 |---|---|
 | [final-clio](final-clio/README.md) | Apartment/Cubicle 对象定位、A1/A2、关系和拒答最终摘要 |
 | [post-d21-pe-fusion](post-d21-pe-fusion/README.md) | PE mask-crop 代表中心扩展 |
+| [relation-improvement](relation-improvement/README.md) | 关系适配器、代表中心、固定候选消歧及拒答消融 |
 
-两份摘要都保存固定分母、聚合结果、协议边界和本地源报告 SHA-256，并提供不依赖原始数据的 validator。
+这些摘要都保存固定分母、聚合结果、协议边界和本地源报告 SHA-256，并提供不依赖原始数据的 validator。
 
 ## 完整研究快照
 

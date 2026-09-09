@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "clio-relation-improvement-v1",
+  "scope": "post-hoc controlled experiments on historically exposed Apartment and Cubicle",
+  "query_protocol": "configs/clio_relation_confirmatory_protocol.json",
+  "query_sets": "reuse every frozen positive and opposite-direction negative query",
+  "upstream_baseline": {
+    "source_commit": "35327ac28b7d193df9ccc39ba6346052bb6f1207",
+    "name": "VGGT-SLAM-style Top-1 objects + explicit relation adapter",
+    "native_upstream_relation_claim": false,
+    "frame_selection": "existing PE Top-1 retrieval",
+    "segmentation": "same cached SAM 3 noun-phrase prompt and 0.50 threshold as multi-view",
+    "lifting": "all Top-1 masks, finite-only homogeneous transform + upstream PCA; no robust-point gate",
+    "prompt_boundary": "shared frozen task-to-noun-phrase mapping; not a verbatim end-to-end upstream reproduction"
+  },
+  "candidate_pools": [
+    "top1_pca",
+    "top1_robust",
+    "a2_fused",
+    "a2_quality",
+    "a2_medoid",
+    "a2_pe"
+  ],
+  "representative_center": "select within each already clustered object; never use GT to select observations",
+  "candidate_quality": "maximum observation geometric-mean retrieval/SAM/valid-point quality; no support-count confidence inflation",
+  "reasoning": {
+    "relation_margin_reconstruction_units": 0.1,
+    "minimum_entity_score": 0.25,
+    "ambiguity_score_gap": 0.05,
+    "equivalence_center_distance_reconstruction_units": 0.15,
+    "equivalence_min_aabb_iou": 0.5,
+    "reference_selection": "independent of requested relation, lexical Jaccard times candidate quality",
+    "target_selection": "filter direction-incompatible candidates before ranking by lexical Jaccard times candidate quality",
+    "equivalence_rule": "complete-link candidate groups requiring both center distance and AABB overlap; query-level only, no memory rewrite"
+  },
+  "reasoning_ablations": [
+    "no_relation",
+    "check_after_selection",
+    "filter_before_selection",
+    "filter_with_abstention"
+  ],
+  "main_comparison": "top1_pca vs a2_pe under the identical filter_with_abstention adapter",
+  "calibration_fitted": false,
+  "threshold_search": false,
+  "label_access": "prediction inputs contain candidates, anchor poses, and queries only; GT and Sim3 are evaluator-only",
+  "reporting": {
+    "strict_primary": true,
+    "rmse_padding_is_sensitivity_only": true,
+    "all_frozen_queries_in_denominator": true,
+    "zero_answer_risk": null,
+    "pair_dependency_warning": "queries share underlying objects; gains are not independent trials",
+    "preserve_negative_ablation_results": true
+  },
+  "supplement": {
+    "name": "fixed-candidate coarse-category relational disambiguation",
+    "scope": "separate diagnostic; not native upstream end-to-end coarse-category retrieval",
+    "families": {
+      "apartment": {
+        "bottle": [
+          "get bottle of tide",
+          "get soy sauce"
+        ],
+        "pile": [
+          "find pile of hats",
+          "move pile of clothes"
+        ]
+      },
+      "cubicle": {
+        "book": [
+          "get notebooks",
+          "get textbooks"
+        ],
+        "rock": [
+          "get mudstone rock",
+          "get quartz rock"
+        ]
+      }
+    },
+    "query_rule": "each family x every other eligible reference task x four directions; retain unique-positive or all-negative cases with every GT center separated by at least 0.25m on that axis",
+    "eligibility": "all family members and reference have one official GT OBB; no filtering by model success",
+    "alias_rule": "declared category membership from task names, shared by every method; no learned or GT-derived semantic classifier",
+    "anchor": "same frozen first-frame anchor",
+    "minimum_axis_m": 0.25,
+    "report": "all queries, family/task breakdown, paired selection wins/losses, failed candidate cases retained"
+  }
+}

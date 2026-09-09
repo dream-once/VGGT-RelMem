@@ -29,6 +29,8 @@ class RelationConfig:
     margin: float = 0.10
     ambiguity_margin: float = 0.05
     confidence_threshold: float = 0.50
+    # Opt-in diagnostic; the default preserves the frozen Clio v2 protocol.
+    score_reference_semantics: bool = False
 
     def __post_init__(self) -> None:
         if self.margin < 0.0 or self.ambiguity_margin < 0.0:
@@ -101,6 +103,8 @@ class RelationGrounder:
                 relation_score = float(1.0 / (1.0 + np.exp(-6.0 * normalized)))
                 combined = (
                     self._semantic_score(query.target, target)
+                    * (self._semantic_score(query.reference, reference)
+                       if self.config.score_reference_semantics else 1.0)
                     * target.confidence
                     * reference.confidence
                     * (0.20 + 0.80 * relation_score)

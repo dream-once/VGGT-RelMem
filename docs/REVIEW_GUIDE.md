@@ -32,7 +32,7 @@ observations.py
 置信过滤、MAD 离群剔除、3D 中心和 PCA OBB
                  │
                  ▼
-association.py
+a2_association.py + association.py
 pair gate + complete-link → ObjectMemory
                  │
         ┌────────┴────────┐
@@ -54,7 +54,7 @@ relations.py          calibration.py
 | 2 | `relground/q1_fixed_topk.py` | 固定预算 Q1 如何冻结并重放？ |
 | 3 | `relground/observations.py` | 2D mask 如何变成稳健 3D observation？ |
 | 4 | `relground/schemas.py` | Observation、Memory 和 manifest 如何序列化？ |
-| 5 | `relground/association.py` | pair gate、连通分量与 complete-link 有何区别？ |
+| 5 | `relground/a2_association.py`、`d9_association.py`、`association.py` | pair gate、连通分量与 complete-link 有何区别？ |
 | 6 | `relground/relations.py` | 左右/前后使用哪个 anchor 坐标系？ |
 | 7 | `relground/calibration.py` | 置信度与拒答如何分离？ |
 | 8 | `relground/clio_grounding_benchmark.py` | 多 GT OBB 如何严格计分？ |
@@ -65,7 +65,7 @@ relations.py          calibration.py
 
 ### Q0、Q1 与 Q1F
 
-- Q0：上游一致的 Top-1 单视角基线。
+- 最终 Clio 表的 Q0：Top-1 帧内最高质量的 robust observation；需与历史 upstream-aligned 的 finite-only B0 实验区分。
 - Q1：固定 Top-5 多视角方案。
 - Q1F：有 A2 永久对象时使用 Q1；没有对象时确定性回退 Q0。
 - Q2：顺序搜索诊断，目前不是最终主策略。
@@ -84,7 +84,7 @@ A1 对通过 pair gate 的边建立连通分量，因此 A-B、B-C 会把 A 和 
 
 ### 拒答
 
-关系查询不仅要找到 target，还要找到 reference。两端定位失败、关系证据不足或置信度低都可能拒答；报告必须区分端到端拒答、原因命中和两端定位成功后的关系拒答。
+关系查询不仅要找到 target，还要找到 reference。两端定位失败、关系证据不足或置信度低都可能拒答；报告必须区分端到端拒答、原因命中和双端定位正确且关系拒答；现有三者均除以全部负例，条件于已定位成功子集的比率需另报。
 
 ## 5. 如何理解 PE 扩展
 
@@ -113,3 +113,7 @@ python -m scripts.demo --save-memory runs/demo/object_memory.json
 ```
 
 然后打开生成的 `object_memory.json`，沿着 observation、association evidence 和 object center 反查代码。真实实验命令见 [REPRODUCTION.md](REPRODUCTION.md)。
+
+2026-09-09 代码与简历核对、指标分母和 CPU 对照见 [面试审计](INTERVIEW_AUDIT_20260909.md)。
+
+2026-09-10 的关系改进、消融及固定候选上限见 [关系模块文档](RELATION_MODULES.md)。
