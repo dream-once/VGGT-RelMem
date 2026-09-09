@@ -5,7 +5,7 @@ This tracked file is the recoverable handoff snapshot for disposable cloud insta
 ## Current snapshot
 
 - Updated: 2026-09-10 relation improvement and interview audit publication.
-- Public repository: `dream-once/VGGT-RelMem`; target branch `main`; pre-publication HEAD `3d312db0e547b91e2a9066128e3b1621f5556c3e`.
+- Public repository: `dream-once/VGGT-RelMem`; target branch `main`; code publication `0fbe973d44ee5c4b531e2c8fbf9a5e74e98ebea4` verified on the remote. Pre-publication implementation parent was `3d312db0e547b91e2a9066128e3b1621f5556c3e`; this focused history update starts from `0fbe973d44ee5c4b531e2c8fbf9a5e74e98ebea4`.
 - Completed: original frozen Apartment/Cubicle results remain unchanged. The new `PairRelationGrounder` and six candidate pools/five reasoning modes have complete post-hoc ablations, standalone label-free query CLI, source replay, direction/view-consistency diagnostics, and `docs/RELATION_MODULES.md`.
 - Main result under a shared relation adapter: Cubicle strict `10/149` Top-1 PCA -> `21/149` A2 fused -> `28/149` A2 medoid/PE; negative false answers `0/149 -> 1/149`. Apartment strict `1/136 -> 1/136`, padded `45/136 -> 28/136`. These are exposed-scene post-hoc results, not untouched held-out or native official upstream relation performance.
 - Fixed-candidate relation-only diagnostic: Cubicle A2 fused `0/10 -> 3/10` strict and `5/10 -> 9/10` padded; negative false answers remain `0/36`. All three strict wins share textbooks and use behind. Apartment has no strict gain. The manually declared coarse taxonomy is shared by all methods.
@@ -330,7 +330,6 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 
 ## Publication history
 
-- 2026-08-30: Published D17 label-free relation prediction, abstention evaluation and calibration boundaries (`5ea7b86`).
 - 2026-08-30: Published D18 frozen Q×A experiment protocol and development/synthetic replay (`79d7d12`).
 - 2026-08-30: Published D19 one-factor ablation and complete failure-accounting audit (`3ad14ad`).
 - 2026-08-30: Published D20 reproducible package and automatically rebuilt result tables (`849fba1`).
@@ -340,6 +339,7 @@ Run `python .agents/skills/vggt-instance-handoff/scripts/audit_instance.py` afte
 - 2026-09-01: Published full Apartment development and Cubicle fixed-confirmatory GPU benchmarks, labelled association and relation/rejection evaluation, lightweight final evidence, honest system-level `+11.11pp` Cubicle grounding delta, 254 CPU tests, and an explicit FOUND-IT out-of-scope boundary (commit containing this entry, pre-publication parent `ea09242`).
 - 2026-09-02: Published the strict evaluator repair and preserved it as `research-complete-2026-09-02`; then curated main to 17 core modules / 72 tests and archived all pre-curation tests on the current server (pre-publication HEAD `22daa3f`, research commit `21d3706`).
 - 2026-09-03: Published the strict final repair and PE mask-crop diagnostic as research snapshot `53db410`, then focused public `main` at pre-publication HEAD `3d312db` to 137 tracked files / 80 tests while preserving the full tree on `research-final-2026-09-02` and `research-final-v1-2026-09-02`.
+- 2026-09-10: Published and remotely verified relation improvement, full controlled ablations, candidate-ceiling diagnostic, module/interview documents, 92 passing CPU tests, and restored continuity skill/memory/baseline on `main` at `0fbe973d44ee5c4b531e2c8fbf9a5e74e98ebea4`. Portable staged-file validation and all three summary validators passed; original frozen results remain unchanged. This follow-up records publication history only.
 
 ## Scope reminder
 
